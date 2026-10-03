@@ -1271,6 +1271,99 @@ def fetch_inmet_forecast(previous):
         })
         return fallback
 
+OBS_RAIN_1H_MM=20.0
+OBS_RAIN_24H_MM=50.0
+DEESCALATION_CONFIRMATIONS=3
+
+def supplemental_observation_signals(forecast, pluviometers):
+    """Complementary signals may raise only the HST Observation level (2).
+
+    They are intentionally not allowed to create Attention/Alert/Crisis by
+    themselves. Higher levels remain driven by official risk/alert sources.
+    """
+    signals=[]
+
+    if isinstance(forecast,dict) and forecast.get("status")=="ok":
+        heavy_terms=(
+            "CHUVA FORTE","CHUVAS FORTES","CHUVA INTENSA","CHUVAS INTENSAS",
+            "TEMPESTADE","FORTES PANCADAS","CHUVA VOLUMOSA","ACUMULADO DE CHUVA",
+        )
+        for day in (forecast.get("days") or [])[:2]:
+            summary=str((day or {}).get("summary") or "")
+            normalized=norm(summary)
+            if any(term in normalized for term in heavy_terms):
+                label=str((day or {}).get("date") or "próximas horas")
+                signals.append(f"Previsão INMET com chuva forte/intensa ou tempestade ({label}).")
+                break
+
+    if isinstance(pluviometers,dict) and pluviometers.get("status")=="ok":
+        h1=pluviometers.get("highest_1h") or {}
+        h24=pluviometers.get("highest_24h") or {}
+        v1=safe_float(h1.get("value"))
+        v24=safe_float(h24.get("value"))
+        if v1 is not None and v1>=OBS_RAIN_1H_MM:
+            station=h1.get("station") or "estação CEMADEN"
+            signals.append(f"Chuva elevada no CEMADEN: {v1:.1f} mm em 1 h em {station}.")
+        if v24 is not None and v24>=OBS_RAIN_24H_MM:
+            station=h24.get("station") or "estação CEMADEN"
+            signals.append(f"Acumulado elevado no CEMADEN: {v24:.1f} mm em 24 h em {station}.")
+
+    return signals
+
+def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
+    """Escalation is immediate; de-escalation is gradual and source-aware."""
+    prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
+    try:
+        previous_level=int(prev_overall.get("level") or 1)
+    except Exception:
+        previous_level=1
+
+    state=prev_overall.get("deescalation") or {}
+    complete=all(
+        isinstance(s,dict) and s.get("status")=="ok" and isinstance(s.get("level"),int)
+        for s in core_sources
+    )
+
+    if candidate_level>=previous_level:
+        return candidate_level,{
+            "pending":False,
+            "target_level":None,
+            "consecutive_confirmations":0,
+            "confirmations_required":DEESCALATION_CONFIRMATIONS,
+            "blocked_by_source_gap":False,
+        },False
+
+    target=max(candidate_level,previous_level-1)
+    if not complete:
+        return previous_level,{
+            "pending":True,
+            "target_level":target,
+            "consecutive_confirmations":0,
+            "confirmations_required":DEESCALATION_CONFIRMATIONS,
+            "blocked_by_source_gap":True,
+        },True
+
+    previous_target=state.get("target_level")
+    previous_count=int(state.get("consecutive_confirmations") or 0)
+    count=previous_count+1 if previous_target==target else 1
+
+    if count>=DEESCALATION_CONFIRMATIONS:
+        return target,{
+            "pending":False,
+            "target_level":None,
+            "consecutive_confirmations":0,
+            "confirmations_required":DEESCALATION_CONFIRMATIONS,
+            "blocked_by_source_gap":False,
+        },False
+
+    return previous_level,{
+        "pending":True,
+        "target_level":target,
+        "consecutive_confirmations":count,
+        "confirmations_required":DEESCALATION_CONFIRMATIONS,
+        "blocked_by_source_gap":False,
+    },True
+
 def main():
     os.makedirs("data",exist_ok=True)
     previous=load_previous()
@@ -1285,32 +1378,77 @@ def main():
     roads=fetch_roads(previous)
 
     usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
-    overall=max([s["level"] for s in usable], default=int((previous.get("overall") or {}).get("level") or 1))
+    official_candidate=max([s["level"] for s in usable], default=1)
 
-    # Optional combined-source escalation: only independent providers count.
+    # Corroboration between independent official providers can escalate one level.
     cemaden_level=max([s.get("level") or 0 for s in (geo,hydro)])
     inmet_level=inmet.get("level") if isinstance(inmet.get("level"),int) else 0
     escalated=False
+    candidate=official_candidate
     if cemaden_level>=3 and inmet_level>=3:
-        overall=min(5,max(cemaden_level,inmet_level)+1)
+        candidate=min(5,max(cemaden_level,inmet_level)+1)
         escalated=True
 
+    # Forecast and pluviometers are early-warning evidence only.
+    supplemental_signals=supplemental_observation_signals(forecast,pluviometers)
+    supplemental_observation=bool(supplemental_signals)
+    if supplemental_observation and candidate<2:
+        candidate=2
+
+    overall,deescalation,deescalation_held=apply_deescalation_hysteresis(
+        candidate,previous,(geo,hydro,inmet)
+    )
+
+    driver_floor=max(1,candidate-(1 if escalated else 0))
     top=[]
     for s in (geo,hydro,inmet):
-        if isinstance(s.get("level"),int) and s["level"]>=max(1,overall-(1 if escalated else 0)):
+        if isinstance(s.get("level"),int) and s["level"]>=driver_floor and s["level"]>1:
             top.append(f'{s["name"]}: {s.get("risk")}')
-    reason=", ".join(top) or "Sem nova leitura válida."
-    if escalated: reason += ". Escalada por duas fontes independentes em nível 3 ou superior."
-    gaps=[s["name"] for s in (geo,hydro) if s.get("status") in ("no_recent_update","source_unconfirmed")]
+
+    reason_parts=[]
+    if top:
+        reason_parts.append(", ".join(top))
+    elif candidate<=1:
+        reason_parts.append("Sem condição oficial de risco acima de Vigilância nas fontes integradas")
+
+    if escalated:
+        reason_parts.append("Escalada por corroboração de CEMADEN-RJ e INMET em nível 3 ou superior")
+    if supplemental_signals:
+        reason_parts.extend(supplemental_signals)
+
+    gaps=[s["name"] for s in (geo,hydro,inmet) if s.get("status") in ("no_recent_update","source_unconfirmed","unavailable")]
     if gaps:
-        reason += ". Sem atualização oficial recente: "+", ".join(gaps)+"."
+        reason_parts.append("Sem confirmação oficial recente em: "+", ".join(gaps))
+
+    if deescalation_held:
+        if deescalation.get("blocked_by_source_gap"):
+            reason_parts.append("Rebaixamento retido por indisponibilidade ou defasagem de fonte oficial")
+        else:
+            reason_parts.append(
+                "Rebaixamento aguardando "
+                +str(deescalation.get("consecutive_confirmations") or 0)
+                +"/"+str(DEESCALATION_CONFIRMATIONS)
+                +" coletas consecutivas de melhora"
+            )
+
+    reason=". ".join(x.rstrip(".") for x in reason_parts if x)+"."
 
     now=datetime.now(TZ)
     payload={
-      "schema_version":2,
+      "schema_version":3,
       "generated_at":now.isoformat(),
       "location":{"city":"Petrópolis","state":"RJ","country":"Brasil"},
-      "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
+      "overall":{
+          "level":overall,
+          "label":LEVEL_LABELS[overall],
+          "reason":reason,
+          "candidate_level":candidate,
+          "official_candidate_level":official_candidate,
+          "supplemental_observation":supplemental_observation,
+          "supplemental_signals":supplemental_signals,
+          "deescalation":deescalation,
+          "rule":"Escalada imediata pelo maior nível oficial válido; CEMADEN-RJ + INMET em nível >=3 podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna de fonte oficial."
+      },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
       "weather_reference":weather_reference,
