@@ -1053,6 +1053,23 @@ def probe_elovias_assets():
         soup=BeautifulSoup(r.text,"html.parser")
         scripts=[s.get("src") for s in soup.find_all("script") if s.get("src")]
         print("ELOVIAS_PROBE_SCRIPTS",json.dumps(scripts,ensure_ascii=False))
+        for src in scripts:
+            if "elovias.com.br" in src or src.startswith("/"):
+                asset=src if src.startswith("http") else "https://elovias.com.br"+("/" if not src.startswith("/") else "")+src
+                try:
+                    jr=requests.get(asset,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+                    print("ELOVIAS_ASSET",asset,jr.status_code,"LEN",len(jr.text))
+                    js=jr.text
+                    urls=sorted(set(re.findall(r'https?://[^"\\'<> ]+',js)))
+                    api_paths=sorted(set(re.findall(r'[/][A-Za-z0-9_.-]*(?:api|noticias|boletim|trafego|tr[aá]fego)[A-Za-z0-9_./?=&%-]*',js,flags=re.I)))
+                    print("ELOVIAS_ASSET_URLS",json.dumps(urls[:80],ensure_ascii=False))
+                    print("ELOVIAS_ASSET_PATHS",json.dumps(api_paths[:120],ensure_ascii=False))
+                    for term in ("boletim","trafego","tráfego","noticias","cronograma"):
+                        pos=js.lower().find(term.lower())
+                        if pos>=0:
+                            print("ELOVIAS_ASSET_CONTEXT",term,re.sub(r"\\s+"," ",js[max(0,pos-900):pos+1800])[:2800])
+                except Exception as exc:
+                    print("ELOVIAS_ASSET_ERROR",asset,repr(exc))
         for s in soup.find_all("script"):
             txt=s.get_text(" ",strip=True)
             if txt and any(k in txt.lower() for k in ("boletim","trafego","tráfego","noticia","api")):
