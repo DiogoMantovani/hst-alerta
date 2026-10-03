@@ -37,6 +37,12 @@ jobs:
         run: pip install --disable-pip-version-check requests beautifulsoup4
 
       - name: Collect HST sources
+        env:
+          HST_WPP_GRUPO_OPERACIONAL_TESTE: ${{ secrets.HST_WPP_GRUPO_OPERACIONAL_TESTE }}
+          HST_WPP_ACCESS_TOKEN: ${{ secrets.HST_WPP_ACCESS_TOKEN }}
+          HST_WPP_PHONE_NUMBER_ID: ${{ secrets.HST_WPP_PHONE_NUMBER_ID }}
+          HST_WPP_TEMPLATE_NAME: ${{ secrets.HST_WPP_TEMPLATE_NAME }}
+          HST_WPP_GRAPH_VERSION: ${{ secrets.HST_WPP_GRAPH_VERSION }}
         run: python scripts/collect_hst.py
 
       - name: Validate generated data
