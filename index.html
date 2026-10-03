@@ -70,7 +70,7 @@
 .rain-metric span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
 .rain-metric strong{display:block;margin-top:5px;font-size:18px;color:#0d6264}
 @media(max-width:900px){.nearest-pluvio{grid-template-columns:1fr}.nearest-pluvio-values{grid-template-columns:repeat(2,1fr)}}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}
-.climate-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-bottom:22px}
+.climate-hero{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:22px}
 .climate-current{position:relative;overflow:hidden;background:linear-gradient(145deg,#f6fbfb,#eaf5f4);border:1px solid #cfe2e1;border-radius:18px;padding:22px}
 .climate-current:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-125px;top:-125px;background:rgba(0,109,111,.06)}
 .climate-current-main{position:relative;z-index:1;display:grid;grid-template-columns:110px 1fr;gap:20px;align-items:center}
@@ -246,16 +246,6 @@
     <div id="climateCurrentChips" class="weather-chips"></div>
   </article>
 
-  <article class="card climate-source-card">
-    <div>
-      <div class="eyebrow">Como interpretar</div>
-      <h3>Fontes meteorológicas</h3>
-      <div class="climate-source-row"><strong>Condição atual</strong><div class="small">Referência complementar próxima ao Hospital Santa Teresa.</div></div>
-      <div class="climate-source-row"><strong>Previsão e avisos</strong><div class="small">INMET — fonte oficial utilizada pelo HST Alerta.</div></div>
-      <div class="climate-source-row"><strong>Nível HST</strong><div class="small">A condição complementar não eleva o nível sozinha; os alertas seguem as fontes oficiais integradas.</div></div>
-    </div>
-    <span id="climateCurrentSource" class="weather-source-badge">Carregando fonte</span>
-  </article>
 </div>
 
 <div class="section"><div><h3>Previsão</h3><div class="small">Horizonte de 24, 48 e 72 horas para preparação operacional.</div></div><span class="badge">INMET</span></div>
@@ -569,7 +559,6 @@ async function loadOfficialData(){
       document.getElementById('climateCurrentCondition').textContent=condition;
       document.getElementById('climateCurrentTime').textContent=relativeWeatherTime(chosen?.observed_at);
       document.getElementById('climateCurrentChips').innerHTML=chips.join('');
-      document.getElementById('climateCurrentSource').textContent=officialWeatherOk?'INMET · oficial':'Referência complementar';
     }
 
     const detailParts=[condition];
