@@ -358,6 +358,16 @@ function applyLevel(l,reason,generatedAt){
   document.getElementById('updatedAt').textContent=fmtDate(base);
   document.getElementById('nextAt').textContent=fmtDate(new Date(base.getTime()+15*60000));
 }
+function setConnection(id,state,label){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.className='connection-pill '+(
+    state==='ok'?'connection-ok':
+    state==='warn'?'connection-warn':
+    state==='off'?'connection-off':'connection-na'
+  );
+  el.textContent=label;
+}
 function sourceBadge(source){
   return 'CEMADEN-RJ';
 }
