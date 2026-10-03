@@ -13,7 +13,7 @@ for(const [i,m] of matches.entries()){
 console.log(`FRONTEND_JS_OK scripts=${matches.length}`);
 
 
-const requiredFunctions=["setConnection","loadOfficialData","loadClimateHistory","loadHistory","renderHistory"];
+const requiredFunctions=["setConnection","loadOfficialData","ensureOperationalMap","buildOperationalMapLayers","activateMapMode","updateOperationalMapSummary","loadClimateHistory","loadHistory","renderHistory"];
 for(const fn of requiredFunctions){
   const re=new RegExp("function\\s+"+fn+"\\s*\\(");
   if(!re.test(html)){
