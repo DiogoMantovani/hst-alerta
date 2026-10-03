@@ -82,6 +82,13 @@
 .road-alert-list{display:grid;gap:8px;margin-top:12px}
 .road-alert-item{padding:10px 11px;border-radius:11px;border:1px solid #edd5aa;background:#fff8e8;font-size:12px;line-height:1.45}
 @media(max-width:900px){.roads-overview,.road-updates,.road-footer-grid{grid-template-columns:1fr}.road-contact-grid{grid-template-columns:1fr}}
+.history-view-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.history-view-btn{border:1px solid #cbdada;background:#fff;color:#526a70;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:900;cursor:pointer}
+.history-view-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.history-subpanel{display:none}.history-subpanel.active{display:block}
+.history-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0 10px}
+.history-section-head h3{margin:0}
+.history-table-note{font-size:11px;color:var(--muted);line-height:1.45;margin:8px 0 12px}
 .history-controls{display:flex;gap:8px;flex-wrap:wrap}
 .btn.active-filter{background:var(--brand);color:#fff;border-color:var(--brand)}
 .history-period{font-weight:750}
@@ -475,21 +482,50 @@
 </section>
 
 <section id="historico" class="panel">
-<div class="section"><h2>Histórico e Rastreabilidade</h2>
-<div class="history-controls">
-  <button id="historyChanges" class="btn active-filter">Somente mudanças</button>
-  <button id="historyAll" class="btn">Todas as coletas</button>
-  <button id="exportHistory" class="btn">Exportar CSV completo</button>
-</div></div>
-<div class="callout">Cada coleta continua sendo preservada para auditoria. Por padrão, a tabela agrupa coletas consecutivas com o mesmo estado operacional e mostra somente as mudanças relevantes; use “Todas as coletas” para visualizar os registros brutos.</div>
-<div class="summary">
-<article class="card"><span class="small">Snapshots na janela</span><strong id="historyCount">—</strong></article>
-<article class="card"><span class="small">Primeiro registro exibido</span><strong id="historyOldest" style="font-size:15px">—</strong></article>
-<article class="card"><span class="small">Último registro</span><strong id="historyNewest" style="font-size:15px">—</strong></article>
-<article class="card"><span class="small">Arquivos mensais</span><strong id="historyMonths">—</strong></article>
+<div class="section">
+  <div><h2>Histórico e Rastreabilidade</h2><div class="small">Riscos e pluviômetros são apresentados separadamente para evitar duplicações e facilitar a leitura.</div></div>
 </div>
+
+<div class="history-view-tabs">
+  <button id="historyRiskView" class="history-view-btn active">Histórico de Riscos</button>
+  <button id="historyRainView" class="history-view-btn">Histórico de Pluviômetros</button>
+</div>
+
+<div class="summary">
+  <article class="card"><span id="historyCountLabel" class="small">Mudanças de risco</span><strong id="historyCount">—</strong></article>
+  <article class="card"><span class="small">Primeiro registro</span><strong id="historyOldest" style="font-size:15px">—</strong></article>
+  <article class="card"><span class="small">Último registro</span><strong id="historyNewest" style="font-size:15px">—</strong></article>
+  <article class="card"><span class="small">Arquivos mensais</span><strong id="historyMonths">—</strong></article>
+</div>
+
 <div id="historyArchiveLinks" class="maplinks" style="justify-content:flex-start;margin-bottom:14px"></div>
-<div class="card table"><table><thead><tr><th>Data/hora</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Máx. 1 h</th><th>Máx. 24 h</th><th>Observação</th></tr></thead><tbody id="historyBody"><tr><td colspan="9">Carregando histórico…</td></tr></tbody></table></div>
+
+<div id="historyRiskPanel" class="history-subpanel active">
+  <div class="history-section-head">
+    <div><h3>Histórico de Riscos</h3><div class="small">Uma nova linha é criada somente quando muda o nível HST ou o estado visível de Geológico, Hidrológico ou INMET.</div></div>
+    <button id="exportHistory" class="btn">Exportar riscos CSV</button>
+  </div>
+  <div class="card table"><table>
+    <thead><tr><th>Período</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Observação</th></tr></thead>
+    <tbody id="historyBody"><tr><td colspan="6">Carregando histórico de riscos…</td></tr></tbody>
+  </table></div>
+</div>
+
+<div id="historyRainPanel" class="history-subpanel">
+  <div class="history-section-head">
+    <div><h3>Histórico de Pluviômetros</h3><div class="small">Consolidado por hora para reduzir ruído das coletas de 15 em 15 minutos.</div></div>
+    <div class="history-controls">
+      <button id="pluvioHistoryHourly" class="btn active-filter">Por hora</button>
+      <button id="pluvioHistoryAll" class="btn">Todas as coletas</button>
+      <button id="exportPluvioHistory" class="btn">Exportar pluviômetros CSV</button>
+    </div>
+  </div>
+  <div class="history-table-note">O valor exibido em cada hora é o maior acumulado encontrado nas coletas daquele período; a estação indicada é a correspondente ao maior valor.</div>
+  <div class="card table"><table>
+    <thead><tr><th>Período</th><th>Máx. 1 h</th><th>Estação 1 h</th><th>Máx. 24 h</th><th>Estação 24 h</th><th>Coletas</th></tr></thead>
+    <tbody id="pluvioHistoryBody"><tr><td colspan="6">Carregando histórico pluviométrico…</td></tr></tbody>
+  </table></div>
+</div>
 </section>
 
 <section id="plano" class="panel plan">
@@ -1114,77 +1150,169 @@ async function loadClimateHistory(){
 }
 
 let currentHistory=[];
-let historyDisplayMode='changes';
+let currentHistoryLabel='janela de 90 dias';
+let historyView='risk';
+let pluvioHistoryMode='hourly';
 
 function esc(v){
   return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
-function historyMm(obj){
+function historyMmValue(obj){
   const v=obj?.value;
-  return v==null?'—':Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mm'+(obj?.station?' · '+obj.station:'');
+  return v==null?'—':Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mm';
 }
-function historySignature(s){
-  return JSON.stringify({
-    level:s.level,label:s.label,
-    geo:[s.geological?.risk,s.geological?.status,s.geological?.level],
-    hydro:[s.hydrological?.risk,s.hydrological?.status,s.hydrological?.level],
-    inmet:[s.inmet?.risk,s.inmet?.status,s.inmet?.level],
-  });
+function normalizeHistoryText(v){
+  return String(v??'').trim().replace(/\s+/g,' ').toLowerCase();
 }
-function groupHistory(snaps){
-  const asc=[...snaps].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+function riskHistorySignature(s){
+  // Deliberately ignores pluviometer values and internal source status metadata.
+  // A new visible risk period exists only when something the operator sees changes.
+  return [
+    Number(s?.level)||0,
+    normalizeHistoryText(s?.geological?.risk),
+    normalizeHistoryText(s?.hydrological?.risk),
+    normalizeHistoryText(s?.inmet?.risk)
+  ].join('|');
+}
+function groupRiskHistory(snaps){
+  const asc=[...snaps].filter(Boolean).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
   const groups=[];
   for(const s of asc){
-    const sig=historySignature(s);
+    const sig=riskHistorySignature(s);
     const last=groups[groups.length-1];
     if(last && last._sig===sig){
       last._to=s.ts;
       last._count+=1;
       last._last=s;
     }else{
-      groups.push({...s,_sig:sig,_from:s.ts,_to:s.ts,_count:1,_last:s});
+      groups.push({_sig:sig,_from:s.ts,_to:s.ts,_count:1,_last:s});
     }
   }
   return groups.map(g=>({...g._last,_from:g._from,_to:g._to,_count:g._count}));
 }
 function historyPeriod(row){
-  if(!row._from || !row._to || row._from===row._to) return '<span class="history-period">'+esc(fmtDate(row.ts))+'</span>';
+  if(!row?._from || !row?._to || row._from===row._to) return '<span class="history-period">'+esc(fmtDate(row?.ts||row?._to))+'</span>';
   const a=new Date(row._from),b=new Date(row._to);
   const sameDay=!isNaN(a)&&!isNaN(b)&&a.toLocaleDateString('pt-BR')===b.toLocaleDateString('pt-BR');
   const start=sameDay?a.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):fmtDate(row._from);
   const end=fmtDate(row._to);
-  return '<span class="history-period">'+esc(start)+' → '+esc(end)+'</span><span class="history-samples">'+row._count+' coletas sem mudança de estado</span>';
+  return '<span class="history-period">'+esc(start)+' → '+esc(end)+'</span><span class="history-samples">'+row._count+' coletas no mesmo estado</span>';
 }
-function renderHistory(snaps,label='janela de 90 dias'){
-  currentHistory=Array.isArray(snaps)?[...snaps]:[];
-  const display=historyDisplayMode==='changes'?groupHistory(currentHistory):[...currentHistory];
-  display.sort((a,b)=>String((b._to||b.ts)||'').localeCompare(String((a._to||a.ts)||'')));
+function riskObservation(s){
+  const drivers=[];
+  const stale=[];
+  const level=Number(s?.level)||1;
+  const geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{};
+
+  if(Number(geo.level)===level && level>1 && geo.risk) drivers.push('Geológico: '+geo.risk);
+  if(Number(hydro.level)===level && level>1 && hydro.risk) drivers.push('Hidrológico: '+hydro.risk);
+  if(Number(imet.level)===level && level>1 && imet.risk) drivers.push('INMET: '+imet.risk);
+
+  if(normalizeHistoryText(geo.risk).includes('sem atualização')) stale.push('Deslizamento sem atualização oficial recente');
+  if(normalizeHistoryText(hydro.risk).includes('sem atualização')) stale.push('Hidrológico sem atualização oficial recente');
+
+  const parts=[];
+  if(drivers.length) parts.push('Nível HST sustentado por '+drivers.join(' e '));
+  if(stale.length) parts.push(stale.join(' · '));
+  if(!parts.length && level<=1) parts.push('Sem condição de risco acima de Vigilância nas fontes integradas');
+  if(!parts.length) parts.push('Mudança registrada nas fontes integradas');
+  return parts.join('. ')+'.';
+}
+function renderRiskHistory(){
+  const display=groupRiskHistory(currentHistory).sort((a,b)=>String(b._to||b.ts||'').localeCompare(String(a._to||a.ts||'')));
   const body=document.getElementById('historyBody');
   if(!display.length){
-    body.innerHTML='<tr><td colspan="9">Nenhum snapshot disponível.</td></tr>';
+    body.innerHTML='<tr><td colspan="6">Nenhum registro de risco disponível.</td></tr>';
   }else{
-    body.innerHTML=display.map(s=>{
-      const obs=s.reason||'Snapshot automático';
-      const dateCell=historyDisplayMode==='changes'?historyPeriod(s):'<span class="history-period">'+esc(fmtDate(s.ts))+'</span>';
+    body.innerHTML=display.map(s=>'<tr>'+
+      '<td>'+historyPeriod(s)+'</td>'+
+      '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong></td>'+
+      '<td>'+esc(s.geological?.risk||'—')+'</td>'+
+      '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
+      '<td>'+esc(s.inmet?.risk||'—')+'</td>'+
+      '<td class="small">'+esc(riskObservation(s))+'</td>'+
+    '</tr>').join('');
+  }
+  document.getElementById('historyCountLabel').textContent='Mudanças de risco';
+  document.getElementById('historyCount').textContent=display.length+' mudanças · '+currentHistory.length+' coletas preservadas';
+}
+function hourBucket(ts){
+  const d=new Date(ts);
+  if(isNaN(d)) return String(ts||'');
+  d.setMinutes(0,0,0);
+  return d.toISOString();
+}
+function groupPluvioHourly(snaps){
+  const map=new Map();
+  [...snaps].filter(Boolean).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||''))).forEach(s=>{
+    const key=hourBucket(s.ts);
+    if(!map.has(key)) map.set(key,{_from:s.ts,_to:s.ts,_count:0,highest_1h:null,highest_24h:null});
+    const g=map.get(key);
+    g._to=s.ts;
+    g._count+=1;
+    for(const field of ['highest_1h','highest_24h']){
+      const cand=s.pluviometers?.[field];
+      if(cand?.value!=null && (g[field]?.value==null || Number(cand.value)>Number(g[field].value))) g[field]=cand;
+    }
+  });
+  return [...map.values()];
+}
+function renderPluvioHistory(){
+  let rows;
+  if(pluvioHistoryMode==='hourly'){
+    rows=groupPluvioHourly(currentHistory);
+  }else{
+    rows=currentHistory.map(s=>({
+      _from:s.ts,_to:s.ts,_count:1,
+      highest_1h:s.pluviometers?.highest_1h||null,
+      highest_24h:s.pluviometers?.highest_24h||null
+    }));
+  }
+  rows.sort((a,b)=>String(b._to||'').localeCompare(String(a._to||'')));
+  const body=document.getElementById('pluvioHistoryBody');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6">Nenhum registro pluviométrico disponível.</td></tr>';
+  }else{
+    body.innerHTML=rows.map(r=>{
+      let period;
+      if(pluvioHistoryMode==='hourly'){
+        const d=new Date(r._from);
+        period=isNaN(d)?fmtDate(r._from):d.toLocaleDateString('pt-BR')+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'–'+String(d.getHours()).padStart(2,'0')+':59';
+      }else{
+        period=fmtDate(r._from);
+      }
       return '<tr>'+
-        '<td>'+dateCell+'</td>'+
-        '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong></td>'+
-        '<td>'+esc(s.geological?.risk||'—')+'</td>'+
-        '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
-        '<td>'+esc(s.inmet?.risk||'—')+'</td>'+
-
-        '<td>'+esc(historyMm(s.pluviometers?.highest_1h))+'</td>'+
-        '<td>'+esc(historyMm(s.pluviometers?.highest_24h))+'</td>'+
-        '<td class="small">'+esc(obs)+'</td>'+
+        '<td><strong>'+esc(period)+'</strong></td>'+
+        '<td>'+esc(historyMmValue(r.highest_1h))+'</td>'+
+        '<td>'+esc(r.highest_1h?.station||'—')+'</td>'+
+        '<td>'+esc(historyMmValue(r.highest_24h))+'</td>'+
+        '<td>'+esc(r.highest_24h?.station||'—')+'</td>'+
+        '<td>'+esc(r._count)+'</td>'+
       '</tr>';
     }).join('');
   }
+  document.getElementById('historyCountLabel').textContent=pluvioHistoryMode==='hourly'?'Horas pluviométricas':'Coletas pluviométricas';
+  document.getElementById('historyCount').textContent=rows.length+(pluvioHistoryMode==='hourly'?' períodos horários':' coletas')+' · '+currentHistory.length+' snapshots preservados';
+}
+function updateHistorySummary(){
   const asc=[...currentHistory].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
-  document.getElementById('historyCount').textContent=historyDisplayMode==='changes'
-    ?display.length+' mudanças · '+currentHistory.length+' coletas'
-    :currentHistory.length+' coletas · '+label;
   document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
   document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
+}
+function renderHistory(snaps,label='janela de 90 dias'){
+  currentHistory=Array.isArray(snaps)?[...snaps]:[];
+  currentHistoryLabel=label;
+  updateHistorySummary();
+  if(historyView==='risk') renderRiskHistory(); else renderPluvioHistory();
+}
+function setHistoryView(view){
+  historyView=view;
+  const risk=view==='risk';
+  document.getElementById('historyRiskView').classList.toggle('active',risk);
+  document.getElementById('historyRainView').classList.toggle('active',!risk);
+  document.getElementById('historyRiskPanel').classList.toggle('active',risk);
+  document.getElementById('historyRainPanel').classList.toggle('active',!risk);
+  if(risk) renderRiskHistory(); else renderPluvioHistory();
 }
 async function loadArchive(file,month){
   try{
@@ -1193,7 +1321,8 @@ async function loadArchive(file,month){
     const d=await r.json();
     renderHistory(d.snapshots||[],month);
   }catch(err){
-    document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
+    const id=historyView==='risk'?'historyBody':'pluvioHistoryBody';
+    document.getElementById(id).innerHTML='<tr><td colspan="6">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
   }
 }
 async function loadHistory(){
@@ -1204,45 +1333,57 @@ async function loadHistory(){
     ]);
     if(!rh.ok) throw new Error('histórico HTTP '+rh.status);
     const h=await rh.json();
-    renderHistory(h.snapshots||[],'últimos '+(h.retention_days||90)+' dias');
+    const rolling=h.snapshots||[];
+    renderHistory(rolling,'últimos '+(h.retention_days||90)+' dias');
     if(ri.ok){
       const idx=await ri.json();
       const months=Array.isArray(idx.months)?idx.months:[];
       document.getElementById('historyMonths').textContent=months.length;
       const box=document.getElementById('historyArchiveLinks');
       box.innerHTML='<button class="btn" id="historyRolling">Últimos 90 dias</button>'+months.map(m=>'<button class="btn archiveBtn" data-file="'+esc(m.file)+'" data-month="'+esc(m.month)+'">'+esc(m.month)+(m.snapshots!=null?' · '+m.snapshots:'')+'</button>').join('');
-      document.getElementById('historyRolling').onclick=()=>renderHistory(h.snapshots||[],'últimos '+(h.retention_days||90)+' dias');
+      document.getElementById('historyRolling').onclick=()=>renderHistory(rolling,'últimos '+(h.retention_days||90)+' dias');
       box.querySelectorAll('.archiveBtn').forEach(b=>b.onclick=()=>loadArchive(b.dataset.file,b.dataset.month));
     }else{
       document.getElementById('historyMonths').textContent='—';
     }
   }catch(err){
-    document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+    document.getElementById('historyBody').innerHTML='<tr><td colspan="6">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+    document.getElementById('pluvioHistoryBody').innerHTML='<tr><td colspan="6">Histórico indisponível: '+esc(err.message)+'</td></tr>';
   }
 }
-document.getElementById('historyChanges').onclick=()=>{
-  historyDisplayMode='changes';
-  document.getElementById('historyChanges').classList.add('active-filter');
-  document.getElementById('historyAll').classList.remove('active-filter');
-  renderHistory(currentHistory,'visualização atual');
+document.getElementById('historyRiskView').onclick=()=>setHistoryView('risk');
+document.getElementById('historyRainView').onclick=()=>setHistoryView('rain');
+document.getElementById('pluvioHistoryHourly').onclick=()=>{
+  pluvioHistoryMode='hourly';
+  document.getElementById('pluvioHistoryHourly').classList.add('active-filter');
+  document.getElementById('pluvioHistoryAll').classList.remove('active-filter');
+  renderPluvioHistory();
 };
-document.getElementById('historyAll').onclick=()=>{
-  historyDisplayMode='all';
-  document.getElementById('historyAll').classList.add('active-filter');
-  document.getElementById('historyChanges').classList.remove('active-filter');
-  renderHistory(currentHistory,'visualização atual');
+document.getElementById('pluvioHistoryAll').onclick=()=>{
+  pluvioHistoryMode='all';
+  document.getElementById('pluvioHistoryAll').classList.add('active-filter');
+  document.getElementById('pluvioHistoryHourly').classList.remove('active-filter');
+  renderPluvioHistory();
 };
 document.getElementById('exportHistory').onclick=()=>{
-  if(!currentHistory.length) return;
-  const cols=['data_hora','nivel_hst','rotulo','geologico','hidrologico','inmet','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h','observacao'];
-  const rows=currentHistory.map(s=>[
-    s.ts,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,
-    s.pluviometers?.highest_1h?.value,s.pluviometers?.highest_1h?.station,
-    s.pluviometers?.highest_24h?.value,s.pluviometers?.highest_24h?.station,s.reason
-  ]);
-  const csv=[cols,...rows].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const rows=groupRiskHistory(currentHistory);
+  if(!rows.length) return;
+  const cols=['inicio','fim','coletas_no_estado','nivel_hst','rotulo','geologico','hidrologico','inmet','observacao'];
+  const data=rows.map(s=>[s._from,s._to,s._count,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,riskObservation(s)]);
+  const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
   const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hst-alerta-historico.csv'; a.click(); URL.revokeObjectURL(a.href);
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hst-alerta-historico-riscos.csv';a.click();URL.revokeObjectURL(a.href);
+};
+document.getElementById('exportPluvioHistory').onclick=()=>{
+  let rows=pluvioHistoryMode==='hourly'?groupPluvioHourly(currentHistory):currentHistory.map(s=>({
+    _from:s.ts,_to:s.ts,_count:1,highest_1h:s.pluviometers?.highest_1h||null,highest_24h:s.pluviometers?.highest_24h||null
+  }));
+  if(!rows.length) return;
+  const cols=['inicio','fim','coletas','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h'];
+  const data=rows.map(r=>[r._from,r._to,r._count,r.highest_1h?.value,r.highest_1h?.station,r.highest_24h?.value,r.highest_24h?.station]);
+  const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hst-alerta-historico-pluviometros.csv';a.click();URL.revokeObjectURL(a.href);
 };
 
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
