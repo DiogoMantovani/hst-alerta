@@ -21,6 +21,7 @@ HISTORY_URL = "https://diogomantovani.github.io/hst-alerta/data/history.json"
 
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
 CEMADEN_PLUVIO = "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ"
+CEMADEN_COORDS_LAYER = "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/FeatureServer/1/query"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
 INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
@@ -474,6 +475,43 @@ KNOWN_CEMADEN_COORDS={
     "Independência2":(-22.54800,-43.20900),
 }
 
+def fetch_cemaden_station_coordinates():
+    """Return cadastral coordinates for Petrópolis CEMADEN stations.
+
+    Rain values continue to come from the CEMADEN interactive endpoint. This
+    auxiliary public geospatial layer is used only to calculate distance/order.
+    """
+    try:
+        r=requests.get(
+            CEMADEN_COORDS_LAYER,
+            params={
+                "where":"codibge=3303906",
+                "outFields":"idestacao,nomeestacao,latitude,longitude",
+                "returnGeometry":"false",
+                "f":"json",
+            },
+            timeout=15,
+            headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"},
+        )
+        r.raise_for_status()
+        data=r.json()
+        result={}
+        for feature in data.get("features") or []:
+            attrs=(feature or {}).get("attributes") or {}
+            lat=safe_float(attrs.get("latitude"))
+            lon=safe_float(attrs.get("longitude"))
+            if lat is None or lon is None:
+                continue
+            station_id=attrs.get("idestacao")
+            station_name=attrs.get("nomeestacao")
+            if station_id is not None:
+                result[("id",str(station_id))]=(lat,lon)
+            if station_name:
+                result[("name",norm(station_name))]=(lat,lon)
+        return result
+    except Exception:
+        return {}
+
 def fetch_cemaden_pluviometers(previous):
     prev=previous.get("pluviometers") or {}
     now=datetime.now(TZ)
@@ -484,6 +522,7 @@ def fetch_cemaden_pluviometers(previous):
         if not isinstance(data,list):
             raise RuntimeError("Formato inesperado do endpoint público de pluviômetros")
 
+        coordinate_map=fetch_cemaden_station_coordinates()
         stations=[]
         for row in data:
             if not isinstance(row,dict) or str(row.get("codibge"))!="3303906":
@@ -510,11 +549,15 @@ def fetch_cemaden_pluviometers(previous):
                 v=row.get(key)
                 return safe_float(v) if v not in ("-",None,"") else None
             station_name=row.get("nomeestacao") or "Estação sem nome"
+            station_id=row.get("idestacao")
+            cadastral_coords=coordinate_map.get(("id",str(station_id))) if station_id is not None else None
+            if cadastral_coords is None:
+                cadastral_coords=coordinate_map.get(("name",norm(station_name)))
             fallback_coords=KNOWN_CEMADEN_COORDS.get(station_name)
             row_lat=safe_float(row.get("latitude"))
             row_lon=safe_float(row.get("longitude"))
-            station_lat=row_lat if row_lat is not None else (fallback_coords[0] if fallback_coords else None)
-            station_lon=row_lon if row_lon is not None else (fallback_coords[1] if fallback_coords else None)
+            station_lat=row_lat if row_lat is not None else (cadastral_coords[0] if cadastral_coords else (fallback_coords[0] if fallback_coords else None))
+            station_lon=row_lon if row_lon is not None else (cadastral_coords[1] if cadastral_coords else (fallback_coords[1] if fallback_coords else None))
             stations.append({
                 "id":row.get("idestacao"),
                 "name":station_name,
@@ -563,7 +606,7 @@ def fetch_cemaden_pluviometers(previous):
         return {
             "provider":"CEMADEN",
             "status":"ok" if recent else "stale",
-            "source_note":"Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
+            "source_note":"Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas cadastrais complementadas por camada geoespacial pública da rede CEMADEN.",
             "collected_at":now.isoformat(),
             "url":CEMADEN_PLUVIO,
             "total_stations":len(stations),
