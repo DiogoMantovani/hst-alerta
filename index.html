@@ -402,19 +402,42 @@ function weatherIconSvg(code,condition=''){
   const c=Number(code),txt=String(condition||'').toLowerCase();
   const sun='<circle cx="32" cy="32" r="11" fill="#F5B800"/><g stroke="#F5B800" stroke-width="3" stroke-linecap="round"><path d="M32 7v7M32 50v7M7 32h7M50 32h7M14.5 14.5l5 5M44.5 44.5l5 5M49.5 14.5l-5 5M19.5 44.5l-5 5"/></g>';
   const cloud='<path d="M18 43h29a10 10 0 0 0 1-20 15 15 0 0 0-28-4A12 12 0 0 0 18 43Z" fill="#91A7B2"/>';
+  const darkCloud='<path d="M18 43h29a10 10 0 0 0 1-20 15 15 0 0 0-28-4A12 12 0 0 0 18 43Z" fill="#697E89"/>';
   const rain='<g stroke="#4B92B6" stroke-width="3" stroke-linecap="round"><path d="M22 49l-3 7M33 49l-3 7M44 49l-3 7"/></g>';
-  const heavy='<g stroke="#397FA6" stroke-width="3.4" stroke-linecap="round"><path d="M20 49l-4 8M32 49l-4 8M44 49l-4 8"/></g>';
+  const heavy='<g stroke="#397FA6" stroke-width="3.4" stroke-linecap="round"><path d="M18 49l-4 8M30 49l-4 8M42 49l-4 8M52 48l-4 8"/></g>';
   const fog='<g stroke="#91A7B2" stroke-width="3" stroke-linecap="round"><path d="M13 26h38M10 36h44M16 46h32"/></g>';
-  const bolt='<path d="M35 42h9l-10 17 2-12h-9l10-17-2 12Z" fill="#E8A800"/>';
+  const bolt='<path d="M36 40h9L34 59l2-13h-9l11-18-2 12Z" fill="#E8A800"/>';
+
+  const has=(...terms)=>terms.some(t=>txt.includes(t));
   let body='',theme='weather-theme-cloud';
-  if(c===0 || txt.includes('céu claro') || txt.includes('tempo claro') || txt.includes('ensolar')){body=sun;theme='weather-theme-clear';}
-  else if([1,2].includes(c) || txt.includes('poucas nuvens') || txt.includes('parcial')){body=sun+cloud;theme='weather-theme-clear';}
-  else if(c===3){body=cloud;theme='weather-theme-cloud';}
-  else if([45,48].includes(c)||txt.includes('nevo')){body=fog;theme='weather-theme-fog';}
-  else if([51,53,55,61,63,80,81].includes(c)||txt.includes('garoa')||txt.includes('chuva')){body=cloud+rain;theme='weather-theme-rain';}
-  else if([65,82].includes(c)){body=cloud+heavy;theme='weather-theme-rain';}
-  else if([95,96,99].includes(c)||txt.includes('trovo')){body=cloud+bolt+rain;theme='weather-theme-storm';}
-  else{body=sun+cloud;theme='weather-theme-cloud';}
+
+  // Priority matters: a forecast can contain both "chuva" and "trovoadas".
+  if([95,96,99].includes(c) || has('trovo','tempest','raio','granizo')){
+    body=darkCloud+bolt+rain;
+    theme='weather-theme-storm';
+  }else if([65,82].includes(c) || has('chuva forte','pancadas fortes','chuva intensa')){
+    body=darkCloud+heavy;
+    theme='weather-theme-rain';
+  }else if([51,53,55,61,63,80,81].includes(c) || has('chuva','garoa','pancadas')){
+    body=cloud+rain;
+    theme='weather-theme-rain';
+  }else if([45,48].includes(c) || has('nevo','névoa')){
+    body=fog;
+    theme='weather-theme-fog';
+  }else if(c===3 || has('muitas nuvens','nublado','encoberto')){
+    body=cloud;
+    theme='weather-theme-cloud';
+  }else if([1,2].includes(c) || has('poucas nuvens','parcial','entre nuvens')){
+    body=sun+cloud;
+    theme='weather-theme-clear';
+  }else if(c===0 || has('céu claro','tempo claro','ensolar')){
+    body=sun;
+    theme='weather-theme-clear';
+  }else{
+    body=cloud;
+    theme='weather-theme-cloud';
+  }
+
   return {theme,svg:'<svg viewBox="0 0 64 64" role="img" aria-label="'+String(condition||'Condição meteorológica')+'">'+body+'</svg>'};
 }
 function weatherChip(icon,label,value){
