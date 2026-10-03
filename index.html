@@ -128,6 +128,18 @@
 .map-legend strong{display:block;color:#173038;margin-bottom:4px;font-size:12px}
 .legend-scale{display:flex;height:8px;border-radius:999px;overflow:hidden;margin:7px 0 4px}
 .legend-scale span{flex:1}
+.map-legend-section+.map-legend-section{border-top:1px solid #e1e9e9;margin-top:9px;padding-top:9px}
+.map-legend-title{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:#718288;margin-bottom:6px}
+.map-symbol-list{display:grid;gap:5px}
+.map-symbol-item{display:flex;align-items:center;gap:7px}
+.map-symbol{width:14px;height:14px;display:inline-grid;place-items:center;flex:0 0 auto}
+.map-symbol.hospital{border-radius:50%;background:#a52f35;color:#fff;font-size:11px;font-weight:900;line-height:1}
+.map-symbol.station-ok{border-radius:50%;background:#17845b;border:2px solid #fff;box-shadow:0 0 0 1px #bfcfcf}
+.map-symbol.station-stale{border-radius:50%;background:#7c8c91;border:2px solid #fff;box-shadow:0 0 0 1px #bfcfcf}
+.map-symbol.radius{width:17px;height:10px;border:2px dashed #006d6f;border-radius:50%;background:rgba(0,163,154,.08)}
+.map-symbol.wind{font-size:16px;color:#0a6970;font-weight:900}
+.precip-scale{display:flex;height:9px;border-radius:999px;overflow:hidden;margin:7px 0 3px;background:linear-gradient(90deg,#d9edf3,#84c9d8,#4aa5c3,#3478b5,#704ca6)}
+.map-legend-labels{display:flex;justify-content:space-between;font-size:9px;color:#829196}
 .map-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
 .map-summary .card strong{display:block;font-size:18px;color:#0c6264;margin-top:5px}
 .map-source-note{margin-top:12px;font-size:11px;line-height:1.5;color:var(--muted)}
@@ -321,7 +333,9 @@
   </div>
   <div class="map-canvas-wrap">
     <div id="weatherMap"></div>
-    <div id="mapLegend" class="map-legend"><strong>Precipitação</strong>Carregando camada meteorológica…</div>
+    <div id="mapLegend" class="map-legend">
+  <div class="map-legend-section"><strong>Legenda do mapa</strong><span>Carregando camada meteorológica…</span></div>
+</div>
   </div>
 </div>
 
@@ -573,18 +587,42 @@ function updateMapLegend(mode,data){
   const el=document.getElementById('mapLegend');
   if(!el) return;
   const radar=data?.weather_map?.radar||{};
+  let active='';
+
   if(mode==='precip'){
-    el.innerHTML='<strong>Precipitação</strong>'+
+    active='<div class="map-legend-title">Precipitação</div>'+
+      '<div class="precip-scale"></div>'+
+      '<div class="map-legend-labels"><span>menor intensidade</span><span>maior intensidade</span></div>'+
       (radar.status==='ok'
-        ?'Radar meteorológico mais recente disponível.<br>Horário: '+esc(fmtDate(radar.frame_time))+'<br><span style="opacity:.75">Fonte complementar: RainViewer</span>'
-        :'Radar não disponível nesta coleta. Exibindo precipitação estimada na grade complementar.');
+        ?'<div style="margin-top:5px">Radar: '+esc(fmtDate(radar.frame_time))+'</div>'
+        :'<div style="margin-top:5px">Radar sem confirmação; usando grade complementar.</div>');
   }else if(mode==='temperature'){
-    el.innerHTML='<strong>Temperatura atual</strong><div class="legend-scale"><span style="background:#3978b8"></span><span style="background:#58a7c7"></span><span style="background:#67bd91"></span><span style="background:#e3b94f"></span><span style="background:#e87c3d"></span><span style="background:#c84b45"></span></div>Mais frio → mais quente<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+    active='<div class="map-legend-title">Temperatura atual</div>'+
+      '<div class="legend-scale"><span style="background:#3978b8"></span><span style="background:#58a7c7"></span><span style="background:#67bd91"></span><span style="background:#e3b94f"></span><span style="background:#e87c3d"></span><span style="background:#c84b45"></span></div>'+
+      '<div class="map-legend-labels"><span>mais frio</span><span>mais quente</span></div>';
   }else if(mode==='cloud'){
-    el.innerHTML='<strong>Nebulosidade</strong><div class="legend-scale"><span style="background:#edf3f4"></span><span style="background:#bac7cc"></span><span style="background:#72848c"></span></div>0% → 100% de cobertura<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+    active='<div class="map-legend-title">Nebulosidade</div>'+
+      '<div class="legend-scale"><span style="background:#edf3f4"></span><span style="background:#bac7cc"></span><span style="background:#72848c"></span></div>'+
+      '<div class="map-legend-labels"><span>0%</span><span>100%</span></div>';
   }else if(mode==='wind'){
-    el.innerHTML='<strong>Vento a 10 m</strong>As setas indicam direção; clique para ver velocidade.<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+    active='<div class="map-legend-title">Vento a 10 m</div>'+
+      '<div class="map-symbol-item"><span class="map-symbol wind">➤</span><span>Direção do vento</span></div>'+
+      '<div style="margin-top:4px">Clique na seta para ver a velocidade.</div>';
   }
+
+  const symbols=
+    '<div class="map-legend-title">Símbolos</div>'+
+    '<div class="map-symbol-list">'+
+      '<div class="map-symbol-item"><span class="map-symbol hospital">+</span><span>Hospital Santa Teresa</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol station-ok"></span><span>Pluviômetro com leitura recente</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol station-stale"></span><span>Pluviômetro sem leitura recente</span></div>'+
+      '<div class="map-symbol-item"><span class="map-symbol radius"></span><span>Raio operacional de 5 km</span></div>'+
+    '</div>';
+
+  el.innerHTML=
+    '<div class="map-legend-section"><strong>Legenda do mapa</strong>'+active+'</div>'+
+    '<div class="map-legend-section">'+symbols+'</div>'+
+    '<div class="map-legend-section" style="opacity:.75">Camadas meteorológicas complementares · Radar RainViewer · grade Open‑Meteo · pluviômetros CEMADEN.</div>';
 }
 function removePrimaryMapLayers(){
   if(!operationalMap) return;
