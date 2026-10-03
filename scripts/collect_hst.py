@@ -660,10 +660,28 @@ def fetch_defesa_civil(previous):
 
     try:
         headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"}
-        home=requests.get(DEFESA_CIVIL_HOME,timeout=8,headers=headers)
-        home.raise_for_status()
-        tag=requests.get(DEFESA_CIVIL_TAG,timeout=8,headers=headers)
-        tag.raise_for_status()
+
+        def dc_get(url, timeout=7):
+            candidates=[url]
+            if "://www.petropolis.rj.gov.br/" in url:
+                candidates.append(url.replace("://www.petropolis.rj.gov.br/","://petropolis.rj.gov.br/",1))
+            last_error=None
+            for candidate_url in candidates:
+                try:
+                    response=requests.get(
+                        candidate_url,
+                        timeout=timeout,
+                        headers={**headers,"Connection":"close"},
+                        allow_redirects=True,
+                    )
+                    response.raise_for_status()
+                    return response
+                except Exception as exc:
+                    last_error=exc
+            raise last_error or RuntimeError("Defesa Civil indisponível")
+
+        home=dc_get(DEFESA_CIVIL_HOME)
+        tag=dc_get(DEFESA_CIVIL_TAG)
 
         links=[]
         for page in (tag.text,home.text):
@@ -698,8 +716,7 @@ def fetch_defesa_civil(previous):
 
         for url in links:
             try:
-                r=requests.get(url,timeout=5,headers=headers)
-                r.raise_for_status()
+                r=dc_get(url,timeout=5)
                 art=BeautifulSoup(r.text,"html.parser")
                 title_el=art.find("h1") or art.find("h2")
                 title=re.sub(r"\s+"," ",title_el.get_text(" ",strip=True) if title_el else "").strip()
