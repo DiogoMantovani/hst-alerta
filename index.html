@@ -6,7 +6,35 @@
 <meta name="theme-color" content="#006d6f">
 <title>HST Alerta | Hospital Santa Teresa</title>
 <style>
-:root{--bg:#f4f8f8;--ink:#173038;--muted:#64777e;--line:#dce7e7;--brand:#006d6f;--brand2:#00a39a;--card:#fff;--l1:#2d8a56;--l2:#c89a05;--l3:#df7419;--l4:#c63b35;--l5:#70233d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}.top{background:linear-gradient(135deg,#004e53,#007b78 60%,#155d68);color:#fff;padding:24px clamp(18px,4vw,56px);display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{display:flex;gap:20px;align-items:center}.brand img{width:230px;max-width:32vw;object-fit:contain}.divider{width:1px;height:72px;background:#ffffff55}.hospital{font-weight:800;letter-spacing:.04em}.top h1{margin:3px 0;font-size:34px}.top p{margin:0;opacity:.9}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#edf2f4;color:#42565f}.badge.demo{background:#fff0bd;color:#765900}.tabs{position:sticky;top:0;z-index:9;background:white;border-bottom:1px solid var(--line);padding:0 clamp(10px,4vw,56px);display:flex;overflow:auto}.tab{border:0;background:transparent;padding:14px 12px;font-weight:750;color:#586b72;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}.tab.active{color:var(--brand);border-color:var(--brand)}main{max-width:1450px;margin:auto;padding:24px clamp(14px,3vw,42px) 48px}.panel{display:none}.panel.active{display:block}.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}.card,.hero{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(20,40,60,.04)}.hero{color:white;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}.l1{background:linear-gradient(135deg,#267749,#2d8a56)}.l2{background:linear-gradient(135deg,#a77f00,#d3a10a)}.l3{background:linear-gradient(135deg,#c55e0d,#e47a20)}.l4{background:linear-gradient(135deg,#9f3029,#c73e36)}.l5{background:linear-gradient(135deg,#531529,#7a233c)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;opacity:.72}.levelrow{display:flex;gap:20px;align-items:center}.num{font-size:82px;font-weight:900;line-height:1}.levelrow h2{margin:0 0 6px;font-size:30px}.levelrow p{margin:0;line-height:1.45}.timestamps{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;opacity:.9}.weather{display:flex;gap:18px;align-items:center;margin:22px 0}.temp{font-size:58px;font-weight:900;color:var(--brand)}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.risk{background:white;border:1px solid var(--line);border-radius:14px;padding:18px}.risk .value{font-size:22px;font-weight:900;margin:8px 0}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.num{font-size:64px}.top h1{font-size:30px}}
+:root{--bg:#f4f8f8;--ink:#173038;--muted:#64777e;--line:#dce7e7;--brand:#006d6f;--brand2:#00a39a;--card:#fff;--l1:#2d8a56;--l2:#c89a05;--l3:#df7419;--l4:#c63b35;--l5:#70233d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}.top{background:linear-gradient(135deg,#004e53,#007b78 60%,#155d68);color:#fff;padding:24px clamp(18px,4vw,56px);display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{display:flex;gap:20px;align-items:center}.brand img{width:230px;max-width:32vw;object-fit:contain}.divider{width:1px;height:72px;background:#ffffff55}.hospital{font-weight:800;letter-spacing:.04em}.top h1{margin:3px 0;font-size:34px}.top p{margin:0;opacity:.9}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#edf2f4;color:#42565f}.badge.demo{background:#fff0bd;color:#765900}.tabs{position:sticky;top:0;z-index:9;background:white;border-bottom:1px solid var(--line);padding:0 clamp(10px,4vw,56px);display:flex;overflow:auto}.tab{border:0;background:transparent;padding:14px 12px;font-weight:750;color:#586b72;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}.tab.active{color:var(--brand);border-color:var(--brand)}main{max-width:1450px;margin:auto;padding:24px clamp(14px,3vw,42px) 48px}.panel{display:none}.panel.active{display:block}.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}.card,.hero{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(20,40,60,.04)}.hero{color:white;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}.l1{background:linear-gradient(135deg,#267749,#2d8a56)}.l2{background:linear-gradient(135deg,#a77f00,#d3a10a)}.l3{background:linear-gradient(135deg,#c55e0d,#e47a20)}.l4{background:linear-gradient(135deg,#9f3029,#c73e36)}.l5{background:linear-gradient(135deg,#531529,#7a233c)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;opacity:.72}.levelrow{display:flex;gap:20px;align-items:center}.num{font-size:82px;font-weight:900;line-height:1}.levelrow h2{margin:0 0 6px;font-size:30px}.levelrow p{margin:0;line-height:1.45}.timestamps{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;opacity:.9}.weather{display:flex;gap:18px;align-items:center;margin:22px 0}.temp{font-size:58px;font-weight:900;color:var(--brand)}
+.weather-card{position:relative;overflow:hidden;padding:0;background:linear-gradient(145deg,#f7fbfb,#eef7f7);border-color:#cfe2e1}
+.weather-card:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-95px;top:-105px;background:rgba(0,109,111,.06)}
+.weather-card-inner{position:relative;z-index:1;padding:20px}
+.weather-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.weather-card-title{margin:4px 0 0;font-size:19px;line-height:1.2}
+.weather-source-badge{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#e6f3f2;color:#006d6f;border:1px solid #c2dfdc;font-size:11px;font-weight:900;white-space:nowrap}
+.weather-current{display:grid;grid-template-columns:92px 1fr;gap:16px;align-items:center;margin:12px 0 16px}
+.weather-iconbox{width:92px;height:92px;border-radius:24px;display:grid;place-items:center;background:#e3f2f1;border:1px solid #c5dddd;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)}
+.weather-iconbox svg{width:62px;height:62px}
+.weather-temp-main{font-size:52px;line-height:.95;font-weight:900;color:#114d52;letter-spacing:-.04em}
+.weather-condition-main{font-size:18px;font-weight:850;margin-top:7px;color:#1c3e44}
+.weather-time{font-size:12px;color:var(--muted);margin-top:5px}
+.weather-chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 14px}
+.weather-chip{display:flex;align-items:center;gap:7px;padding:9px 10px;border:1px solid #d8e5e5;border-radius:12px;background:rgba(255,255,255,.72);font-size:12px;color:#3e565e}
+.weather-chip-icon{font-size:15px;line-height:1}
+.weather-chip strong{color:#223f46}
+.weather-note-box{display:flex;gap:9px;align-items:flex-start;border-top:1px solid #dbe8e8;padding-top:12px;color:var(--muted);font-size:12px;line-height:1.45}
+.weather-note-symbol{font-size:15px;line-height:1.25}
+.weather-theme-clear{background:linear-gradient(145deg,#fffaf0,#f7fbfb)}
+.weather-theme-clear .weather-iconbox{background:#fff2c7;border-color:#f0df9b}
+.weather-theme-cloud{background:linear-gradient(145deg,#f7f9fb,#edf3f5)}
+.weather-theme-cloud .weather-iconbox{background:#e6ecef;border-color:#d3dde2}
+.weather-theme-rain{background:linear-gradient(145deg,#f0f8fb,#e7f2f6)}
+.weather-theme-rain .weather-iconbox{background:#dceef5;border-color:#c7e1eb}
+.weather-theme-storm{background:linear-gradient(145deg,#f4f2f9,#eceaf4)}
+.weather-theme-storm .weather-iconbox{background:#e4e0f0;border-color:#d4cdea}
+.weather-theme-fog{background:linear-gradient(145deg,#f7f8f8,#eef1f1)}
+.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.risk{background:white;border:1px solid var(--line);border-radius:14px;padding:18px}.risk .value{font-size:22px;font-weight:900;margin:8px 0}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
 <body>
@@ -39,10 +67,30 @@
 <div class="levelrow"><div id="levelNum" class="num">1</div><div><h2 id="levelLabel">Vigilância</h2><p id="levelReason">Carregando monitoramento oficial CEMADEN-RJ…</p></div></div>
 <div class="timestamps"><span>Última atualização: <strong id="updatedAt">—</strong></span><span>Próxima coleta planejada: <strong id="nextAt">—</strong></span></div>
 </article>
-<article class="card">
-<div id="weatherEyebrow" class="eyebrow">Condição meteorológica atual</div>
-<div class="weather"><div id="weatherTemp" class="temp">—</div><div><h3 id="weatherTitle">Próximo ao Hospital Santa Teresa</h3><p id="weatherSummary">Carregando condição meteorológica recente…</p></div></div>
-<div id="weatherNote" class="small">Referência complementar para situação atual. Alertas oficiais continuam sendo definidos por INMET, CEMADEN e Defesa Civil.</div>
+<article id="weatherCard" class="card weather-card weather-theme-cloud">
+<div class="weather-card-inner">
+  <div class="weather-card-top">
+    <div>
+      <div id="weatherEyebrow" class="eyebrow">Condição meteorológica atual</div>
+      <h3 id="weatherTitle" class="weather-card-title">Próximo ao Hospital Santa Teresa</h3>
+    </div>
+    <span id="weatherSourceBadge" class="weather-source-badge">Carregando</span>
+  </div>
+  <div class="weather-current">
+    <div id="weatherIconBox" class="weather-iconbox" aria-hidden="true"></div>
+    <div>
+      <div id="weatherTemp" class="weather-temp-main">—°</div>
+      <div id="weatherCondition" class="weather-condition-main">Carregando condição atual…</div>
+      <div id="weatherTimestamp" class="weather-time">—</div>
+    </div>
+  </div>
+  <div id="weatherMetaChips" class="weather-chips"></div>
+  <div class="weather-note-box">
+    <span class="weather-note-symbol">ⓘ</span>
+    <span id="weatherNote">Referência complementar para situação atual. Alertas oficiais continuam sendo definidos por INMET, CEMADEN e Defesa Civil.</span>
+  </div>
+  <span id="weatherSummary" style="display:none"></span>
+</div>
 </article>
 </div>
 
@@ -183,6 +231,42 @@ function fmtDate(value){
   const d=new Date(value);
   return isNaN(d)?String(value):d.toLocaleString('pt-BR');
 }
+function numBR(value,digits=1){
+  if(value==null || Number.isNaN(Number(value))) return '—';
+  return Number(value).toLocaleString('pt-BR',{minimumFractionDigits:digits,maximumFractionDigits:digits});
+}
+function weatherIconSvg(code,condition=''){
+  const c=Number(code),txt=String(condition||'').toLowerCase();
+  const sun='<circle cx="32" cy="32" r="11" fill="#F5B800"/><g stroke="#F5B800" stroke-width="3" stroke-linecap="round"><path d="M32 7v7M32 50v7M7 32h7M50 32h7M14.5 14.5l5 5M44.5 44.5l5 5M49.5 14.5l-5 5M19.5 44.5l-5 5"/></g>';
+  const cloud='<path d="M18 43h29a10 10 0 0 0 1-20 15 15 0 0 0-28-4A12 12 0 0 0 18 43Z" fill="#91A7B2"/>';
+  const rain='<g stroke="#4B92B6" stroke-width="3" stroke-linecap="round"><path d="M22 49l-3 7M33 49l-3 7M44 49l-3 7"/></g>';
+  const heavy='<g stroke="#397FA6" stroke-width="3.4" stroke-linecap="round"><path d="M20 49l-4 8M32 49l-4 8M44 49l-4 8"/></g>';
+  const fog='<g stroke="#91A7B2" stroke-width="3" stroke-linecap="round"><path d="M13 26h38M10 36h44M16 46h32"/></g>';
+  const bolt='<path d="M35 42h9l-10 17 2-12h-9l10-17-2 12Z" fill="#E8A800"/>';
+  let body='',theme='weather-theme-cloud';
+  if(c===0){body=sun;theme='weather-theme-clear';}
+  else if([1,2].includes(c)){body=sun+cloud;theme='weather-theme-clear';}
+  else if(c===3){body=cloud;theme='weather-theme-cloud';}
+  else if([45,48].includes(c)||txt.includes('nevo')){body=fog;theme='weather-theme-fog';}
+  else if([51,53,55,61,63,80,81].includes(c)||txt.includes('garoa')||txt.includes('chuva')){body=cloud+rain;theme='weather-theme-rain';}
+  else if([65,82].includes(c)){body=cloud+heavy;theme='weather-theme-rain';}
+  else if([95,96,99].includes(c)||txt.includes('trovo')){body=cloud+bolt+rain;theme='weather-theme-storm';}
+  else{body=sun+cloud;theme='weather-theme-cloud';}
+  return {theme,svg:'<svg viewBox="0 0 64 64" role="img" aria-label="'+String(condition||'Condição meteorológica')+'">'+body+'</svg>'};
+}
+function weatherChip(icon,label,value){
+  if(value==null || value==='') return '';
+  return '<div class="weather-chip"><span class="weather-chip-icon">'+icon+'</span><span><strong>'+label+':</strong> '+value+'</span></div>';
+}
+function relativeWeatherTime(value){
+  if(!value) return 'Horário não informado';
+  const d=new Date(value);
+  if(isNaN(d)) return String(value);
+  const mins=Math.round((Date.now()-d.getTime())/60000);
+  if(mins>=0 && mins<2) return 'Atualizado agora · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  if(mins>=0 && mins<60) return 'Atualizado há '+mins+' min · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return 'Atualizado em '+d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
 function renderActions(l){document.getElementById('actions').innerHTML=acts[l].map(x=>'<div class="action">• '+x+'</div>').join('')}
 function applyLevel(l,reason,generatedAt){
   const h=document.getElementById('hero');
@@ -247,26 +331,42 @@ async function loadOfficialData(){
     const officialWeatherOk=w.status==='ok' && w.temperature_c!=null;
     const chosen=officialWeatherOk?w:wr;
     const temp=chosen?.temperature_c;
-    document.getElementById('weatherTemp').textContent=(temp==null?'—':Number(temp).toFixed(1)+'°');
-    const weatherParts=[];
-    if(chosen?.condition) weatherParts.push(chosen.condition);
-    if(chosen?.humidity_pct!=null) weatherParts.push('Umidade '+Number(chosen.humidity_pct).toFixed(0)+'%');
-    if(chosen?.apparent_temperature_c!=null) weatherParts.push('Sensação '+Number(chosen.apparent_temperature_c).toFixed(1)+'°C');
-    if(chosen?.precipitation_mm!=null) weatherParts.push('Precipitação '+Number(chosen.precipitation_mm).toFixed(1)+' mm');
-    if(chosen?.wind_speed_kmh!=null) weatherParts.push('Vento '+Number(chosen.wind_speed_kmh).toFixed(0)+' km/h');
-    if(chosen?.wind_gust_kmh!=null) weatherParts.push('Rajada '+Number(chosen.wind_gust_kmh).toFixed(0)+' km/h');
+    const condition=chosen?.condition||(officialWeatherOk?'Observação meteorológica':'Condição atual');
+    const visual=weatherIconSvg(chosen?.weather_code,condition);
+    const weatherCard=document.getElementById('weatherCard');
+    weatherCard.classList.remove('weather-theme-clear','weather-theme-cloud','weather-theme-rain','weather-theme-storm','weather-theme-fog');
+    weatherCard.classList.add(visual.theme);
+    document.getElementById('weatherIconBox').innerHTML=visual.svg;
+    document.getElementById('weatherTemp').textContent=temp==null?'—°':numBR(temp,1)+'°';
+    document.getElementById('weatherCondition').textContent=condition;
+    document.getElementById('weatherTimestamp').textContent=relativeWeatherTime(chosen?.observed_at);
     if(officialWeatherOk){
-      if(w.rain_1h_mm!=null) weatherParts.push('Chuva 1h '+Number(w.rain_1h_mm).toFixed(1)+' mm');
       document.getElementById('weatherEyebrow').textContent='Observação oficial · INMET';
       document.getElementById('weatherTitle').textContent='Pico do Couto (A610)';
+      document.getElementById('weatherSourceBadge').textContent='Fonte oficial';
       document.getElementById('weatherNote').textContent='Observação oficial regional. Pode diferir do microclima no terreno do hospital.';
     }else{
-      document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HST · complementar';
+      document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HST';
       document.getElementById('weatherTitle').textContent='Hospital Santa Teresa · Centro';
-      document.getElementById('weatherNote').textContent='Fonte complementar de condição atual próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
+      document.getElementById('weatherSourceBadge').textContent='Fonte complementar';
+      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
     }
-    document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem condição recente confirmada')+' · '+fmtDate(chosen?.observed_at);
-    document.getElementById('weatherDetails').textContent=(officialWeatherOk?'INMET Pico do Couto (A610). ':'Referência meteorológica complementar próxima ao Hospital Santa Teresa. ')+(weatherParts.join(' · ')||'Sem condição recente confirmada')+' · horário: '+fmtDate(chosen?.observed_at)+'. Alertas e níveis HST continuam baseados nas fontes oficiais.';
+    const chips=[];
+    if(chosen?.humidity_pct!=null) chips.push(weatherChip('◉','Umidade',numBR(chosen.humidity_pct,0)+'%'));
+    if(chosen?.apparent_temperature_c!=null) chips.push(weatherChip('⌁','Sensação',numBR(chosen.apparent_temperature_c,1)+'°C'));
+    if(chosen?.precipitation_mm!=null) chips.push(weatherChip('◒','Precipitação',numBR(chosen.precipitation_mm,1)+' mm'));
+    if(officialWeatherOk && w.rain_1h_mm!=null) chips.push(weatherChip('↧','Chuva 1 h',numBR(w.rain_1h_mm,1)+' mm'));
+    if(chosen?.wind_speed_kmh!=null) chips.push(weatherChip('→','Vento',numBR(chosen.wind_speed_kmh,0)+' km/h'));
+    if(chosen?.wind_gust_kmh!=null) chips.push(weatherChip('≈','Rajada',numBR(chosen.wind_gust_kmh,0)+' km/h'));
+    document.getElementById('weatherMetaChips').innerHTML=chips.join('');
+    const detailParts=[condition];
+    if(chosen?.humidity_pct!=null) detailParts.push('Umidade '+numBR(chosen.humidity_pct,0)+'%');
+    if(chosen?.apparent_temperature_c!=null) detailParts.push('Sensação '+numBR(chosen.apparent_temperature_c,1)+'°C');
+    if(chosen?.precipitation_mm!=null) detailParts.push('Precipitação '+numBR(chosen.precipitation_mm,1)+' mm');
+    if(chosen?.wind_speed_kmh!=null) detailParts.push('Vento '+numBR(chosen.wind_speed_kmh,0)+' km/h');
+    if(chosen?.wind_gust_kmh!=null) detailParts.push('Rajada '+numBR(chosen.wind_gust_kmh,0)+' km/h');
+    document.getElementById('weatherSummary').textContent=detailParts.join(' · ')+' · '+fmtDate(chosen?.observed_at);
+    document.getElementById('weatherDetails').textContent=(officialWeatherOk?'INMET Pico do Couto (A610). ':'Referência meteorológica complementar próxima ao Hospital Santa Teresa. ')+detailParts.join(' · ')+' · horário: '+fmtDate(chosen?.observed_at)+'. Alertas e níveis HST continuam baseados nas fontes oficiais.';
     document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
     document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'')+(pv.time_anomaly_stations?' · '+pv.time_anomaly_stations+' horário(s) inconsistente(s)':'');
     document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
