@@ -487,12 +487,12 @@ def fetch_cemaden_station_coordinates():
         (
             CEMADEN_COORDS_LAYER,
             "camada pública CEMADEN/MG",
-            "codibge=3303906",
+            "cidade LIKE 'PETR%'",
         ),
         (
             CEMADEN_COORDS_LAYER_FALLBACK,
             "camada pública CEMADEN/Vitória",
-            "codibge='3303906'",
+            "cidade LIKE 'PETR%'",
         ),
     ]
     errors=[]
