@@ -89,18 +89,13 @@
 <section id="pluvio" class="panel">
 <div class="section"><h2>Pluviômetros de Petrópolis</h2><span class="badge demo">estrutura pronta</span></div>
 <div class="summary">
-<article class="card"><span class="small">Estações previstas</span><strong>13+</strong></article>
-<article class="card"><span class="small">Maior 1 h</span><strong>— mm</strong></article>
-<article class="card"><span class="small">Maior 24 h</span><strong>— mm</strong></article>
-<article class="card"><span class="small">Atualização</span><strong>10–60 min</strong></article>
+<article class="card"><span class="small">Estações encontradas</span><strong id="pluvioCount">—</strong></article>
+<article class="card"><span class="small">Maior 1 h</span><strong id="pluvioMax1">— mm</strong><span id="pluvioMax1Station" class="small"></span></article>
+<article class="card"><span class="small">Maior 24 h</span><strong id="pluvioMax24">— mm</strong><span id="pluvioMax24Station" class="small"></span></article>
+<article class="card"><span class="small">Com leitura recente</span><strong id="pluvioRecent">—</strong></article>
 </div>
 <div class="card table"><table><thead><tr><th>Estação</th><th>Última leitura</th><th>1 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
-<tbody>
-<tr><td>Alto da Serra</td><td>Integração pendente</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>Bingen</td><td>Integração pendente</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>Itaipava</td><td>Integração pendente</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-<tr><td>Quitandinha</td><td>Integração pendente</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
-</tbody></table></div>
+<tbody id="pluvioBody"><tr><td colspan="9">Carregando pluviômetros CEMADEN…</td></tr></tbody></table></div>
 </section>
 
 <section id="servicos" class="panel">
@@ -216,6 +211,7 @@ async function loadOfficialData(){
     const imet=data.sources?.inmet_alerts;
     const w=data.weather||{};
     const fc=data.forecast||{};
+    const pv=data.pluviometers||{};
     document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
     document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
@@ -234,6 +230,18 @@ async function loadOfficialData(){
     if(w.wind_gust_ms!=null) weatherParts.push('Rajada '+(w.wind_gust_ms*3.6).toFixed(0)+' km/h');
     document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem observação válida')+' · '+fmtDate(w.observed_at);
     document.getElementById('weatherDetails').textContent='Estação INMET Pico do Couto (A610), referência regional. '+(weatherParts.join(' · ')||'Dados indisponíveis')+(w.pressure_hpa!=null?' · Pressão '+w.pressure_hpa.toFixed(1)+' hPa':'')+' · Observação: '+fmtDate(w.observed_at)+'.';
+    document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
+    document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'');
+    document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
+    document.getElementById('pluvioMax1Station').textContent=pv.highest_1h?.station||'';
+    document.getElementById('pluvioMax24').textContent=pv.highest_24h?.value!=null?Number(pv.highest_24h.value).toFixed(1)+' mm':'— mm';
+    document.getElementById('pluvioMax24Station').textContent=pv.highest_24h?.station||'';
+    const stations=Array.isArray(pv.stations)?pv.stations:[];
+    document.getElementById('pluvioBody').innerHTML=stations.length?stations.map(s=>{
+      const val=k=>s[k]==null?'—':Number(s[k]).toFixed(1);
+      const state=s.status==='ok'?'ATUAL':'SEM COMUNICAÇÃO RECENTE';
+      return '<tr><td><strong>'+s.name+'</strong><br><span class="small">'+state+'</span></td><td>'+fmtDate(s.observed_at)+(s.age_hours!=null?'<br><span class="small">'+s.age_hours+' h atrás</span>':'')+'</td><td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td></tr>';
+    }).join(''):'<tr><td colspan="9">Dados de pluviômetros indisponíveis.</td></tr>';
     const days=Array.isArray(fc.days)?fc.days:[];
     for(let idx=0;idx<3;idx++){
       const d=days[idx];
