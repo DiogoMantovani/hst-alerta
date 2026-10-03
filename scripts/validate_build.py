@@ -6,8 +6,9 @@ from bs4 import BeautifulSoup
 
 REQUIRED_IDS = {
     "hero","levelNum","levelLabel","levelReason","updatedAt","nextAt",
-    "geoCard","hidroCard","inmetCard","dcCard","cemadenHealth","inmetHealth",
-    "dcHealth","roadsHealth","pluvioBody","historyBody","historyCount",
+    "geoCard","hidroCard","inmetCard","cemadenHealth","inmetHealth",
+    "roadsHealth","pluvioBody","historyBody","historyCount",
+    "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
     "historyOldest","historyNewest","historyMonths","exportHistory"
 }
 
@@ -27,11 +28,13 @@ status=load_json("data/status.json")
 level=(status.get("overall") or {}).get("level")
 if level not in (1,2,3,4,5):
     raise SystemExit(f"Nível HST inválido: {level}")
-for key in ("cemaden_geological","cemaden_hydrological","inmet_alerts","defesa_civil"):
+for key in ("cemaden_geological","cemaden_hydrological","inmet_alerts"):
     if key not in (status.get("sources") or {}):
         raise SystemExit(f"Fonte ausente: {key}")
 if "pluviometers" not in status or "forecast" not in status or "roads" not in status:
     raise SystemExit("Blocos operacionais obrigatórios ausentes no status.json")
+if not (status.get("pluviometers") or {}).get("nearest_to_hst"):
+    raise SystemExit("Pluviômetro de referência próximo ao HST não identificado")
 
 history=load_json("data/history.json")
 snaps=history.get("snapshots",[])
