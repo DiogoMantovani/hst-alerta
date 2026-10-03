@@ -1081,6 +1081,13 @@ def history_snapshot(payload):
             "risk":(sources.get("inmet_alerts") or {}).get("risk"),
             "status":(sources.get("inmet_alerts") or {}).get("status"),
         },
+        "defesa_civil":{
+            "level":(sources.get("defesa_civil") or {}).get("level"),
+            "risk":(sources.get("defesa_civil") or {}).get("risk"),
+            "status":(sources.get("defesa_civil") or {}).get("status"),
+            "stage":(sources.get("defesa_civil") or {}).get("stage"),
+            "basis":(sources.get("defesa_civil") or {}).get("basis"),
+        },
         "pluviometers":{
             "highest_1h":pv.get("highest_1h"),
             "highest_24h":pv.get("highest_24h"),
