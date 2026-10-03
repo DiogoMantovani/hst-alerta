@@ -255,7 +255,17 @@ def fetch_cemaden_pluviometers(previous):
             except Exception:
                 pass
             age=round((now-observed).total_seconds()/3600,1) if observed else None
-            health="ok" if age is not None and age<=2 else "stale"
+            # A reading materially ahead of the collector clock is kept as raw
+            # evidence, but is not treated as a fresh/valid reading for summaries.
+            # Small clock skew up to 15 minutes is tolerated.
+            if age is None:
+                health="stale"
+            elif age < -0.25:
+                health="time_anomaly"
+            elif age <= 2:
+                health="ok"
+            else:
+                health="stale"
             def mm(key):
                 v=row.get(key)
                 return safe_float(v) if v not in ("-",None,"") else None
@@ -263,6 +273,7 @@ def fetch_cemaden_pluviometers(previous):
                 "id":row.get("idestacao"),
                 "name":row.get("nomeestacao") or "Estação sem nome",
                 "status":health,
+                "raw_timestamp":raw_dt or None,
                 "observed_at":observed.isoformat() if observed else raw_dt or None,
                 "age_hours":age,
                 "last_mm":mm("ultimovalor"),
@@ -281,14 +292,17 @@ def fetch_cemaden_pluviometers(previous):
             raise RuntimeError("Nenhum pluviômetro de Petrópolis encontrado")
 
         recent=[s for s in stations if s["status"]=="ok"]
+        anomalies=[s for s in stations if s["status"]=="time_anomaly"]
         def highest(key):
-            vals=[s for s in stations if isinstance(s.get(key),(int,float))]
+            # Only fresh, internally time-consistent stations contribute to
+            # dashboard maxima. Stale/anomalous values remain visible in the table.
+            vals=[s for s in recent if isinstance(s.get(key),(int,float))]
             if not vals: return {"value":None,"station":None}
             top=max(vals,key=lambda s:s[key])
             return {"value":top[key],"station":top["name"]}
 
-        # Fresh stations first, then highest 24h accumulation.
-        stations.sort(key=lambda s:(0 if s["status"]=="ok" else 1,-(s.get("acc24h_mm") or 0),s["name"]))
+        order={"ok":0,"time_anomaly":1,"stale":2}
+        stations.sort(key=lambda s:(order.get(s["status"],3),-(s.get("acc24h_mm") or 0),s["name"]))
         return {
             "provider":"CEMADEN",
             "status":"ok" if recent else "stale",
@@ -297,6 +311,7 @@ def fetch_cemaden_pluviometers(previous):
             "url":CEMADEN_PLUVIO,
             "total_stations":len(stations),
             "recent_stations":len(recent),
+            "time_anomaly_stations":len(anomalies),
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
             "stations":stations,
