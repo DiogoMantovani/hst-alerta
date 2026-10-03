@@ -484,6 +484,10 @@ def fetch_cemaden_pluviometers(previous):
         if not isinstance(data,list):
             raise RuntimeError("Formato inesperado do endpoint público de pluviômetros")
 
+        probe_rows=[row for row in data if isinstance(row,dict) and str(row.get("codibge"))=="3303906"][:3]
+        for probe in probe_rows:
+            print("CEMADEN_PLUVIO_FIELDS",probe.get("nomeestacao"),json.dumps(probe,ensure_ascii=False)[:5000])
+
         stations=[]
         for row in data:
             if not isinstance(row,dict) or str(row.get("codibge"))!="3303906":
