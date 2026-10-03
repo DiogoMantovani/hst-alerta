@@ -168,14 +168,14 @@ def hours_since(value):
         return 9999
 
 
-def determine_event(level, context_key, state, force_test=False):
+def determine_event(level, context_key, state, min_level, force_test=False):
     if force_test:
         return "test"
 
     last_level = state.get("last_notified_level")
     last_context = state.get("last_notified_context")
 
-    if level >= MIN_NOTIFY_LEVEL:
+    if level >= min_level:
         if last_level is None:
             return "entry"
         last_level = int(last_level)
@@ -187,14 +187,36 @@ def determine_event(level, context_key, state, force_test=False):
             return "context_change"
         return None
 
-    if last_level is not None and int(last_level) >= MIN_NOTIFY_LEVEL:
-        return "recovery"
     return None
+
+
+def parse_recipients(raw):
+    parts = re.split(r"[,;\n]+", raw or "")
+    recipients = []
+    for item in parts:
+        email = item.strip()
+        if email and email not in recipients:
+            recipients.append(email)
+    return recipients
+
 
 
 def config():
     return {
-        "recipient": os.getenv("HST_EMAIL_GRUPO_OPERACIONAL", "").strip(),
+        "groups": {
+            "operational": {
+                "label": "Grupo Operacional",
+                "levels": [3, 4, 5],
+                "min_level": 3,
+                "recipients": parse_recipients(os.getenv("HST_EMAIL_GRUPO_OPERACIONAL", "")),
+            },
+            "managers": {
+                "label": "Grupo de Gerentes",
+                "levels": [4, 5],
+                "min_level": 4,
+                "recipients": parse_recipients(os.getenv("HST_EMAIL_GRUPO_GERENTES", "")),
+            },
+        },
         "api_key": os.getenv("RESEND_API_KEY", "").strip(),
         "smtp_user": os.getenv("HST_SMTP_USER", "").strip(),
         "smtp_app_password": os.getenv("HST_SMTP_APP_PASSWORD", "").strip(),
@@ -206,10 +228,10 @@ def config():
     }
 
 
-def configured(cfg):
-    resend_ready = bool(cfg.get("api_key"))
-    smtp_ready = bool(cfg.get("smtp_user") and cfg.get("smtp_app_password"))
-    return bool(cfg.get("recipient") and (resend_ready or smtp_ready))
+
+def configured(cfg, group):
+    return bool(group.get("recipients") and provider_name(cfg))
+
 
 
 def provider_name(cfg):
@@ -291,90 +313,114 @@ Mensagem automática de apoio à decisão. Os documentos institucionais vigentes
     return subject, body_html, body_text
 
 
-def send_email(cfg, subject, body_html, body_text):
+def send_email(cfg, recipients, subject, body_html, body_text):
     provider = provider_name(cfg)
+    if not recipients:
+        return False, [], "Nenhum destinatário configurado."
 
-    if provider == "smtp":
-        msg = EmailMessage()
-        msg["Subject"] = subject
-        msg["From"] = cfg.get("from_email") or formataddr(("HST Alerta", cfg["smtp_user"]))
-        msg["To"] = cfg["recipient"]
+    sent_ids = []
+    failures = []
+
+    for recipient in recipients:
+        if provider == "smtp":
+            msg = EmailMessage()
+            msg["Subject"] = subject
+            msg["From"] = cfg.get("from_email") or formataddr(("HST Alerta", cfg["smtp_user"]))
+            msg["To"] = recipient
+            if cfg.get("reply_to"):
+                msg["Reply-To"] = cfg["reply_to"]
+            msg.set_content(body_text)
+            msg.add_alternative(body_html, subtype="html")
+            try:
+                with smtplib.SMTP_SSL(cfg["smtp_host"], cfg["smtp_port"], timeout=30) as server:
+                    server.login(cfg["smtp_user"], cfg["smtp_app_password"])
+                    server.send_message(msg)
+                sent_ids.append(None)
+            except Exception as exc:
+                failures.append(f"{recipient}: {exc.__class__.__name__}")
+            continue
+
+        headers = {
+            "Authorization": f"Bearer {cfg['api_key']}",
+            "Content-Type": "application/json",
+        }
+        sender = cfg.get("from_email") or "HST Alerta <onboarding@resend.dev>"
+        payload = {
+            "from": sender,
+            "to": [recipient],
+            "subject": subject,
+            "html": body_html,
+            "text": body_text,
+        }
         if cfg.get("reply_to"):
-            msg["Reply-To"] = cfg["reply_to"]
-        msg.set_content(body_text)
-        msg.add_alternative(body_html, subtype="html")
+            payload["reply_to"] = cfg["reply_to"]
+
         try:
-            with smtplib.SMTP_SSL(cfg["smtp_host"], cfg["smtp_port"], timeout=30) as server:
-                server.login(cfg["smtp_user"], cfg["smtp_app_password"])
-                server.send_message(msg)
-            return True, None, None
-        except Exception as exc:
-            return False, None, clean_text(f"Falha SMTP: {exc.__class__.__name__}", 500)
+            response = requests.post("https://api.resend.com/emails", headers=headers, json=payload, timeout=30)
+        except requests.RequestException as exc:
+            failures.append(f"{recipient}: {exc.__class__.__name__}")
+            continue
 
-    headers = {
-        "Authorization": f"Bearer {cfg['api_key']}",
-        "Content-Type": "application/json",
-    }
-    sender = cfg.get("from_email") or "HST Alerta <onboarding@resend.dev>"
-    payload = {
-        "from": sender,
-        "to": [cfg["recipient"]],
-        "subject": subject,
-        "html": body_html,
-        "text": body_text,
-    }
-    if cfg.get("reply_to"):
-        payload["reply_to"] = cfg["reply_to"]
+        if 200 <= response.status_code < 300:
+            try:
+                sent_ids.append((response.json() or {}).get("id"))
+            except Exception:
+                sent_ids.append(None)
+        else:
+            error = f"HTTP {response.status_code}"
+            try:
+                body = response.json() or {}
+                error = clean_text(body.get("message") or body.get("name") or error, 300)
+            except Exception:
+                pass
+            failures.append(f"{recipient}: {error}")
 
-    try:
-        response = requests.post("https://api.resend.com/emails", headers=headers, json=payload, timeout=30)
-    except requests.RequestException as exc:
-        return False, None, f"Falha de conexão com o Resend: {exc.__class__.__name__}"
+    if failures:
+        return False, sent_ids, clean_text("; ".join(failures), 500)
+    return True, sent_ids, None
 
-    if 200 <= response.status_code < 300:
-        try:
-            message_id = (response.json() or {}).get("id")
-        except Exception:
-            message_id = None
-        return True, message_id, None
 
-    error = f"HTTP {response.status_code}"
-    try:
-        body = response.json() or {}
-        error = clean_text(body.get("message") or body.get("name") or error, 500)
-    except Exception:
-        pass
-    return False, None, error
 
 def update_public_status(data, state, cfg, enabled):
     notifications = data.setdefault("notifications", {})
-    item = notifications.setdefault("group_operational_email", {})
-    item.update({
-        "channel": "email",
-        "levels": [3, 4, 5],
-        "recipient_configured": bool(cfg["recipient"]),
-        "provider_configured": bool(provider_name(cfg)),
-        "provider": provider_name(cfg),
-        "automatic_sending_enabled": bool(enabled),
-        "status": (
-            "active" if configured(cfg) and enabled
-            else "ready_disabled" if configured(cfg)
-            else "awaiting_provider" if cfg["recipient"]
-            else "recipient_missing"
-        ),
-        "last_attempt_at": state.get("last_attempt_at"),
-        "last_sent_at": state.get("last_sent_at"),
-        "last_event": state.get("last_event"),
-        "last_result": state.get("last_result"),
-        "last_notified_level": state.get("last_notified_level"),
-    })
+    group_states = state.setdefault("groups", {})
+
+    mapping = {
+        "operational": "group_operational_email",
+        "managers": "group_managers_email",
+    }
+
+    for key, public_key in mapping.items():
+        group = cfg["groups"][key]
+        group_state = group_states.setdefault(key, {})
+        item = notifications.setdefault(public_key, {})
+        item.update({
+            "channel": "email",
+            "label": group["label"],
+            "levels": group["levels"],
+            "recipient_configured": bool(group["recipients"]),
+            "recipient_count": len(group["recipients"]),
+            "provider_configured": bool(provider_name(cfg)),
+            "provider": provider_name(cfg),
+            "automatic_sending_enabled": bool(enabled),
+            "status": (
+                "active" if configured(cfg, group) and enabled
+                else "ready_disabled" if configured(cfg, group)
+                else "awaiting_recipient" if provider_name(cfg)
+                else "awaiting_provider"
+            ),
+            "last_attempt_at": group_state.get("last_attempt_at"),
+            "last_sent_at": group_state.get("last_sent_at"),
+            "last_event": group_state.get("last_event"),
+            "last_result": group_state.get("last_result"),
+            "last_notified_level": group_state.get("last_notified_level"),
+        })
+
     notifications.pop("group_operational_test", None)
 
 
-def main():
-    data = load_json(STATUS_PATH, {})
-    state = load_json(STATE_PATH, {
-        "schema_version": 1,
+def default_group_state():
+    return {
         "last_notified_level": None,
         "last_notified_context": None,
         "last_sent_at": None,
@@ -383,11 +429,44 @@ def main():
         "last_result": None,
         "last_error": None,
         "last_message_id": None,
-    })
+    }
+
+
+def normalize_state(raw):
+    raw = raw or {}
+    if isinstance(raw.get("groups"), dict):
+        state = raw
+        state["schema_version"] = 2
+        state.setdefault("groups", {})
+        state["groups"].setdefault("operational", default_group_state())
+        state["groups"].setdefault("managers", default_group_state())
+        return state
+
+    operational = default_group_state()
+    for key in operational:
+        if key in raw:
+            operational[key] = raw.get(key)
+
+    return {
+        "schema_version": 2,
+        "last_seen_level": raw.get("last_seen_level"),
+        "last_seen_context": raw.get("last_seen_context"),
+        "groups": {
+            "operational": operational,
+            "managers": default_group_state(),
+        },
+        "updated_at": raw.get("updated_at"),
+    }
+
+
+
+def main():
+    data = load_json(STATUS_PATH, {})
+    state = normalize_state(load_json(STATE_PATH, {}))
 
     cfg = config()
     enabled = env_bool("HST_EMAIL_ENABLED", False)
-    force_test = False
+    force_test = env_bool("HST_EMAIL_FORCE_TEST", False)
 
     try:
         level = max(1, min(5, int((data.get("overall") or {}).get("level") or 1)))
@@ -395,66 +474,84 @@ def main():
         level = 1
 
     context_key, context_label = derive_context(data)
-    event = determine_event(level, context_key, state, force_test=force_test)
-
     state["last_seen_level"] = level
     state["last_seen_context"] = context_key
     state["updated_at"] = now_iso()
 
-    if not event:
-        state["last_result"] = "no_event"
-        update_public_status(data, state, cfg, enabled)
-        save_json(STATE_PATH, state)
-        save_json(STATUS_PATH, data)
-        print(f"EMAIL_NO_EVENT level={level} context={context_key}")
-        return
+    any_sent = False
 
-    state["last_event"] = event
+    for group_key, group in cfg["groups"].items():
+        group_state = state["groups"].setdefault(group_key, default_group_state())
 
-    if not configured(cfg):
-        state["last_result"] = "not_configured"
-        state["last_error"] = "Configuração de e-mail ainda incompleta."
-        update_public_status(data, state, cfg, enabled)
-        save_json(STATE_PATH, state)
-        save_json(STATUS_PATH, data)
-        print(f"EMAIL_NOT_CONFIGURED event={event} level={level}")
-        return
+        if level < group["min_level"] and group_state.get("last_notified_level") is not None:
+            group_state["last_notified_level"] = None
+            group_state["last_notified_context"] = None
+            group_state["last_result"] = "below_threshold"
 
-    if not enabled and not force_test:
-        state["last_result"] = "disabled"
-        state["last_error"] = None
-        update_public_status(data, state, cfg, enabled)
-        save_json(STATE_PATH, state)
-        save_json(STATUS_PATH, data)
-        print(f"EMAIL_DISABLED event={event} level={level}")
-        return
+        event = determine_event(
+            level,
+            context_key,
+            group_state,
+            group["min_level"],
+            force_test=force_test,
+        )
 
-    subject, body_html, body_text = build_message(
-        data, level, context_key, context_label, event, cfg
-    )
-    state["last_attempt_at"] = now_iso()
-    ok, message_id, error = send_email(cfg, subject, body_html, body_text)
+        if not event:
+            if group_state.get("last_result") != "below_threshold":
+                group_state["last_result"] = "no_event"
+            continue
 
-    if ok:
-        state["last_result"] = "sent"
-        state["last_error"] = None
-        state["last_message_id"] = message_id
-        state["last_sent_at"] = now_iso()
-        if event == "recovery" or level < MIN_NOTIFY_LEVEL:
-            state["last_notified_level"] = None
-            state["last_notified_context"] = None
+        group_state["last_event"] = event
+
+        if not configured(cfg, group):
+            group_state["last_result"] = "not_configured"
+            group_state["last_error"] = "Destinatários ou serviço de e-mail não configurados."
+            continue
+
+        if not enabled and not force_test:
+            group_state["last_result"] = "disabled"
+            group_state["last_error"] = None
+            continue
+
+        subject, body_html, body_text = build_message(
+            data, level, context_key, context_label, event, cfg
+        )
+        subject = f"{subject} | {group['label']}"
+        group_state["last_attempt_at"] = now_iso()
+        ok, message_ids, error = send_email(
+            cfg,
+            group["recipients"],
+            subject,
+            body_html,
+            body_text,
+        )
+
+        if ok:
+            any_sent = True
+            group_state["last_result"] = "sent"
+            group_state["last_error"] = None
+            group_state["last_message_id"] = message_ids
+            group_state["last_sent_at"] = now_iso()
+            group_state["last_notified_level"] = level
+            group_state["last_notified_context"] = context_key
+            print(
+                f"EMAIL_SENT group={group_key} event={event} "
+                f"level={level} recipients={len(group['recipients'])}"
+            )
         else:
-            state["last_notified_level"] = level
-            state["last_notified_context"] = context_key
-        print(f"EMAIL_SENT event={event} level={level}")
-    else:
-        state["last_result"] = "failed"
-        state["last_error"] = clean_text(error, 500)
-        print(f"EMAIL_FAILED event={event} level={level} error={state['last_error']}")
+            group_state["last_result"] = "failed"
+            group_state["last_error"] = clean_text(error, 500)
+            print(
+                f"EMAIL_FAILED group={group_key} event={event} "
+                f"level={level} error={group_state['last_error']}"
+            )
 
     update_public_status(data, state, cfg, enabled)
     save_json(STATE_PATH, state)
     save_json(STATUS_PATH, data)
+
+    if not any_sent:
+        print(f"EMAIL_NO_SEND level={level} context={context_key}")
 
 
 if __name__ == "__main__":
