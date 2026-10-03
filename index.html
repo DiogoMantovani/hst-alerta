@@ -1541,10 +1541,11 @@ async function loadOfficialData(){
       notificationCfg.recipient_configured?'ok':'off',
       notificationCfg.recipient_configured?'Protegido no GitHub':'E-mail não configurado'
     );
+    const emailProvider=notificationCfg.provider==='smtp'?'Gmail SMTP':notificationCfg.provider==='resend'?'Resend':'Serviço de e-mail';
     setConnection(
       'notificationProviderStatus',
       notificationCfg.provider_configured?'ok':'warn',
-      notificationCfg.provider_configured?'Resend configurado':'Aguardando Resend'
+      notificationCfg.provider_configured?emailProvider+' configurado':'Aguardando serviço de e-mail'
     );
     setConnection(
       'notificationSendStatus',
