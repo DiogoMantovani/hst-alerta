@@ -45,8 +45,8 @@
 .risk-observation{border-top:1px solid #edf2f2;padding-top:11px;margin-top:auto}
 .risk-observation-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:5px}
 .risk-observation-text{font-size:12px;line-height:1.45;color:var(--muted)}
-.source-health-list{display:grid;gap:10px}
-.source-health-row{display:grid;grid-template-columns:minmax(145px,.8fr) minmax(125px,.6fr) 1.7fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f2}
+.source-health-list{display:grid;gap:0}
+.source-health-row{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f2}
 .source-health-row:last-child{border-bottom:0}
 .source-health-name{font-weight:850}
 .connection-pill{display:inline-flex;align-items:center;gap:7px;width:max-content;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid}
@@ -55,7 +55,7 @@
 .connection-warn{color:#986f00;background:#fff8e3;border-color:#ead9a1}
 .connection-off{color:#a33832;background:#fff0ef;border-color:#e8c4c1}
 .connection-na{color:#66777d;background:#f2f5f5;border-color:#d9e1e1}
-.source-health-note{font-size:12px;color:var(--muted);line-height:1.45}
+.source-health-footer{margin-top:12px;padding-top:11px;border-top:1px solid #edf2f2;font-size:11px;line-height:1.5;color:var(--muted)}
 .roads-overview{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
 .road-panel-card{position:relative;overflow:hidden}
 .road-panel-card h3{margin:5px 0 8px}
@@ -539,15 +539,16 @@ footer{
 <div class="grid2">
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
 <article class="card">
-<div class="section"><div><h3>Conectividade das fontes</h3><div class="small">Mostra se o HST Alerta conseguiu acessar cada canal. Conectividade ativa não significa ausência de risco.</div></div></div>
+<div class="section"><h3>Conectividade das fontes</h3></div>
 <div class="source-health-list">
-  <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span><div id="cemadenHealth" class="source-health-note">Carregando status…</div></div>
-  <div class="source-health-row"><div class="source-health-name">CEMADEN · Pluviômetros</div><span id="pluvioConnection" class="connection-pill connection-na">Verificando</span><div id="pluvioHealth" class="source-health-note">Carregando status…</div></div>
-  <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span><div id="inmetHealth" class="source-health-note">Carregando status…</div></div>
-  <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span><div id="weatherRefHealth" class="source-health-note">Referência meteorológica próxima ao HST.</div></div>
-  <div class="source-health-row"><div class="source-health-name">Elovias · BR-040/495</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span><div id="roadsHealth" class="source-health-note">Carregando API oficial…</div></div>
-  <div class="source-health-row"><div class="source-health-name">Enel Rio / Águas do Imperador</div><span class="connection-pill connection-na">Canal cadastrado</span><div class="source-health-note">Ainda sem monitoramento automático de conectividade.</div></div>
+  <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">CEMADEN · Pluviômetros</div><span id="pluvioConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Elovias · BR-040/495</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Enel Rio / Águas do Imperador</div><span class="connection-pill connection-na">Canal cadastrado</span></div>
 </div>
+<div class="source-health-footer">Mostra se o HST Alerta conseguiu acessar cada canal. Conectividade ativa não significa ausência de risco.</div>
 </article>
 </div>
 </section>
@@ -1314,37 +1315,16 @@ async function loadOfficialData(){
     }
     const cemadenConnected=!states.some(x=>x==='source_unconfirmed');
     setConnection('cemadenConnection',cemadenConnected?'ok':'off',cemadenConnected?'Conectividade ativa':'Sem confirmação');
-    document.getElementById('cemadenHealth').textContent=
-      !cemadenConnected?'Não foi possível confirmar acesso ao CEMADEN-RJ nesta coleta.':
-      states.some(x=>x==='no_recent_update')?'Conexão ativa; uma categoria não possui atualização oficial dentro das últimas 24 h.':
-      'Conexão ativa e dados consultados com sucesso.';
-
     const pluvioConnected=pv?.status==='ok' || pv?.status==='stale';
     setConnection('pluvioConnection',pluvioConnected?'ok':'off',pluvioConnected?'Conectividade ativa':'Sem confirmação');
-    document.getElementById('pluvioHealth').textContent=pluvioConnected
-      ?'Rede de pluviômetros consultada; '+String(pv.recent_stations??0)+' de '+String(pv.total_stations??0)+' estações com leitura recente.'
-      :'Não foi possível confirmar acesso à rede de pluviômetros nesta coleta.';
-
     const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
     setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
-    document.getElementById('inmetHealth').textContent=inmetConnected
-      ?'Avisos/previsão INMET acessíveis. Observação A610 '+(w.status==='ok'?'também está atualizada.':'não retornou dado recente; o clima atual usa referência complementar.')
-      :'Não foi possível confirmar acesso aos serviços INMET nesta coleta.';
-
     const weatherRefConnected=wr?.status==='ok';
     setConnection('weatherRefConnection',weatherRefConnected?'ok':'off',weatherRefConnected?'Conectividade ativa':'Sem confirmação');
-    document.getElementById('weatherRefHealth').textContent=weatherRefConnected
-      ?'Condição meteorológica atual próxima ao HST disponível.'
-      :'Sem condição meteorológica complementar recente confirmada.';
-
     const roadsConnected=roads?.status==='ok';
     const roadsDegraded=roads?.status==='degraded';
     setConnection('roadsConnection',roadsConnected?'ok':roadsDegraded?'warn':'off',roadsConnected?'Conectividade ativa':roadsDegraded?'Conectividade parcial':'Sem confirmação');
     const ep=roads?.endpoint_status||{};
-    document.getElementById('roadsHealth').textContent=roadsConnected
-      ?'API oficial acessível · avisos, clima rodoviário, notícias e boletins consultados.'
-      :roadsDegraded?'API parcialmente acessível nesta coleta; alguns módulos podem estar desatualizados.':'Não foi possível confirmar acesso à API oficial da Elovias nesta coleta.';
-
     const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
     document.getElementById('roadsAlertState').textContent=alerts.length
       ?alerts.length+' aviso'+(alerts.length>1?'s':'')+' operacional'+(alerts.length>1?'is':'')+' ativo'+(alerts.length>1?'s':'')
