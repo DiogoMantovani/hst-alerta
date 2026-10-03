@@ -56,6 +56,18 @@
 .connection-off{color:#a33832;background:#fff0ef;border-color:#e8c4c1}
 .connection-na{color:#66777d;background:#f2f5f5;border-color:#d9e1e1}
 .source-health-footer{margin-top:12px;padding-top:11px;border-top:1px solid #edf2f2;font-size:11px;line-height:1.5;color:var(--muted)}
+.dc-overview{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.dc-stage-main{font-size:30px;font-weight:900;color:#123d45;margin:8px 0}
+.dc-impact-main{font-size:21px;font-weight:900;color:#123d45;margin:8px 0}
+.dc-meta{font-size:12px;line-height:1.55;color:var(--muted);margin-top:8px}
+.dc-signal-box{padding:14px;border:1px solid #dce7e7;border-radius:12px;background:#f9fcfc;margin-top:10px}
+.dc-signal-title{font-size:17px;font-weight:900;color:#173b43}
+.dc-contact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.dc-contact-box{border:1px solid #e0eaea;border-radius:12px;padding:12px;background:#fbfdfd}
+.dc-contact-box span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+.dc-contact-box strong{display:block;margin-top:5px;color:#153d44;font-size:17px}
+.dc-history-status{font-weight:800}
+@media(max-width:900px){.dc-overview{grid-template-columns:1fr}.dc-contact-grid{grid-template-columns:1fr}}
 .roads-overview{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}
 .road-panel-card{position:relative;overflow:hidden}
 .road-panel-card h3{margin:5px 0 8px}
@@ -451,6 +463,7 @@ footer{
 <button class="tab" data-target="clima">Clima & Previsão</button>
 <button class="tab" data-target="mapa">Mapa</button>
 <button class="tab" data-target="pluvio">Pluviômetros</button>
+<button class="tab" data-target="defesa">Defesa Civil</button>
 <button class="tab" data-target="servicos">Rodovias</button>
 <button class="tab" data-target="historico">Histórico</button>
 <button class="tab" data-target="plano">Plano</button>
@@ -691,6 +704,86 @@ footer{
     <tbody id="bingenHistoryBody"><tr><td colspan="10">O histórico começará a ser preenchido a partir da ativação deste recurso.</td></tr></tbody>
   </table></div>
 </div>
+</section>
+
+<section id="defesa" class="panel">
+<div class="section">
+  <div><h2>Defesa Civil de Petrópolis</h2><div class="small">Fonte oficial municipal · estágio operacional, sinais de mobilização e publicações relevantes para o HST.</div></div>
+  <span class="badge">FONTE OFICIAL MUNICIPAL</span>
+</div>
+
+<div class="dc-overview">
+  <article class="card">
+    <div class="eyebrow">Situação oficial</div>
+    <div id="dcStage" class="dc-stage-main">Carregando…</div>
+    <div><span id="dcSourceStatus" class="connection-pill connection-na">Verificando</span></div>
+    <div id="dcBasis" class="dc-meta">Aguardando informação oficial.</div>
+    <div id="dcOfficialUpdated" class="dc-meta">—</div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Impacto no Nível HST</div>
+    <div id="dcHstImpact" class="dc-impact-main">Calculando…</div>
+    <div id="dcHstImpactDetail" class="dc-meta">A Defesa Civil somente influencia o nível quando existe estágio ou sinal operacional oficial recente.</div>
+  </article>
+</div>
+
+<div class="grid2">
+  <article class="card">
+    <div class="eyebrow">Sinal operacional recente</div>
+    <div class="dc-signal-box">
+      <div id="dcSignalTitle" class="dc-signal-title">Nenhum sinal confirmado</div>
+      <div id="dcSignalMeta" class="dc-meta">Sirenes, alertas de risco com mobilização e abertura de pontos de apoio são acompanhados.</div>
+      <div class="road-actions"><a id="dcSignalLink" class="btn" target="_blank" rel="noopener" style="display:none">Abrir publicação</a></div>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Última publicação monitorada</div>
+    <div id="dcLatestTitle" class="road-update-title">Carregando…</div>
+    <div id="dcLatestDate" class="road-update-meta">—</div>
+    <div class="road-actions"><a id="dcLatestLink" class="btn" target="_blank" rel="noopener" style="display:none">Abrir publicação oficial</a></div>
+    <div class="source-health-footer">Publicação comum é exibida para contexto, mas não eleva automaticamente o Nível HST.</div>
+  </article>
+</div>
+
+<div class="grid2">
+  <article class="card">
+    <div class="eyebrow">Canais oficiais</div>
+    <div class="dc-contact-grid">
+      <div class="dc-contact-box"><span>Emergência</span><strong id="dcEmergency">199</strong></div>
+      <div class="dc-contact-box"><span>Alertas por SMS</span><strong id="dcSms">40199</strong></div>
+    </div>
+    <div class="road-actions">
+      <a id="dcHomeLink" class="btn" target="_blank" rel="noopener">Portal Defesa Civil</a>
+      <a id="dcBulletinLink" class="btn" target="_blank" rel="noopener">Boletins</a>
+      <a id="dcWhatsappLink" class="btn" target="_blank" rel="noopener">Canal oficial</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Critério usado pelo HST Alerta</div>
+    <div class="actions">
+      <div class="action">• Estágio operacional explícito: considerado por até <strong>48 h</strong>.</div>
+      <div class="action">• Sirene, mobilização de risco ou abertura de ponto de apoio: considerado por até <strong>12 h</strong>.</div>
+      <div class="action">• Informação antiga ou fonte indisponível não provoca nova escalada.</div>
+      <div class="action">• Notícia comum permanece informativa e não funciona como gatilho automático.</div>
+    </div>
+  </article>
+</div>
+
+<article class="card">
+  <div class="section">
+    <div><h3>Histórico da Defesa Civil</h3><div class="small">Registra somente mudanças de estágio, sinal operacional ou estado de comunicação.</div></div>
+    <span id="dcHistoryCount" class="badge">0 mudanças</span>
+  </div>
+  <div class="table"><table>
+    <thead><tr><th>Período</th><th>Comunicação</th><th>Estágio / sinal</th><th>Nível associado</th><th>Atualização oficial</th><th>Impacto</th></tr></thead>
+    <tbody id="dcHistoryBody"><tr><td colspan="6">Carregando histórico da Defesa Civil…</td></tr></tbody>
+  </table></div>
+</article>
+
+<div class="callout" style="margin-top:16px"><strong>Importante:</strong> indisponibilidade do portal ou ausência de publicação recente não significam ausência de risco. O HST Alerta não infere normalidade quando a fonte oficial não pode ser confirmada.</div>
 </section>
 
 <section id="servicos" class="panel">
@@ -1388,6 +1481,134 @@ function updateOperationalMapSummary(data){
   document.getElementById('mapCurrentWeatherTime').textContent=current?.observed_at?relativeWeatherTime(current.observed_at):'';
 }
 
+function defenseCivilStatusText(status){
+  if(status==='ok') return 'Fonte confirmada';
+  if(status==='no_recent_update') return 'Conectividade ativa · sem atualização recente';
+  return 'Sem confirmação da fonte';
+}
+function defenseCivilStatusClass(status){
+  if(status==='ok') return 'ok';
+  if(status==='no_recent_update') return 'warn';
+  return 'off';
+}
+function renderDefenseCivilPanel(data){
+  const dc=data?.sources?.defesa_civil||{};
+  const overall=data?.overall||{};
+  const status=dc.status||'source_unconfirmed';
+
+  setConnection('dcSourceStatus',defenseCivilStatusClass(status),defenseCivilStatusText(status));
+  document.getElementById('dcStage').textContent=status==='ok'
+    ?(dc.stage||dc.risk||'Informação operacional')
+    :status==='no_recent_update'?'Sem atualização recente':'Sem confirmação';
+  document.getElementById('dcBasis').textContent=dc.basis||dc.message||'Nenhuma informação operacional recente confirmada.';
+  document.getElementById('dcOfficialUpdated').textContent=dc.official_updated_at
+    ?'Atualização oficial: '+fmtDate(dc.official_updated_at)+' · coleta: '+fmtDate(dc.collected_at)
+    :'Última coleta do canal: '+fmtDate(dc.collected_at);
+
+  const dcLevel=Number(dc.level)||0;
+  const hstLevel=Number(overall.level)||1;
+  const officialCandidate=Number(overall.official_candidate_level)||1;
+  let impact='Não está elevando o Nível HST';
+  let impactDetail='Sem estágio ou sinal operacional recente aplicável nesta coleta.';
+  if(status==='ok' && dcLevel>1){
+    if(dcLevel===officialCandidate){
+      impact='Contribui para o nível oficial '+dcLevel+' · '+(labels[dcLevel]||'');
+      impactDetail=(dc.basis||'Informação oficial da Defesa Civil')+'. Nível HST atual: '+hstLevel+' · '+(labels[hstLevel]||'')+'.';
+    }else{
+      impact='Sinaliza nível '+dcLevel+' · '+(labels[dcLevel]||'');
+      impactDetail=(dc.basis||'Informação oficial da Defesa Civil')+'. O Nível HST atual é '+hstLevel+' · '+(labels[hstLevel]||'')+' por considerar o conjunto das fontes.';
+    }
+  }else if(status!=='ok'){
+    impact='Sem influência confirmada nesta coleta';
+    impactDetail='A fonte não está sendo usada para nova escalada enquanto não houver informação oficial recente confirmada.';
+  }
+  document.getElementById('dcHstImpact').textContent=impact;
+  document.getElementById('dcHstImpactDetail').textContent=impactDetail;
+
+  const signal=dc.operational_signal||{};
+  document.getElementById('dcSignalTitle').textContent=signal.label||'Nenhum sinal operacional recente identificado';
+  document.getElementById('dcSignalMeta').textContent=signal.published_at
+    ?'Publicado em '+fmtDate(signal.published_at)+(signal.level?' · referência HST nível '+signal.level+' · '+(labels[signal.level]||''):'')
+    :'Sirenes, alertas de risco com mobilização e abertura de pontos de apoio são acompanhados.';
+  const signalLink=document.getElementById('dcSignalLink');
+  if(signal.url){signalLink.href=signal.url;signalLink.style.display='inline-block';}else{signalLink.style.display='none';}
+
+  const latest=dc.latest_news||dc.latest_bulletin||{};
+  document.getElementById('dcLatestTitle').textContent=latest.title||'Nenhuma publicação recente confirmada';
+  document.getElementById('dcLatestDate').textContent=latest.published_at?'Publicado em '+fmtDate(latest.published_at):'—';
+  const latestLink=document.getElementById('dcLatestLink');
+  if(latest.url){latestLink.href=latest.url;latestLink.style.display='inline-block';}else{latestLink.style.display='none';}
+
+  const channels=dc.channels||{};
+  document.getElementById('dcEmergency').textContent=channels.emergency||'199';
+  document.getElementById('dcSms').textContent=channels.sms||'40199';
+  const links=[
+    ['dcHomeLink',channels.home],
+    ['dcBulletinLink',channels.bulletin],
+    ['dcWhatsappLink',channels.whatsapp]
+  ];
+  links.forEach(([id,url])=>{
+    const el=document.getElementById(id);
+    if(url){el.href=url;el.style.display='inline-block';}else{el.style.display='none';}
+  });
+}
+
+function defenseCivilHistorySignature(s){
+  const dc=s?.defesa_civil;
+  if(!dc) return null;
+  return [
+    normalizeHistoryText(dc.status),
+    Number(dc.level)||0,
+    normalizeHistoryText(dc.stage),
+    normalizeHistoryText(dc.basis),
+    normalizeHistoryText(dc.signal_type),
+    normalizeHistoryText(dc.signal_label)
+  ].join('|');
+}
+function groupDefenseCivilHistory(snaps){
+  const asc=[...snaps].filter(s=>s?.defesa_civil).sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  const groups=[];
+  for(const s of asc){
+    const sig=defenseCivilHistorySignature(s);
+    if(sig==null) continue;
+    const last=groups[groups.length-1];
+    if(last && last._sig===sig){
+      last._to=s.ts;
+      last._count+=1;
+      last._last=s;
+    }else{
+      groups.push({_sig:sig,_from:s.ts,_to:s.ts,_count:1,_last:s});
+    }
+  }
+  return groups.map(g=>({...g._last,_from:g._from,_to:g._to,_count:g._count}));
+}
+function renderDefenseCivilHistory(){
+  const body=document.getElementById('dcHistoryBody');
+  const badge=document.getElementById('dcHistoryCount');
+  if(!body || !badge) return;
+  const rows=groupDefenseCivilHistory(currentHistory).sort((a,b)=>String(b._to||b.ts||'').localeCompare(String(a._to||a.ts||'')));
+  badge.textContent=rows.length+' mudança'+(rows.length===1?'':'s');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6">O histórico próprio será preenchido a partir das coletas com a integração da Defesa Civil.</td></tr>';
+    return;
+  }
+  body.innerHTML=rows.map(s=>{
+    const dc=s.defesa_civil||{};
+    const comm=dc.status==='ok'?'Confirmada':dc.status==='no_recent_update'?'Sem atualização recente':'Sem confirmação';
+    const event=dc.basis||dc.signal_label||dc.stage||dc.risk||'—';
+    const lvl=dc.level?dc.level+' · '+(labels[dc.level]||''):'—';
+    const impact=dc.level&&Number(dc.level)>1?'Pode influenciar o Nível HST':'Sem elevação confirmada';
+    return '<tr>'+
+      '<td>'+historyPeriod(s)+'</td>'+
+      '<td><span class="dc-history-status">'+esc(comm)+'</span></td>'+
+      '<td>'+esc(event)+'</td>'+
+      '<td>'+esc(lvl)+'</td>'+
+      '<td>'+esc(dc.official_updated_at?fmtDate(dc.official_updated_at):'—')+'</td>'+
+      '<td class="small">'+esc(impact)+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
 async function loadOfficialData(){
   try{
     const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
@@ -1400,6 +1621,7 @@ async function loadOfficialData(){
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
     const dc=data.sources?.defesa_civil||{};
+    renderDefenseCivilPanel(data);
     const roads=data.roads||{};
     const w=data.weather||{};
     const wr=data.weather_reference||{};
@@ -1928,6 +2150,7 @@ function renderHistory(snaps,label='janela de 90 dias'){
   currentHistoryLabel=label;
   updateHistorySummary();
   if(historyView==='risk') renderRiskHistory(); else renderPluvioHistory();
+  renderDefenseCivilHistory();
 }
 function setHistoryView(view){
   historyView=view;
@@ -2016,6 +2239,7 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   b.classList.add('active');
   document.getElementById(b.dataset.target).classList.add('active');
   if(b.dataset.target==='mapa') setTimeout(()=>ensureOperationalMap(latestOfficialData),60);
+  if(b.dataset.target==='defesa') renderDefenseCivilHistory();
 });
 document.querySelectorAll('[data-map-mode]').forEach(btn=>btn.onclick=()=>activateMapMode(btn.dataset.mapMode));
 document.getElementById('mapStationsToggle').onclick=()=>toggleMapSupport('stations');
