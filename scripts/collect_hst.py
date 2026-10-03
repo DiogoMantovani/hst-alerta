@@ -12,17 +12,28 @@ from bs4 import BeautifulSoup
 TZ = ZoneInfo("America/Sao_Paulo")
 CITY = "PETRÓPOLIS"
 OUT = os.path.join("data", "status.json")
+HISTORY_OUT = os.path.join("data", "history.json")
+HISTORY_INDEX_OUT = os.path.join("data", "history_index.json")
+ARCHIVE_DIR = os.path.join("data", "archive")
 PREVIOUS_URL = "https://diogomantovani.github.io/hst-alerta/data/status.json"
+HISTORY_URL = "https://diogomantovani.github.io/hst-alerta/data/history.json"
 
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
 CEMADEN_PLUVIO = "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
 INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
+DEFESA_CIVIL_HOME = "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil"
+DEFESA_CIVIL_TAG = "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil"
+DEFESA_CIVIL_BOLETIM = "https://www.petropolis.rj.gov.br/boletim"
+DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
+ELOVIAS_HOME = "https://elovias.com.br/home"
+ELOVIAS_MAP = "https://elovias.com.br/mapa"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
 LEVEL_LABELS = {1:"Vigilância",2:"Observação",3:"Atenção",4:"Alerta",5:"Alerta Máximo"}
 ALERT_LEVEL = {"SEM AVISO":1,"AMARELO":2,"LARANJA":3,"VERMELHO":4}
+DC_LEVEL = {"VIGILANCIA":1,"OBSERVACAO":2,"ATENCAO":3,"ALERTA":4,"ALERTA MAXIMO":5,"CRISE":5}
 
 def norm(value):
     value = unicodedata.normalize("NFKD", str(value or ""))
@@ -328,6 +339,292 @@ def fetch_cemaden_pluviometers(previous):
         })
         return fallback
 
+def parse_portuguese_datetime(text):
+    if not text:
+        return None
+    value=re.sub(r"\\s+"," ",str(text)).strip()
+    parsed=parse_dt(value)
+    if parsed:
+        return parsed
+    months={
+        "JANEIRO":1,"FEVEREIRO":2,"MARCO":3,"ABRIL":4,"MAIO":5,"JUNHO":6,
+        "JULHO":7,"AGOSTO":8,"SETEMBRO":9,"OUTUBRO":10,"NOVEMBRO":11,"DEZEMBRO":12,
+    }
+    clean=norm(value)
+    m=re.search(r"(\\d{1,2})\\s+(JANEIRO|FEVEREIRO|MARCO|ABRIL|MAIO|JUNHO|JULHO|AGOSTO|SETEMBRO|OUTUBRO|NOVEMBRO|DEZEMBRO)\\s+(\\d{4})(?:\\s+(\\d{1,2}):(\\d{2}))?",clean)
+    if not m:
+        return None
+    try:
+        return datetime(int(m.group(3)),months[m.group(2)],int(m.group(1)),int(m.group(4) or 0),int(m.group(5) or 0),tzinfo=TZ)
+    except Exception:
+        return None
+
+def article_datetime(soup):
+    for attrs in (
+        {"property":"article:published_time"},
+        {"itemprop":"datePublished"},
+        {"name":"date"},
+    ):
+        tag=soup.find("meta",attrs=attrs)
+        if tag and tag.get("content"):
+            d=parse_portuguese_datetime(tag.get("content"))
+            if d: return d
+    text=soup.get_text(" ",strip=True)
+    return parse_portuguese_datetime(text[:2500])
+
+def fetch_defesa_civil(previous):
+    prev=(previous.get("sources") or {}).get("defesa_civil",{})
+    now=datetime.now(TZ)
+    channels={
+        "emergency":"199",
+        "sms":"40199",
+        "whatsapp":DEFESA_CIVIL_WHATSAPP,
+        "bulletin":DEFESA_CIVIL_BOLETIM,
+        "home":DEFESA_CIVIL_HOME,
+    }
+    try:
+        home=requests.get(DEFESA_CIVIL_HOME,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        home.raise_for_status()
+        tag=requests.get(DEFESA_CIVIL_TAG,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        tag.raise_for_status()
+        soup=BeautifulSoup(tag.text,"html.parser")
+        links=[]
+        for a in soup.find_all("a",href=True):
+            href=a.get("href","")
+            if "/noticias/item/" not in href:
+                continue
+            if href.startswith("/"):
+                href="https://www.petropolis.rj.gov.br"+href
+            elif not href.startswith("http"):
+                href="https://www.petropolis.rj.gov.br/pmp/"+href.lstrip("./")
+            if href not in links:
+                links.append(href)
+            if len(links)>=15:
+                break
+
+        latest_stage=None
+        latest_news=None
+        for url in links:
+            try:
+                r=requests.get(url,timeout=12,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+                r.raise_for_status()
+                art=BeautifulSoup(r.text,"html.parser")
+                title_el=art.find("h1") or art.find("h2")
+                title=re.sub(r"\\s+"," ",title_el.get_text(" ",strip=True) if title_el else "").strip()
+                published=article_datetime(art)
+                text_body=re.sub(r"\\s+"," ",art.get_text(" ",strip=True))
+                item={"title":title or "Notícia da Defesa Civil","url":url,"published_at":published.isoformat() if published else None}
+                if published and (latest_news is None or published>latest_news[0]):
+                    latest_news=(published,item)
+                body_norm=norm(text_body)
+                m=re.search(r"ESTAGIO OPERACIONAL\\s*[:\\-]?\\s*(VIGILANCIA|OBSERVACAO|ATENCAO|ALERTA MAXIMO|ALERTA|CRISE)",body_norm)
+                if m and published and (latest_stage is None or published>latest_stage[0]):
+                    latest_stage=(published,m.group(1),item)
+            except Exception:
+                continue
+
+        latest_news_item=latest_news[1] if latest_news else None
+        if latest_stage:
+            published,stage_norm,item=latest_stage
+            age=round((now-published).total_seconds()/3600,1)
+            if age<=48:
+                stage_label={
+                    "VIGILANCIA":"Vigilância","OBSERVACAO":"Observação","ATENCAO":"Atenção",
+                    "ALERTA":"Alerta","ALERTA MAXIMO":"Alerta Máximo","CRISE":"Crise"
+                }[stage_norm]
+                return {
+                    "name":"Defesa Civil",
+                    "provider":"Defesa Civil de Petrópolis",
+                    "status":"ok",
+                    "stage":stage_label,
+                    "risk":stage_label,
+                    "level":DC_LEVEL[stage_norm],
+                    "official_updated_at":published.isoformat(),
+                    "age_hours":age,
+                    "latest_bulletin":item,
+                    "latest_news":latest_news_item,
+                    "channels":channels,
+                    "collected_at":now.isoformat(),
+                    "url":DEFESA_CIVIL_HOME,
+                    "error":None,
+                }
+
+        return {
+            "name":"Defesa Civil",
+            "provider":"Defesa Civil de Petrópolis",
+            "status":"no_recent_bulletin",
+            "stage":None,
+            "risk":"Sem estágio recente automatizável",
+            "level":None,
+            "official_updated_at":latest_stage[0].isoformat() if latest_stage else None,
+            "age_hours":round((now-latest_stage[0]).total_seconds()/3600,1) if latest_stage else None,
+            "latest_bulletin":latest_stage[2] if latest_stage else None,
+            "latest_news":latest_news_item,
+            "channels":channels,
+            "collected_at":now.isoformat(),
+            "url":DEFESA_CIVIL_HOME,
+            "error":None,
+        }
+    except Exception as exc:
+        return {
+            "name":"Defesa Civil",
+            "provider":"Defesa Civil de Petrópolis",
+            "status":"unavailable",
+            "stage":None,
+            "risk":"Fonte indisponível",
+            "level":None,
+            "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
+            "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
+            "channels":channels,
+            "collected_at":now.isoformat(),
+            "url":DEFESA_CIVIL_HOME,
+            "error":str(exc)[:500],
+        }
+
+def fetch_roads(previous):
+    prev=previous.get("roads") or {}
+    now=datetime.now(TZ)
+    try:
+        r=requests.get(ELOVIAS_HOME,timeout=18,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        r.raise_for_status()
+        return {
+            "provider":"Elovias",
+            "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
+            "status":"official_channel_available",
+            "traffic_status":"Consulta oficial necessária",
+            "automated_traffic":False,
+            "emergency_phone":"0800-040-0495",
+            "accessibility_phone":"0800-040-1495",
+            "whatsapp":"(21) 98040-0113",
+            "home_url":ELOVIAS_HOME,
+            "map_url":ELOVIAS_MAP,
+            "collected_at":now.isoformat(),
+            "error":None,
+        }
+    except Exception as exc:
+        fallback=dict(prev)
+        fallback.update({
+            "provider":"Elovias",
+            "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
+            "status":"unavailable",
+            "traffic_status":"Não determinado",
+            "automated_traffic":False,
+            "home_url":ELOVIAS_HOME,
+            "map_url":ELOVIAS_MAP,
+            "collected_at":now.isoformat(),
+            "error":str(exc)[:400],
+        })
+        return fallback
+
+def history_snapshot(payload):
+    sources=payload.get("sources") or {}
+    pv=payload.get("pluviometers") or {}
+    return {
+        "ts":payload.get("generated_at"),
+        "level":(payload.get("overall") or {}).get("level"),
+        "label":(payload.get("overall") or {}).get("label"),
+        "reason":(payload.get("overall") or {}).get("reason"),
+        "geological":{
+            "level":(sources.get("cemaden_geological") or {}).get("level"),
+            "risk":(sources.get("cemaden_geological") or {}).get("risk"),
+            "status":(sources.get("cemaden_geological") or {}).get("status"),
+        },
+        "hydrological":{
+            "level":(sources.get("cemaden_hydrological") or {}).get("level"),
+            "risk":(sources.get("cemaden_hydrological") or {}).get("risk"),
+            "status":(sources.get("cemaden_hydrological") or {}).get("status"),
+        },
+        "inmet":{
+            "level":(sources.get("inmet_alerts") or {}).get("level"),
+            "risk":(sources.get("inmet_alerts") or {}).get("risk"),
+            "status":(sources.get("inmet_alerts") or {}).get("status"),
+        },
+        "defesa_civil":{
+            "level":(sources.get("defesa_civil") or {}).get("level"),
+            "stage":(sources.get("defesa_civil") or {}).get("stage"),
+            "status":(sources.get("defesa_civil") or {}).get("status"),
+        },
+        "pluviometers":{
+            "highest_1h":pv.get("highest_1h"),
+            "highest_24h":pv.get("highest_24h"),
+            "recent_stations":pv.get("recent_stations"),
+            "total_stations":pv.get("total_stations"),
+        },
+        "weather":{
+            "status":(payload.get("weather") or {}).get("status"),
+            "temperature_c":(payload.get("weather") or {}).get("temperature_c"),
+        },
+        "roads":{
+            "status":(payload.get("roads") or {}).get("status"),
+            "traffic_status":(payload.get("roads") or {}).get("traffic_status"),
+        },
+    }
+
+def persist_history(payload):
+    os.makedirs(ARCHIVE_DIR,exist_ok=True)
+    now=parse_dt(payload.get("generated_at")) or datetime.now(TZ)
+    snap=history_snapshot(payload)
+
+    history=[]
+    try:
+        with open(HISTORY_OUT,"r",encoding="utf-8") as f:
+            raw=json.load(f)
+            history=raw.get("snapshots",[]) if isinstance(raw,dict) else raw
+    except Exception:
+        try:
+            raw=get_json(HISTORY_URL,timeout=10)
+            history=raw.get("snapshots",[]) if isinstance(raw,dict) else raw
+        except Exception:
+            history=[]
+
+    history=[x for x in history if isinstance(x,dict) and x.get("ts")!=snap.get("ts")]
+    history.append(snap)
+    history.sort(key=lambda x:str(x.get("ts") or ""))
+    cutoff=now-timedelta(days=90)
+    rolling=[]
+    for x in history:
+        d=parse_dt(x.get("ts"))
+        if d and d>=cutoff:
+            rolling.append(x)
+    with open(HISTORY_OUT,"w",encoding="utf-8") as f:
+        json.dump({
+            "schema_version":1,
+            "generated_at":now.isoformat(),
+            "retention_days":90,
+            "snapshots":rolling,
+        },f,ensure_ascii=False,separators=(",",":"))
+
+    month=now.strftime("%Y-%m")
+    archive_path=os.path.join(ARCHIVE_DIR,month+".json")
+    archive=[]
+    try:
+        with open(archive_path,"r",encoding="utf-8") as f:
+            raw=json.load(f)
+            archive=raw.get("snapshots",[]) if isinstance(raw,dict) else raw
+    except Exception:
+        archive=[]
+    archive=[x for x in archive if isinstance(x,dict) and x.get("ts")!=snap.get("ts")]
+    archive.append(snap)
+    archive.sort(key=lambda x:str(x.get("ts") or ""))
+    with open(archive_path,"w",encoding="utf-8") as f:
+        json.dump({"schema_version":1,"month":month,"snapshots":archive},f,ensure_ascii=False,separators=(",",":"))
+
+    months=[]
+    for name in sorted(os.listdir(ARCHIVE_DIR),reverse=True):
+        if not re.fullmatch(r"\\d{4}-\\d{2}\\.json",name):
+            continue
+        path=os.path.join(ARCHIVE_DIR,name)
+        count=None
+        try:
+            with open(path,"r",encoding="utf-8") as f:
+                raw=json.load(f)
+                count=len(raw.get("snapshots",[]) if isinstance(raw,dict) else raw)
+        except Exception:
+            pass
+        months.append({"month":name[:-5],"file":"data/archive/"+name,"snapshots":count})
+    with open(HISTORY_INDEX_OUT,"w",encoding="utf-8") as f:
+        json.dump({"schema_version":1,"generated_at":now.isoformat(),"months":months},f,ensure_ascii=False,separators=(",",":"))
+
 def fetch_inmet_forecast(previous):
     prev=previous.get("forecast") or {}
     now=datetime.now(TZ)
@@ -427,8 +724,10 @@ def main():
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
+    defesa=fetch_defesa_civil(previous)
+    roads=fetch_roads(previous)
 
-    usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
+    usable=[s for s in (geo,hydro,inmet,defesa) if isinstance(s.get("level"),int)]
     overall=max([s["level"] for s in usable], default=int((previous.get("overall") or {}).get("level") or 1))
 
     # Optional combined-source escalation: only independent providers count.
@@ -440,12 +739,12 @@ def main():
         escalated=True
 
     top=[]
-    for s in (geo,hydro,inmet):
+    for s in (geo,hydro,inmet,defesa):
         if isinstance(s.get("level"),int) and s["level"]>=max(1,overall-(1 if escalated else 0)):
             top.append(f'{s["name"]}: {s.get("risk")}')
     reason=", ".join(top) or "Sem nova leitura válida."
     if escalated: reason += ". Escalada por duas fontes independentes em nível 3 ou superior."
-    unavailable=[s["name"] for s in (geo,hydro,inmet) if s.get("status")=="unavailable"]
+    unavailable=[s["name"] for s in (geo,hydro,inmet,defesa) if s.get("status")=="unavailable"]
     stale=[s["name"] for s in (geo,hydro) if s.get("status")=="stale"]
     if unavailable: reason += ". Fonte(s) indisponível(is): "+", ".join(unavailable)+"; último valor válido preservado quando disponível."
     if stale: reason += ". Atenção: atualização oficial antiga em "+", ".join(stale)+"."
@@ -456,13 +755,15 @@ def main():
       "generated_at":now.isoformat(),
       "location":{"city":"Petrópolis","state":"RJ","country":"Brasil"},
       "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
-      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
+      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
       "pluviometers":pluviometers,
       "forecast":forecast,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":"pending","roads":"pending","utilities":"pending"}
+      "roads":roads,
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":defesa.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
+    persist_history(payload)
     print(json.dumps(payload,ensure_ascii=False,indent=2))
 
 if __name__=="__main__":
