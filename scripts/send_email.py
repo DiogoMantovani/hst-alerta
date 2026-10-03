@@ -9,7 +9,6 @@ from email.utils import formataddr
 from datetime import datetime, timezone
 from pathlib import Path
 
-import requests
 
 STATUS_PATH = Path("data/status.json")
 STATE_PATH = Path("data/email_notification_state.json")
@@ -217,7 +216,6 @@ def config():
                 "recipients": parse_recipients(os.getenv("HST_EMAIL_GRUPO_GERENTES", "")),
             },
         },
-        "api_key": os.getenv("RESEND_API_KEY", "").strip(),
         "smtp_user": os.getenv("HST_SMTP_USER", "").strip(),
         "smtp_app_password": os.getenv("HST_SMTP_APP_PASSWORD", "").strip(),
         "smtp_host": os.getenv("HST_SMTP_HOST", "smtp.gmail.com").strip() or "smtp.gmail.com",
@@ -237,8 +235,6 @@ def configured(cfg, group):
 def provider_name(cfg):
     if cfg.get("smtp_user") and cfg.get("smtp_app_password"):
         return "smtp"
-    if cfg.get("api_key"):
-        return "resend"
     return None
 
 
@@ -314,71 +310,37 @@ Mensagem automática de apoio à decisão. Os documentos institucionais vigentes
 
 
 def send_email(cfg, recipients, subject, body_html, body_text):
-    provider = provider_name(cfg)
     if not recipients:
         return False, [], "Nenhum destinatário configurado."
+    if provider_name(cfg) != "smtp":
+        return False, [], "Gmail SMTP não configurado."
 
     sent_ids = []
     failures = []
 
     for recipient in recipients:
-        if provider == "smtp":
-            msg = EmailMessage()
-            msg["Subject"] = subject
-            msg["From"] = cfg.get("from_email") or formataddr(("HST Alerta", cfg["smtp_user"]))
-            msg["To"] = recipient
-            if cfg.get("reply_to"):
-                msg["Reply-To"] = cfg["reply_to"]
-            msg.set_content(body_text)
-            msg.add_alternative(body_html, subtype="html")
-            try:
-                with smtplib.SMTP_SSL(cfg["smtp_host"], cfg["smtp_port"], timeout=30) as server:
-                    server.login(cfg["smtp_user"], cfg["smtp_app_password"])
-                    server.send_message(msg)
-                sent_ids.append(None)
-            except Exception as exc:
-                failures.append(f"{recipient}: {exc.__class__.__name__}")
-            continue
-
-        headers = {
-            "Authorization": f"Bearer {cfg['api_key']}",
-            "Content-Type": "application/json",
-        }
-        sender = cfg.get("from_email") or "HST Alerta <onboarding@resend.dev>"
-        payload = {
-            "from": sender,
-            "to": [recipient],
-            "subject": subject,
-            "html": body_html,
-            "text": body_text,
-        }
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = cfg.get("from_email") or formataddr(("HST Alerta", cfg["smtp_user"]))
+        msg["To"] = recipient
         if cfg.get("reply_to"):
-            payload["reply_to"] = cfg["reply_to"]
-
+            msg["Reply-To"] = cfg["reply_to"]
+        msg.set_content(body_text)
+        msg.add_alternative(body_html, subtype="html")
         try:
-            response = requests.post("https://api.resend.com/emails", headers=headers, json=payload, timeout=30)
-        except requests.RequestException as exc:
-            failures.append(f"{recipient}: {exc.__class__.__name__}")
-            continue
-
-        if 200 <= response.status_code < 300:
-            try:
-                sent_ids.append((response.json() or {}).get("id"))
-            except Exception:
-                sent_ids.append(None)
-        else:
-            error = f"HTTP {response.status_code}"
-            try:
-                body = response.json() or {}
-                error = clean_text(body.get("message") or body.get("name") or error, 300)
-            except Exception:
-                pass
-            failures.append(f"{recipient}: {error}")
+            with smtplib.SMTP_SSL(cfg["smtp_host"], cfg["smtp_port"], timeout=30) as server:
+                server.login(cfg["smtp_user"], cfg["smtp_app_password"])
+                server.send_message(msg)
+            sent_ids.append(None)
+        except Exception as exc:
+            failures.append(exc.__class__.__name__)
 
     if failures:
-        return False, sent_ids, clean_text("; ".join(failures), 500)
+        return False, sent_ids, clean_text(
+            f"{len(failures)} destinatário(s) com falha SMTP: " + ", ".join(failures),
+            500,
+        )
     return True, sent_ids, None
-
 
 
 def update_public_status(data, state, cfg, enabled):
