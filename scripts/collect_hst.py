@@ -484,10 +484,6 @@ def fetch_cemaden_pluviometers(previous):
         if not isinstance(data,list):
             raise RuntimeError("Formato inesperado do endpoint público de pluviômetros")
 
-        probe_rows=[row for row in data if isinstance(row,dict) and str(row.get("codibge"))=="3303906"][:3]
-        for probe in probe_rows:
-            print("CEMADEN_PLUVIO_FIELDS",probe.get("nomeestacao"),json.dumps(probe,ensure_ascii=False)[:5000])
-
         stations=[]
         for row in data:
             if not isinstance(row,dict) or str(row.get("codibge"))!="3303906":
@@ -514,14 +510,18 @@ def fetch_cemaden_pluviometers(previous):
                 v=row.get(key)
                 return safe_float(v) if v not in ("-",None,"") else None
             station_name=row.get("nomeestacao") or "Estação sem nome"
-            coords=KNOWN_CEMADEN_COORDS.get(station_name)
+            fallback_coords=KNOWN_CEMADEN_COORDS.get(station_name)
+            row_lat=safe_float(row.get("latitude"))
+            row_lon=safe_float(row.get("longitude"))
+            station_lat=row_lat if row_lat is not None else (fallback_coords[0] if fallback_coords else None)
+            station_lon=row_lon if row_lon is not None else (fallback_coords[1] if fallback_coords else None)
             stations.append({
                 "id":row.get("idestacao"),
                 "name":station_name,
                 "status":health,
-                "latitude":coords[0] if coords else None,
-                "longitude":coords[1] if coords else None,
-                "distance_to_hst_km":round(distance_km(HST_LAT,HST_LON,coords[0],coords[1]),2) if coords else None,
+                "latitude":station_lat,
+                "longitude":station_lon,
+                "distance_to_hst_km":round(distance_km(HST_LAT,HST_LON,station_lat,station_lon),2) if station_lat is not None and station_lon is not None else None,
                 "raw_timestamp":raw_dt or None,
                 "observed_at":observed.isoformat() if observed else raw_dt or None,
                 "age_hours":age,
@@ -543,7 +543,8 @@ def fetch_cemaden_pluviometers(previous):
         recent=[s for s in stations if s["status"]=="ok"]
         anomalies=[s for s in stations if s["status"]=="time_anomaly"]
         georeferenced=[s for s in stations if isinstance(s.get("distance_to_hst_km"),(int,float))]
-        nearest=min(georeferenced,key=lambda s:s["distance_to_hst_km"]) if georeferenced else None
+        georeferenced_recent=[s for s in recent if isinstance(s.get("distance_to_hst_km"),(int,float))]
+        nearest=min(georeferenced_recent or georeferenced,key=lambda s:s["distance_to_hst_km"]) if georeferenced else None
         def highest(key):
             # Only fresh, internally time-consistent stations contribute to
             # dashboard maxima. Stale/anomalous values remain visible in the table.
@@ -552,8 +553,13 @@ def fetch_cemaden_pluviometers(previous):
             top=max(vals,key=lambda s:s[key])
             return {"value":top[key],"station":top["name"]}
 
-        order={"ok":0,"time_anomaly":1,"stale":2}
-        stations.sort(key=lambda s:(order.get(s["status"],3),-(s.get("acc24h_mm") or 0),s["name"]))
+        stations.sort(
+            key=lambda s:(
+                s.get("distance_to_hst_km") is None,
+                s.get("distance_to_hst_km") if s.get("distance_to_hst_km") is not None else 9999,
+                s["name"],
+            )
+        )
         return {
             "provider":"CEMADEN",
             "status":"ok" if recent else "stale",
@@ -562,6 +568,7 @@ def fetch_cemaden_pluviometers(previous):
             "url":CEMADEN_PLUVIO,
             "total_stations":len(stations),
             "recent_stations":len(recent),
+            "hidden_stations":len(stations)-len(recent),
             "time_anomaly_stations":len(anomalies),
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
@@ -897,6 +904,10 @@ def fetch_roads(previous):
 def history_snapshot(payload):
     sources=payload.get("sources") or {}
     pv=payload.get("pluviometers") or {}
+    bingen=next(
+        (s for s in (pv.get("stations") or []) if norm((s or {}).get("name"))=="BINGEN GEO"),
+        None,
+    )
     return {
         "ts":payload.get("generated_at"),
         "level":(payload.get("overall") or {}).get("level"),
@@ -922,6 +933,21 @@ def history_snapshot(payload):
             "highest_24h":pv.get("highest_24h"),
             "recent_stations":pv.get("recent_stations"),
             "total_stations":pv.get("total_stations"),
+            "bingen":{
+                "name":bingen.get("name"),
+                "status":bingen.get("status"),
+                "observed_at":bingen.get("observed_at"),
+                "age_hours":bingen.get("age_hours"),
+                "distance_to_hst_km":bingen.get("distance_to_hst_km"),
+                "acc1h_mm":bingen.get("acc1h_mm"),
+                "acc3h_mm":bingen.get("acc3h_mm"),
+                "acc6h_mm":bingen.get("acc6h_mm"),
+                "acc12h_mm":bingen.get("acc12h_mm"),
+                "acc24h_mm":bingen.get("acc24h_mm"),
+                "acc48h_mm":bingen.get("acc48h_mm"),
+                "acc72h_mm":bingen.get("acc72h_mm"),
+                "acc96h_mm":bingen.get("acc96h_mm"),
+            } if bingen else None,
         },
         "weather":{
             "status":(payload.get("weather_reference") or {}).get("status") or (payload.get("weather") or {}).get("status"),
