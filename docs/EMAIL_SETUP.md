@@ -66,3 +66,7 @@ Secrets:
 A senha normal da conta Google não deve ser usada. A senha de app exige verificação em duas etapas na Conta Google.
 
 Se Gmail SMTP e Resend estiverem configurados ao mesmo tempo, o HST Alerta prioriza Gmail SMTP.
+
+
+## Estado de produção
+Após a validação do envio por Gmail SMTP, o canal pode ser habilitado com `HST_EMAIL_ENABLED=true`. Antes da primeira ativação real, o estado de teste deve ser limpo para que um nível 3, 4 ou 5 vigente gere o primeiro aviso operacional normalmente.
