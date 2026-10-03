@@ -34,7 +34,31 @@
 .weather-theme-storm{background:linear-gradient(145deg,#f4f2f9,#eceaf4)}
 .weather-theme-storm .weather-iconbox{background:#e4e0f0;border-color:#d4cdea}
 .weather-theme-fog{background:linear-gradient(145deg,#f7f8f8,#eef1f1)}
-.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.risk{background:white;border:1px solid var(--line);border-radius:14px;padding:18px}.risk .value{font-size:22px;font-weight:900;margin:8px 0}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.num{font-size:64px}.top h1{font-size:30px}}
+.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.risk{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:215px;display:flex;flex-direction:column}
+.risk-title{font-size:16px;font-weight:900;color:#173038;letter-spacing:.01em;margin-bottom:14px}
+.risk-state-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:3px}
+.risk .value{font-size:23px;line-height:1.2;font-weight:900;margin:0 0 15px;color:#082d38}
+.risk-source-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:5px}
+.risk-source{margin-bottom:13px}
+.risk-observation{border-top:1px solid #edf2f2;padding-top:11px;margin-top:auto}
+.risk-observation-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:5px}
+.risk-observation-text{font-size:12px;line-height:1.45;color:var(--muted)}
+.source-health-list{display:grid;gap:10px}
+.source-health-row{display:grid;grid-template-columns:minmax(145px,.8fr) minmax(125px,.6fr) 1.7fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #edf2f2}
+.source-health-row:last-child{border-bottom:0}
+.source-health-name{font-weight:850}
+.connection-pill{display:inline-flex;align-items:center;gap:7px;width:max-content;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid}
+.connection-pill:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.connection-ok{color:#27794b;background:#eef8f2;border-color:#cce7d5}
+.connection-warn{color:#986f00;background:#fff8e3;border-color:#ead9a1}
+.connection-off{color:#a33832;background:#fff0ef;border-color:#e8c4c1}
+.connection-na{color:#66777d;background:#f2f5f5;border-color:#d9e1e1}
+.source-health-note{font-size:12px;color:var(--muted);line-height:1.45}
+.history-controls{display:flex;gap:8px;flex-wrap:wrap}
+.btn.active-filter{background:var(--brand);color:#fff;border-color:var(--brand)}
+.history-period{font-weight:750}
+.history-samples{display:block;font-size:11px;color:var(--muted);margin-top:3px}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
 <body>
@@ -95,21 +119,52 @@
 </div>
 
 <div class="riskgrid">
-<article class="risk"><div class="small">Deslizamento</div><div id="geoCard" class="value">Carregando…</div><span id="geoBadge" class="badge">CEMADEN-RJ</span><div id="geoMeta" class="small" style="margin-top:8px"></div></article>
-<article class="risk"><div class="small">Hidrológico</div><div id="hidroCard" class="value">Carregando…</div><span id="hidroBadge" class="badge">CEMADEN-RJ</span><div id="hidroMeta" class="small" style="margin-top:8px"></div></article>
-<article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Carregando…</div><span id="inmetBadge" class="badge">INMET</span><div id="inmetMeta" class="small" style="margin-top:8px"></div></article>
-<article class="risk"><div class="small">Defesa Civil</div><div id="dcCard" class="value">Carregando…</div><span id="dcBadge" class="badge">Petrópolis</span><div id="dcMeta" class="small" style="margin-top:8px"></div></article>
+<article class="risk">
+  <div class="risk-title">Deslizamento</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="geoCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="geoBadge" class="badge">CEMADEN-RJ</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="geoMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Risco hidrológico</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="hidroCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="hidroBadge" class="badge">CEMADEN-RJ</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="hidroMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Avisos meteorológicos</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="inmetCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="inmetBadge" class="badge">INMET</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="inmetMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
+<article class="risk">
+  <div class="risk-title">Estágio da Defesa Civil</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="dcCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="dcBadge" class="badge">Defesa Civil de Petrópolis</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="dcMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
 </div>
 <div class="callout"><strong>Padrão HST de atualidade:</strong> informações de risco com mais de 24 horas deixam o painel atual e permanecem no histórico. “Sem atualização oficial recente” significa apenas que não há informação oficial nova confirmada na janela definida — <strong>não significa ausência de risco</strong>.</div>
 
 <div class="grid2">
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
-<article class="card"><div class="section"><h3>Integridade das fontes</h3></div>
-<div class="action"><strong>CEMADEN-RJ</strong><br><span id="cemadenHealth" class="small">Carregando status das fontes…</span></div>
-<div class="action"><strong>INMET</strong><br><span id="inmetHealth" class="small">Carregando clima e avisos…</span></div>
-<div class="action"><strong>Defesa Civil de Petrópolis</strong><br><span id="dcHealth" class="small">Carregando canal municipal…</span></div>
-<div class="action"><strong>Elovias / BR-040/495</strong><br><span id="roadsHealth" class="small">Carregando canal oficial…</span></div>
-<div class="action"><strong>Enel Rio / Águas do Imperador</strong><br><span class="small">Canais oficiais cadastrados; sem inferir normalidade quando não houver dado automatizável.</span></div>
+<article class="card">
+<div class="section"><div><h3>Conectividade das fontes</h3><div class="small">Mostra se o HST Alerta conseguiu acessar cada canal. Conectividade ativa não significa ausência de risco.</div></div></div>
+<div class="source-health-list">
+  <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span><div id="cemadenHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span><div id="inmetHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">Defesa Civil de Petrópolis</div><span id="dcConnection" class="connection-pill connection-na">Verificando</span><div id="dcHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">Elovias / BR-040/495</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span><div id="roadsHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">Enel Rio / Águas do Imperador</div><span class="connection-pill connection-na">Canal cadastrado</span><div class="source-health-note">Ainda sem monitoramento automático de conectividade.</div></div>
+</div>
 </article>
 </div>
 </section>
@@ -170,8 +225,13 @@
 </section>
 
 <section id="historico" class="panel">
-<div class="section"><h2>Histórico e Rastreabilidade</h2><button id="exportHistory" class="btn">Exportar CSV</button></div>
-<div class="callout">Cada coleta gera um snapshot auditável. O painel mantém uma janela rápida de até 90 dias e o repositório preserva arquivos mensais para retenção permanente a partir da ativação desta função.</div>
+<div class="section"><h2>Histórico e Rastreabilidade</h2>
+<div class="history-controls">
+  <button id="historyChanges" class="btn active-filter">Somente mudanças</button>
+  <button id="historyAll" class="btn">Todas as coletas</button>
+  <button id="exportHistory" class="btn">Exportar CSV completo</button>
+</div></div>
+<div class="callout">Cada coleta continua sendo preservada para auditoria. Por padrão, a tabela agrupa coletas consecutivas com o mesmo estado operacional e mostra somente as mudanças relevantes; use “Todas as coletas” para visualizar os registros brutos.</div>
 <div class="summary">
 <article class="card"><span class="small">Snapshots na janela</span><strong id="historyCount">—</strong></article>
 <article class="card"><span class="small">Primeiro registro exibido</span><strong id="historyOldest" style="font-size:15px">—</strong></article>
@@ -297,6 +357,12 @@ function sourceMeta(source){
   if(source.message) parts.push(source.message);
   return [...new Set(parts)].join(' · ');
 }
+function setConnection(id,state,label){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.className='connection-pill '+(state==='ok'?'connection-ok':state==='warn'?'connection-warn':state==='off'?'connection-off':'connection-na');
+  el.textContent=label;
+}
 async function loadOfficialData(){
   try{
     const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
@@ -402,15 +468,31 @@ async function loadOfficialData(){
         p.textContent=fc.error?'Fonte oficial sem resposta válida.':'Previsão oficial INMET.';
       }
     }
-    document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos meteorológicos ativos consultados automaticamente. Observação A610: '+(w.status==='ok'?'atualizada':'sem dado recente; referência complementar exibida no Dashboard')+'.':'Sem informação meteorológica oficial recente confirmada nesta coleta. Isso não significa ausência de risco.';
-    document.getElementById('dcHealth').textContent=dc?.status==='ok'?'Boletim municipal recente reconhecido automaticamente.':'Sem informação municipal recente confirmada nesta coleta. Isso não significa ausência de risco; manter 199, SMS e WhatsApp como redundância.';
-    document.getElementById('roadsHealth').textContent=roads?.status==='official_channel_available'?'Canal oficial Elovias acessível; condição de tráfego exige consulta ao mapa/app/0800.':'Canal Elovias indisponível nesta coleta; nenhuma condição de tráfego é inferida.';
-    document.getElementById('roadsServiceText').textContent=roads?.status==='official_channel_available'?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial indisponível; consultar a concessionária por telefone e canais redundantes.';
+    const cemadenConnected=!states.some(x=>x==='source_unconfirmed');
+    setConnection('cemadenConnection',cemadenConnected?'ok':'off',cemadenConnected?'Conectividade ativa':'Sem confirmação');
     document.getElementById('cemadenHealth').textContent=
-      states.every(x=>x==='ok')?'Coleta automática ativa e informações dentro da janela de 24 h.':
-      states.some(x=>x==='no_recent_update')?'Há categoria sem atualização oficial nas últimas 24 h; dado anterior permanece somente no histórico. Isso não significa ausência de risco.':
-      states.some(x=>x==='source_unconfirmed')?'Sem informação oficial recente confirmada em uma ou mais categorias nesta coleta. Isso não significa ausência de risco.':
-      'Coleta automática ativa; aguardando consolidação do status.';
+      !cemadenConnected?'Não foi possível confirmar acesso ao CEMADEN-RJ nesta coleta.':
+      states.some(x=>x==='no_recent_update')?'Conexão ativa; uma categoria não possui atualização oficial dentro das últimas 24 h.':
+      'Conexão ativa e dados consultados com sucesso.';
+
+    const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
+    setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
+    document.getElementById('inmetHealth').textContent=inmetConnected
+      ?'Avisos/previsão INMET acessíveis. Observação A610 '+(w.status==='ok'?'também está atualizada.':'não retornou dado recente; o clima atual usa referência complementar.')
+      :'Não foi possível confirmar acesso aos serviços INMET nesta coleta.';
+
+    const dcConnected=dc?.status!=='source_unconfirmed' && dc?.status!=='unavailable';
+    setConnection('dcConnection',dcConnected?'ok':'off',dcConnected?'Conectividade ativa':'Sem confirmação');
+    document.getElementById('dcHealth').textContent=dcConnected
+      ?(dc?.status==='ok'?'Canal municipal acessível e com boletim recente.':'Canal municipal acessível, sem atualização operacional recente confirmada.')
+      :'O portal municipal não respondeu adequadamente nesta coleta; isso não significa ausência de risco.';
+
+    const roadsConnected=roads?.status==='official_channel_available';
+    setConnection('roadsConnection',roadsConnected?'ok':'off',roadsConnected?'Conectividade ativa':'Sem confirmação');
+    document.getElementById('roadsHealth').textContent=roadsConnected
+      ?'Canal oficial Elovias acessível. A condição do tráfego continua exigindo consulta ao mapa/app/0800.'
+      :'Não foi possível confirmar acesso ao canal Elovias nesta coleta.';
+    document.getElementById('roadsServiceText').textContent=roadsConnected?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial sem confirmação nesta coleta; consultar a concessionária por telefone e canais redundantes.';
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
     document.getElementById('systemMode').textContent='CEMADEN + INMET + DEFESA CIVIL';
@@ -425,25 +507,61 @@ async function loadOfficialData(){
   }
 }
 let currentHistory=[];
+let historyDisplayMode='changes';
 
 function esc(v){
   return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 function historyMm(obj){
   const v=obj?.value;
-  return v==null?'—':Number(v).toFixed(1)+' mm'+(obj?.station?' · '+obj.station:'');
+  return v==null?'—':Number(v).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mm'+(obj?.station?' · '+obj.station:'');
+}
+function historySignature(s){
+  return JSON.stringify({
+    level:s.level,label:s.label,
+    geo:[s.geological?.risk,s.geological?.status,s.geological?.level],
+    hydro:[s.hydrological?.risk,s.hydrological?.status,s.hydrological?.level],
+    inmet:[s.inmet?.risk,s.inmet?.status,s.inmet?.level],
+    dc:[s.defesa_civil?.stage,s.defesa_civil?.status,s.defesa_civil?.level]
+  });
+}
+function groupHistory(snaps){
+  const asc=[...snaps].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  const groups=[];
+  for(const s of asc){
+    const sig=historySignature(s);
+    const last=groups[groups.length-1];
+    if(last && last._sig===sig){
+      last._to=s.ts;
+      last._count+=1;
+      last._last=s;
+    }else{
+      groups.push({...s,_sig:sig,_from:s.ts,_to:s.ts,_count:1,_last:s});
+    }
+  }
+  return groups.map(g=>({...g._last,_from:g._from,_to:g._to,_count:g._count}));
+}
+function historyPeriod(row){
+  if(!row._from || !row._to || row._from===row._to) return '<span class="history-period">'+esc(fmtDate(row.ts))+'</span>';
+  const a=new Date(row._from),b=new Date(row._to);
+  const sameDay=!isNaN(a)&&!isNaN(b)&&a.toLocaleDateString('pt-BR')===b.toLocaleDateString('pt-BR');
+  const start=sameDay?a.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):fmtDate(row._from);
+  const end=fmtDate(row._to);
+  return '<span class="history-period">'+esc(start)+' → '+esc(end)+'</span><span class="history-samples">'+row._count+' coletas sem mudança de estado</span>';
 }
 function renderHistory(snaps,label='janela de 90 dias'){
   currentHistory=Array.isArray(snaps)?[...snaps]:[];
-  currentHistory.sort((a,b)=>String(b.ts||'').localeCompare(String(a.ts||'')));
+  const display=historyDisplayMode==='changes'?groupHistory(currentHistory):[...currentHistory];
+  display.sort((a,b)=>String((b._to||b.ts)||'').localeCompare(String((a._to||a.ts)||'')));
   const body=document.getElementById('historyBody');
-  if(!currentHistory.length){
+  if(!display.length){
     body.innerHTML='<tr><td colspan="9">Nenhum snapshot disponível.</td></tr>';
   }else{
-    body.innerHTML=currentHistory.map(s=>{
+    body.innerHTML=display.map(s=>{
       const obs=s.reason||'Snapshot automático';
+      const dateCell=historyDisplayMode==='changes'?historyPeriod(s):'<span class="history-period">'+esc(fmtDate(s.ts))+'</span>';
       return '<tr>'+
-        '<td>'+esc(fmtDate(s.ts))+'</td>'+
+        '<td>'+dateCell+'</td>'+
         '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong></td>'+
         '<td>'+esc(s.geological?.risk||'—')+'</td>'+
         '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
@@ -456,7 +574,9 @@ function renderHistory(snaps,label='janela de 90 dias'){
     }).join('');
   }
   const asc=[...currentHistory].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
-  document.getElementById('historyCount').textContent=currentHistory.length+' · '+label;
+  document.getElementById('historyCount').textContent=historyDisplayMode==='changes'
+    ?display.length+' mudanças · '+currentHistory.length+' coletas'
+    :currentHistory.length+' coletas · '+label;
   document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
   document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
 }
@@ -494,6 +614,18 @@ async function loadHistory(){
     document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico indisponível: '+esc(err.message)+'</td></tr>';
   }
 }
+document.getElementById('historyChanges').onclick=()=>{
+  historyDisplayMode='changes';
+  document.getElementById('historyChanges').classList.add('active-filter');
+  document.getElementById('historyAll').classList.remove('active-filter');
+  renderHistory(currentHistory,'visualização atual');
+};
+document.getElementById('historyAll').onclick=()=>{
+  historyDisplayMode='all';
+  document.getElementById('historyAll').classList.add('active-filter');
+  document.getElementById('historyChanges').classList.remove('active-filter');
+  renderHistory(currentHistory,'visualização atual');
+};
 document.getElementById('exportHistory').onclick=()=>{
   if(!currentHistory.length) return;
   const cols=['data_hora','nivel_hst','rotulo','geologico','hidrologico','inmet','defesa_civil','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h','observacao'];
