@@ -11,6 +11,8 @@ REQUIRED_IDS = {
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
     "climateCurrentCard","climateCurrentIcon","climateCurrentTemp","climateHistoryGrid",
     "weatherMap","mapLegend","mapUpdated","mapRadarStatus","mapNearestStation","mapNearestRain","mapCurrentWeather",
+    "roadsConnection","roadsHealth","roadsAlertState","roadsWeatherTemp","roadsWeatherCondition",
+    "roadsSerraTitle","roadsScheduleTitle","roadsBulletinTitle",
     "historyOldest","historyNewest","historyMonths","exportHistory"
 }
 
@@ -33,7 +35,7 @@ if level not in (1,2,3,4,5):
 for key in ("cemaden_geological","cemaden_hydrological","inmet_alerts"):
     if key not in (status.get("sources") or {}):
         raise SystemExit(f"Fonte ausente: {key}")
-if "pluviometers" not in status or "forecast" not in status or "weather_map" not in status:
+if "pluviometers" not in status or "forecast" not in status or "weather_map" not in status or "roads" not in status:
     raise SystemExit("Blocos operacionais obrigatórios ausentes no status.json")
 weather_map=status.get("weather_map") or {}
 if not isinstance(weather_map.get("grid"),list) or len(weather_map.get("grid") or []) < 9:
@@ -41,6 +43,11 @@ if not isinstance(weather_map.get("grid"),list) or len(weather_map.get("grid") o
 center=weather_map.get("center") or {}
 if center.get("latitude") is None or center.get("longitude") is None:
     raise SystemExit("Centro do mapa meteorológico não definido")
+
+roads=status.get("roads") or {}
+if roads.get("provider")!="Elovias" or not isinstance(roads.get("endpoint_status"),dict):
+    raise SystemExit("Elovias ausente ou inválida no status.json")
+
 if not (status.get("pluviometers") or {}).get("nearest_to_hst"):
     raise SystemExit("Pluviômetro de referência próximo ao HST não identificado")
 
