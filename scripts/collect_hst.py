@@ -28,8 +28,6 @@ DEFESA_CIVIL_HOME = "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil
 DEFESA_CIVIL_TAG = "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil"
 DEFESA_CIVIL_BOLETIM = "https://www.petropolis.rj.gov.br/boletim"
 DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
-ELOVIAS_HOME = "https://elovias.com.br/home"
-ELOVIAS_MAP = "https://elovias.com.br/mapa"
 HST_LAT = -22.50825
 HST_LON = -43.19345
 OPEN_METEO_CURRENT = "https://api.open-meteo.com/v1/forecast"
@@ -720,119 +718,6 @@ def fetch_defesa_civil(previous):
             "error":str(exc)[:500],
         }
 
-def fetch_roads(previous):
-    prev=previous.get("roads") or {}
-    now=datetime.now(TZ)
-    try:
-        r=requests.get(ELOVIAS_HOME,timeout=18,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
-        r.raise_for_status()
-        soup=BeautifulSoup(r.text,"html.parser")
-        page_text=re.sub(r"\s+"," ",soup.get_text(" ",strip=True)).strip()
-        raw_text=re.sub(r"\s+"," ",r.text.replace("\\u00f3","ó").replace("\\u00e9","é").replace("\\u00e7","ç").replace("\\u00e3","ã").replace("\\u00ed","í").replace("\\u00e1","á")).strip()
-
-        bulletin=None
-        bulletin_time=None
-        serra_status=None
-
-        # The portal renders part of its home content dynamically. Search both
-        # visible text and serialized page data so the collector does not depend
-        # on a browser runtime.
-        bulletin_patterns=[
-            r"Boletim\s+Elovias\s*\(([^)]*)\)\s*:\s*(.*?)(?=Serviços\s+e\s+Informações|Últimas\s+Notícias|$)",
-            r"Boletim\s+Elovias\s*\(([^)]*)\)\s*:\s*(.*?)(?=Desacelere|Seu\s+bem\s+maior|$)",
-        ]
-        for source_text in (page_text,raw_text):
-            for pattern in bulletin_patterns:
-                m=re.search(pattern,source_text,flags=re.I)
-                if m:
-                    bulletin_time=m.group(1).strip()
-                    bulletin=re.sub(r"<[^>]+>"," ",m.group(2))
-                    bulletin=bulletin.replace("\\n"," ").replace("\\r"," ").replace("\\t"," ")
-                    bulletin=re.sub(r'\\\\+["/]', " ", bulletin)
-                    bulletin=re.sub(r"\s+"," ",bulletin).strip()
-                    bulletin=re.sub(r"\s*(Desacelere\..*)$","",bulletin,flags=re.I).strip()
-                    break
-            if bulletin:
-                break
-
-        if bulletin:
-            serra_match=re.search(
-                r"Serra\s+de\s+Petrópolis\s*:\s*(.*?)(?=(?:Baixada\s+Fluminense|Planalto|Para\s+consultar|WhatsApp|📲|$))",
-                bulletin,
-                flags=re.I,
-            )
-            if serra_match:
-                serra_status=re.sub(r"\s+"," ",serra_match.group(1)).strip(" .,:;-")
-
-        works_title=None
-        works_url=None
-
-        # Prefer the current news feed because the home page can be client-rendered.
-        news_sources=[(soup,ELOVIAS_HOME)]
-        try:
-            nr=requests.get("https://elovias.com.br/noticias/cronograma-de-obras-05-janeiro-2026",timeout=12,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
-            nr.raise_for_status()
-            news_sources.insert(0,(BeautifulSoup(nr.text,"html.parser"),nr.url))
-        except Exception:
-            pass
-
-        for news_soup,base_url in news_sources:
-            for a in news_soup.find_all("a",href=True):
-                txt=re.sub(r"\s+"," ",a.get_text(" ",strip=True)).strip()
-                if re.search(r"Cronograma\s+de\s+Obras",txt,re.I):
-                    href=a.get("href","").strip()
-                    if href.startswith("/"):
-                        href="https://elovias.com.br"+href
-                    elif href and not href.startswith("http"):
-                        href="https://elovias.com.br/"+href.lstrip("/")
-                    works_title=txt
-                    works_url=href or base_url
-                    break
-            if works_title:
-                break
-
-        if not works_title:
-            for source_text in (page_text,raw_text):
-                mt=re.search(r"(Cronograma\s+de\s+Obras\s*[-–—]\s*[^<|]{3,80})",source_text,re.I)
-                if mt:
-                    works_title=re.sub(r"\s+"," ",mt.group(1)).strip()
-                    break
-
-        return {
-            "provider":"Elovias",
-            "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
-            "status":"ok",
-            "traffic_status":serra_status or ("Boletim operacional disponível" if bulletin else "Sem boletim operacional identificado nesta coleta"),
-            "automated_traffic":bool(bulletin),
-            "bulletin":bulletin,
-            "bulletin_time":bulletin_time,
-            "serra_status":serra_status,
-            "works_title":works_title,
-            "works_url":works_url,
-            "emergency_phone":"0800-040-0495",
-            "accessibility_phone":"0800-040-1495",
-            "whatsapp":"(21) 98040-0113",
-            "home_url":ELOVIAS_HOME,
-            "map_url":ELOVIAS_MAP,
-            "collected_at":now.isoformat(),
-            "message":"Informação extraída do portal oficial da Elovias. Quando o boletim não trouxer data completa, o HST Alerta exibe o conteúdo sem inferir atualidade além da coleta.",
-            "error":None,
-        }
-    except Exception as exc:
-        fallback=dict(prev)
-        fallback.update({
-            "provider":"Elovias",
-            "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
-            "status":"unavailable",
-            "traffic_status":"Sem informação operacional confirmada nesta coleta",
-            "automated_traffic":False,
-            "home_url":ELOVIAS_HOME,
-            "map_url":ELOVIAS_MAP,
-            "collected_at":now.isoformat(),
-            "error":str(exc)[:400],
-        })
-        return fallback
-
 def history_snapshot(payload):
     sources=payload.get("sources") or {}
     pv=payload.get("pluviometers") or {}
@@ -866,10 +751,6 @@ def history_snapshot(payload):
             "status":(payload.get("weather_reference") or {}).get("status") or (payload.get("weather") or {}).get("status"),
             "provider":(payload.get("weather_reference") or {}).get("provider") or (payload.get("weather") or {}).get("provider"),
             "temperature_c":(payload.get("weather_reference") or {}).get("temperature_c") if (payload.get("weather_reference") or {}).get("temperature_c") is not None else (payload.get("weather") or {}).get("temperature_c"),
-        },
-        "roads":{
-            "status":(payload.get("roads") or {}).get("status"),
-            "traffic_status":(payload.get("roads") or {}).get("traffic_status"),
         },
     }
 
@@ -1175,7 +1056,6 @@ def main():
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
-    roads=fetch_roads(previous)
 
     usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
     overall=max([s["level"] for s in usable], default=int((previous.get("overall") or {}).get("level") or 1))
@@ -1210,8 +1090,7 @@ def main():
       "weather_map":weather_map,
       "pluviometers":pluviometers,
       "forecast":forecast,
-      "roads":roads,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
