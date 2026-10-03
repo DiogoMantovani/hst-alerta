@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "generated_at": null,
+  "location": {
+    "city": "Petrópolis",
+    "state": "RJ",
+    "country": "Brasil"
+  },
+  "overall": {
+    "level": 1,
+    "label": "Vigilância",
+    "reason": "Aguardando primeira coleta automática do CEMADEN-RJ.",
+    "rule": "Maior nível válido entre riscos CEMADEN-RJ. Falha de fonte não reduz automaticamente o nível."
+  },
+  "sources": {
+    "cemaden_geological": {
+      "name": "Deslizamento",
+      "provider": "CEMADEN-RJ / Defesa Civil RJ",
+      "status": "pending",
+      "risk": "Aguardando coleta",
+      "level": null,
+      "official_updated_at": null,
+      "collected_at": null
+    },
+    "cemaden_hydrological": {
+      "name": "Hidrológico",
+      "provider": "CEMADEN-RJ / Defesa Civil RJ",
+      "status": "pending",
+      "risk": "Aguardando coleta",
+      "level": null,
+      "official_updated_at": null,
+      "collected_at": null
+    }
+  },
+  "integrations": {
+    "cemaden_rj": "pending",
+    "inmet": "pending",
+    "pluviometers": "pending",
+    "defesa_civil": "pending",
+    "roads": "pending",
+    "utilities": "pending"
+  }
+}
