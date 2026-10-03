@@ -1487,16 +1487,13 @@ def main():
               "recipient_configured":bool(os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()),
               "recipient_count":len([x for x in re.split(r"[,;\\n]+",os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","")) if x.strip()]),
               "provider_configured":bool(
-                  os.getenv("RESEND_API_KEY","").strip()
-                  or (
-                      os.getenv("HST_SMTP_USER","").strip()
-                      and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
-                  )
+                  os.getenv("HST_SMTP_USER","").strip()
+                  and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
               ),
               "provider":"smtp" if (
                   os.getenv("HST_SMTP_USER","").strip()
                   and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
-              ) else "resend" if os.getenv("RESEND_API_KEY","").strip() else None,
+              ) else None,
               "automatic_sending_enabled":os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim"),
               "status":"active" if (
                   os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim")
@@ -1510,16 +1507,13 @@ def main():
               "recipient_configured":bool(os.getenv("HST_EMAIL_GRUPO_GERENTES","").strip()),
               "recipient_count":len([x for x in re.split(r"[,;\\n]+",os.getenv("HST_EMAIL_GRUPO_GERENTES","")) if x.strip()]),
               "provider_configured":bool(
-                  os.getenv("RESEND_API_KEY","").strip()
-                  or (
-                      os.getenv("HST_SMTP_USER","").strip()
-                      and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
-                  )
+                  os.getenv("HST_SMTP_USER","").strip()
+                  and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
               ),
               "provider":"smtp" if (
                   os.getenv("HST_SMTP_USER","").strip()
                   and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
-              ) else "resend" if os.getenv("RESEND_API_KEY","").strip() else None,
+              ) else None,
               "automatic_sending_enabled":os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim"),
               "status":"active" if (
                   os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim")
