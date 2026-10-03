@@ -50,7 +50,7 @@
 <article class="risk"><div class="small">Deslizamento</div><div id="geoCard" class="value">Carregando…</div><span id="geoBadge" class="badge">CEMADEN-RJ</span><div id="geoMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Hidrológico</div><div id="hidroCard" class="value">Carregando…</div><span id="hidroBadge" class="badge">CEMADEN-RJ</span><div id="hidroMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Carregando…</div><span id="inmetBadge" class="badge">INMET</span><div id="inmetMeta" class="small" style="margin-top:8px"></div></article>
-<article class="risk"><div class="small">Defesa Civil</div><div class="value">Sem evento</div><span class="badge">Integração pendente</span></article>
+<article class="risk"><div class="small">Defesa Civil</div><div id="dcCard" class="value">Carregando…</div><span id="dcBadge" class="badge">Petrópolis</span><div id="dcMeta" class="small" style="margin-top:8px"></div></article>
 </div>
 
 <div class="grid2">
@@ -58,8 +58,9 @@
 <article class="card"><div class="section"><h3>Integridade das fontes</h3></div>
 <div class="action"><strong>CEMADEN-RJ</strong><br><span id="cemadenHealth" class="small">Carregando status das fontes…</span></div>
 <div class="action"><strong>INMET</strong><br><span id="inmetHealth" class="small">Carregando clima e avisos…</span></div>
-<div class="action"><strong>Elovias / BR-040</strong><br><span class="small">Monitoramento rodoviário · automação pendente</span></div>
-<div class="action"><strong>Enel Rio / Águas do Imperador</strong><br><span class="small">Canais oficiais cadastrados</span></div>
+<div class="action"><strong>Defesa Civil de Petrópolis</strong><br><span id="dcHealth" class="small">Carregando canal municipal…</span></div>
+<div class="action"><strong>Elovias / BR-040/495</strong><br><span id="roadsHealth" class="small">Carregando canal oficial…</span></div>
+<div class="action"><strong>Enel Rio / Águas do Imperador</strong><br><span class="small">Canais oficiais cadastrados; sem inferir normalidade quando não houver dado automatizável.</span></div>
 </article>
 </div>
 </section>
@@ -87,7 +88,7 @@
 </section>
 
 <section id="pluvio" class="panel">
-<div class="section"><h2>Pluviômetros de Petrópolis</h2><span class="badge demo">estrutura pronta</span></div>
+<div class="section"><h2>Pluviômetros de Petrópolis</h2><span class="badge">CEMADEN AUTOMÁTICO</span></div>
 <div class="summary">
 <article class="card"><span class="small">Estações encontradas</span><strong id="pluvioCount">—</strong></article>
 <article class="card"><span class="small">Maior 1 h</span><strong id="pluvioMax1">— mm</strong><span id="pluvioMax1Station" class="small"></span></article>
@@ -101,10 +102,10 @@
 <section id="servicos" class="panel">
 <div class="section"><h2>Rodovias & Concessionárias</h2></div>
 <div class="services">
-<article class="card service"><div class="eyebrow">Rodovias</div><div class="status">BR-040 / Serra</div><p>Boletins e condições de tráfego.</p><a target="_blank" href="https://elovias.com.br/">Elovias</a></article>
+<article class="card service"><div class="eyebrow">Rodovias</div><div class="status">BR-040/495 · Serra</div><p id="roadsServiceText">O HST Alerta verifica a disponibilidade do canal oficial, mas não presume trânsito livre sem dado operacional automatizável.</p><a target="_blank" href="https://elovias.com.br/mapa">Mapa Elovias</a><br><span class="small">Emergências: 0800-040-0495</span></article>
 <article class="card service"><div class="eyebrow">Energia</div><div class="status">Enel Rio</div><p>Canal oficial para fornecimento e ocorrências.</p><a target="_blank" href="https://www.enel.com.br/">Enel</a></article>
 <article class="card service"><div class="eyebrow">Água</div><div class="status">Águas do Imperador</div><p>Canal oficial de abastecimento.</p><a target="_blank" href="https://www.grupoaguasdobrasil.com.br/aguas-imperador/">Águas do Imperador</a></article>
-<article class="card service"><div class="eyebrow">Alertas</div><div class="status">Defesa Civil</div><p>Cell Broadcast, SMS e demais canais oficiais.</p><a target="_blank" href="https://www.gov.br/pt-br/servicos/solicitar-cadastro-para-recebimento-de-avisos-e-alertas-de-desastres">Cadastro oficial</a></article>
+<article class="card service"><div class="eyebrow">Alertas municipais</div><div class="status">Defesa Civil de Petrópolis</div><p>Emergência 199 · SMS 40199 · boletim municipal e canal oficial de WhatsApp.</p><a target="_blank" href="https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil">Portal oficial</a><br><a target="_blank" href="https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i">Canal WhatsApp</a></article>
 </div>
 </section>
 
@@ -120,9 +121,16 @@
 </section>
 
 <section id="historico" class="panel">
-<div class="section"><h2>Histórico e Rastreabilidade</h2></div>
-<div class="callout">Em produção, o HST Alerta armazenará snapshots periódicos e mudanças de nível com data/hora, fonte, justificativa, reconhecimento e ações executadas. Também será preparado para retrocarga de dados oficiais do INMET e CEMADEN.</div>
-<div class="card table"><table><thead><tr><th>Data/hora</th><th>Nível HST</th><th>Evento</th><th>Fonte</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+<div class="section"><h2>Histórico e Rastreabilidade</h2><button id="exportHistory" class="btn">Exportar CSV</button></div>
+<div class="callout">Cada coleta gera um snapshot auditável. O painel mantém uma janela rápida de até 90 dias e o repositório preserva arquivos mensais para retenção permanente a partir da ativação desta função.</div>
+<div class="summary">
+<article class="card"><span class="small">Snapshots na janela</span><strong id="historyCount">—</strong></article>
+<article class="card"><span class="small">Primeiro registro exibido</span><strong id="historyOldest" style="font-size:15px">—</strong></article>
+<article class="card"><span class="small">Último registro</span><strong id="historyNewest" style="font-size:15px">—</strong></article>
+<article class="card"><span class="small">Arquivos mensais</span><strong id="historyMonths">—</strong></article>
+</div>
+<div id="historyArchiveLinks" class="maplinks" style="justify-content:flex-start;margin-bottom:14px"></div>
+<div class="card table"><table><thead><tr><th>Data/hora</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Defesa Civil</th><th>Máx. 1 h</th><th>Máx. 24 h</th><th>Observação</th></tr></thead><tbody id="historyBody"><tr><td colspan="9">Carregando histórico…</td></tr></tbody></table></div>
 </section>
 
 <section id="plano" class="panel plan">
@@ -209,6 +217,8 @@ async function loadOfficialData(){
     const g=data.sources?.cemaden_geological;
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
+    const dc=data.sources?.defesa_civil;
+    const roads=data.roads||{};
     const w=data.weather||{};
     const fc=data.forecast||{};
     const pv=data.pluviometers||{};
@@ -217,6 +227,12 @@ async function loadOfficialData(){
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
     document.getElementById('inmetBadge').textContent=imet?.status==='ok'?'INMET · ATUAL':(imet?.status==='unavailable'?'INMET · INDISPONÍVEL':'INMET · '+String(imet?.status||'PENDENTE').toUpperCase());
     document.getElementById('inmetMeta').textContent=(imet?.title||'')+(imet?.active_count!=null?' · avisos ativos: '+imet.active_count:'');
+    document.getElementById('dcCard').textContent=dc?.stage||(dc?.status==='no_recent_bulletin'?'Sem estágio recente':'Indisponível');
+    document.getElementById('dcBadge').textContent=dc?.status==='ok'?'DEFESA CIVIL · ATUAL':(dc?.status==='no_recent_bulletin'?'DEFESA CIVIL · SEM BOLETIM RECENTE':'DEFESA CIVIL · INDISPONÍVEL');
+    const dcParts=[];
+    if(dc?.official_updated_at) dcParts.push('Boletim: '+fmtDate(dc.official_updated_at));
+    if(dc?.latest_bulletin?.title) dcParts.push(dc.latest_bulletin.title);
+    document.getElementById('dcMeta').textContent=dcParts.join(' · ')||'Estágio municipal não automatizável nesta coleta.';
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
@@ -266,6 +282,9 @@ async function loadOfficialData(){
       }
     }
     document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos automáticos ativos; clima da A610 '+(w.status==='ok'?'atualizado':'com status '+String(w.status||'indisponível'))+'.':'Fonte de avisos indisponível; último valor válido é preservado quando possível.';
+    document.getElementById('dcHealth').textContent=dc?.status==='ok'?'Boletim recente com estágio operacional reconhecido automaticamente.':(dc?.status==='no_recent_bulletin'?'Canal oficial acessível, porém sem estágio recente que possa ser usado no cálculo.':'Canal municipal indisponível nesta coleta; usar 199/SMS/WhatsApp como redundância.');
+    document.getElementById('roadsHealth').textContent=roads?.status==='official_channel_available'?'Canal oficial Elovias acessível; condição de tráfego exige consulta ao mapa/app/0800.':'Canal Elovias indisponível nesta coleta; nenhuma condição de tráfego é inferida.';
+    document.getElementById('roadsServiceText').textContent=roads?.status==='official_channel_available'?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial indisponível; consultar a concessionária por telefone e canais redundantes.';
     document.getElementById('cemadenHealth').textContent=
       states.includes('unavailable')?'Fonte oficial com indisponibilidade; último valor válido preservado.':
       states.includes('stale')?'Fonte acessível, porém há leitura oficial desatualizada.':
@@ -273,16 +292,100 @@ async function loadOfficialData(){
       'Coleta automática ativa; aguardando consolidação do status.';
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
-    document.getElementById('systemMode').textContent='CEMADEN + INMET AUTOMÁTICO';
+    document.getElementById('systemMode').textContent='CEMADEN + INMET + DEFESA CIVIL';
     document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
-    document.getElementById('historyBody').innerHTML=
-      '<tr><td>'+fmtDate(data.generated_at)+'</td><td>'+level+' · '+labels[level]+'</td><td>'+String(data.overall?.reason||'Snapshot automático')+'</td><td>CEMADEN-RJ</td></tr>';
+    if(!window.currentHistory?.length){
+      document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico ainda não carregado.</td></tr>';
+    }
   }catch(err){
     document.getElementById('cemadenHealth').textContent='Não foi possível carregar o snapshot publicado. A tela não rebaixa o nível automaticamente.';
     document.getElementById('systemMode').textContent='DADOS INDISPONÍVEIS';
     document.getElementById('levelReason').textContent='Falha ao carregar o snapshot oficial publicado: '+err.message;
   }
 }
+let currentHistory=[];
+
+function esc(v){
+  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function historyMm(obj){
+  const v=obj?.value;
+  return v==null?'—':Number(v).toFixed(1)+' mm'+(obj?.station?' · '+obj.station:'');
+}
+function renderHistory(snaps,label='janela de 90 dias'){
+  currentHistory=Array.isArray(snaps)?[...snaps]:[];
+  currentHistory.sort((a,b)=>String(b.ts||'').localeCompare(String(a.ts||'')));
+  const body=document.getElementById('historyBody');
+  if(!currentHistory.length){
+    body.innerHTML='<tr><td colspan="9">Nenhum snapshot disponível.</td></tr>';
+  }else{
+    body.innerHTML=currentHistory.map(s=>{
+      const obs=s.reason||'Snapshot automático';
+      return '<tr>'+
+        '<td>'+esc(fmtDate(s.ts))+'</td>'+
+        '<td><strong>'+esc((s.level??'—')+(s.label?' · '+s.label:''))+'</strong></td>'+
+        '<td>'+esc(s.geological?.risk||'—')+'</td>'+
+        '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
+        '<td>'+esc(s.inmet?.risk||'—')+'</td>'+
+        '<td>'+esc(s.defesa_civil?.stage||'—')+'</td>'+
+        '<td>'+esc(historyMm(s.pluviometers?.highest_1h))+'</td>'+
+        '<td>'+esc(historyMm(s.pluviometers?.highest_24h))+'</td>'+
+        '<td class="small">'+esc(obs)+'</td>'+
+      '</tr>';
+    }).join('');
+  }
+  const asc=[...currentHistory].sort((a,b)=>String(a.ts||'').localeCompare(String(b.ts||'')));
+  document.getElementById('historyCount').textContent=currentHistory.length+' · '+label;
+  document.getElementById('historyOldest').textContent=asc.length?fmtDate(asc[0].ts):'—';
+  document.getElementById('historyNewest').textContent=asc.length?fmtDate(asc[asc.length-1].ts):'—';
+}
+async function loadArchive(file,month){
+  try{
+    const r=await fetch(file+'?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    renderHistory(d.snapshots||[],month);
+  }catch(err){
+    document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Falha ao carregar arquivo '+esc(month)+': '+esc(err.message)+'</td></tr>';
+  }
+}
+async function loadHistory(){
+  try{
+    const [rh,ri]=await Promise.all([
+      fetch('data/history.json?ts='+Date.now(),{cache:'no-store'}),
+      fetch('data/history_index.json?ts='+Date.now(),{cache:'no-store'})
+    ]);
+    if(!rh.ok) throw new Error('histórico HTTP '+rh.status);
+    const h=await rh.json();
+    renderHistory(h.snapshots||[],'últimos '+(h.retention_days||90)+' dias');
+    if(ri.ok){
+      const idx=await ri.json();
+      const months=Array.isArray(idx.months)?idx.months:[];
+      document.getElementById('historyMonths').textContent=months.length;
+      const box=document.getElementById('historyArchiveLinks');
+      box.innerHTML='<button class="btn" id="historyRolling">Últimos 90 dias</button>'+months.map(m=>'<button class="btn archiveBtn" data-file="'+esc(m.file)+'" data-month="'+esc(m.month)+'">'+esc(m.month)+(m.snapshots!=null?' · '+m.snapshots:'')+'</button>').join('');
+      document.getElementById('historyRolling').onclick=()=>renderHistory(h.snapshots||[],'últimos '+(h.retention_days||90)+' dias');
+      box.querySelectorAll('.archiveBtn').forEach(b=>b.onclick=()=>loadArchive(b.dataset.file,b.dataset.month));
+    }else{
+      document.getElementById('historyMonths').textContent='—';
+    }
+  }catch(err){
+    document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico indisponível: '+esc(err.message)+'</td></tr>';
+  }
+}
+document.getElementById('exportHistory').onclick=()=>{
+  if(!currentHistory.length) return;
+  const cols=['data_hora','nivel_hst','rotulo','geologico','hidrologico','inmet','defesa_civil','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h','observacao'];
+  const rows=currentHistory.map(s=>[
+    s.ts,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,s.defesa_civil?.stage,
+    s.pluviometers?.highest_1h?.value,s.pluviometers?.highest_1h?.station,
+    s.pluviometers?.highest_24h?.value,s.pluviometers?.highest_24h?.station,s.reason
+  ]);
+  const csv=[cols,...rows].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hst-alerta-historico.csv'; a.click(); URL.revokeObjectURL(a.href);
+};
+
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
@@ -301,7 +404,9 @@ document.getElementById('simulate').onclick=()=>{
 };
 renderActions(1);
 loadOfficialData();
+loadHistory();
 setInterval(loadOfficialData,60000);
+setInterval(loadHistory,15*60000);
 </script>
 </body>
 </html>
