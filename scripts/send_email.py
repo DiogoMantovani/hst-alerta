@@ -387,7 +387,7 @@ def main():
 
     cfg = config()
     enabled = env_bool("HST_EMAIL_ENABLED", False)
-    force_test = env_bool("HST_EMAIL_FORCE_TEST", False)
+    force_test = True  # one-time controlled resend test
 
     try:
         level = max(1, min(5, int((data.get("overall") or {}).get("level") or 1)))
