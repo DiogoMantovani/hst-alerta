@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 REQUIRED_IDS = {
     "hero","levelNum","levelLabel","levelReason","updatedAt","nextAt",
-    "geoCard","hidroCard","inmetCard",
+    "geoCard","hidroCard","inmetCard","defesaCard","defesaConnection",
     "pluvioBody","pluvioHidden","bingenHistoryBody","bingenHistoryStatus","bingenHistoryLast","bingenHistory1h","bingenHistory24h","bingenHistoryDistance",
     "historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
@@ -33,7 +33,7 @@ status=load_json("data/status.json")
 level=(status.get("overall") or {}).get("level")
 if level not in (1,2,3,4,5):
     raise SystemExit(f"Nível HST inválido: {level}")
-for key in ("cemaden_geological","cemaden_hydrological","inmet_alerts"):
+for key in ("cemaden_geological","cemaden_hydrological","inmet_alerts","defesa_civil"):
     if key not in (status.get("sources") or {}):
         raise SystemExit(f"Fonte ausente: {key}")
 if "pluviometers" not in status or "forecast" not in status or "weather_map" not in status or "roads" not in status:
