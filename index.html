@@ -16,7 +16,7 @@
     <div class="divider"></div>
     <div><div class="hospital">Hospital Santa Teresa</div><h1>HST Alerta</h1><p>Monitoramento preditivo de riscos externos e continuidade hospitalar · Petrópolis/RJ</p></div>
   </div>
-  <span class="badge demo">VERSÃO DEMONSTRAÇÃO</span>
+  <span id="systemMode" class="badge">CEMADEN-RJ AUTOMÁTICO</span>
 </header>
 
 <nav class="tabs">
@@ -36,7 +36,7 @@
 <div class="grid2">
 <article id="hero" class="hero l1">
 <div class="eyebrow">Nível HST atual</div>
-<div class="levelrow"><div id="levelNum" class="num">1</div><div><h2 id="levelLabel">Vigilância</h2><p id="levelReason">Versão de demonstração. Integrações oficiais serão ativadas na próxima etapa.</p></div></div>
+<div class="levelrow"><div id="levelNum" class="num">1</div><div><h2 id="levelLabel">Vigilância</h2><p id="levelReason">Carregando monitoramento oficial CEMADEN-RJ…</p></div></div>
 <div class="timestamps"><span>Última atualização: <strong id="updatedAt">—</strong></span><span>Próxima coleta planejada: <strong id="nextAt">—</strong></span></div>
 </article>
 <article class="card">
@@ -47,8 +47,8 @@
 </div>
 
 <div class="riskgrid">
-<article class="risk"><div class="small">Deslizamento</div><div id="geoCard" class="value">Muito Baixo</div><span class="badge">CEMADEN-RJ · demo</span></article>
-<article class="risk"><div class="small">Hidrológico</div><div id="hidroCard" class="value">Muito Baixo</div><span class="badge">CEMADEN-RJ · demo</span></article>
+<article class="risk"><div class="small">Deslizamento</div><div id="geoCard" class="value">Carregando…</div><span id="geoBadge" class="badge">CEMADEN-RJ</span><div id="geoMeta" class="small" style="margin-top:8px"></div></article>
+<article class="risk"><div class="small">Hidrológico</div><div id="hidroCard" class="value">Carregando…</div><span id="hidroBadge" class="badge">CEMADEN-RJ</span><div id="hidroMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Sem aviso</div><span class="badge">INMET · demo</span></article>
 <article class="risk"><div class="small">Defesa Civil</div><div class="value">Sem evento</div><span class="badge">Integração pendente</span></article>
 </div>
@@ -56,7 +56,7 @@
 <div class="grid2">
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
 <article class="card"><div class="section"><h3>Integridade das fontes</h3></div>
-<div class="action"><strong>CEMADEN-RJ</strong><br><span class="small">Fonte oficial cadastrada · automação pendente</span></div>
+<div class="action"><strong>CEMADEN-RJ</strong><br><span id="cemadenHealth" class="small">Carregando status das fontes…</span></div>
 <div class="action"><strong>INMET</strong><br><span class="small">Clima, previsão e avisos · automação pendente</span></div>
 <div class="action"><strong>Elovias / BR-040</strong><br><span class="small">Monitoramento rodoviário · automação pendente</span></div>
 <div class="action"><strong>Enel Rio / Águas do Imperador</strong><br><span class="small">Canais oficiais cadastrados</span></div>
@@ -173,12 +173,88 @@ const acts={
 4:['Elevar prontidão operacional','Avaliar ativação do Comitê de Crise','Posicionar equipes e recursos críticos'],
 5:['Ativar gestão de crise conforme documentos vigentes','Executar planos de contingência aplicáveis','Manter comunicação e registro contínuos']
 };
-function setTimes(){const n=new Date();document.getElementById('updatedAt').textContent=n.toLocaleString('pt-BR');document.getElementById('nextAt').textContent=new Date(n.getTime()+15*60000).toLocaleString('pt-BR')}
+
+function fmtDate(value){
+  if(!value) return '—';
+  const d=new Date(value);
+  return isNaN(d)?String(value):d.toLocaleString('pt-BR');
+}
 function renderActions(l){document.getElementById('actions').innerHTML=acts[l].map(x=>'<div class="action">• '+x+'</div>').join('')}
-function applyLevel(l,reason){const h=document.getElementById('hero');h.className='hero l'+l;document.getElementById('levelNum').textContent=l;document.getElementById('levelLabel').textContent=labels[l];document.getElementById('levelReason').textContent=reason;renderActions(l);setTimes();const body=document.getElementById('historyBody');body.innerHTML='<tr><td>'+new Date().toLocaleString('pt-BR')+'</td><td>'+l+' · '+labels[l]+'</td><td>Simulação/visualização atual</td><td>Sistema</td></tr>'+body.innerHTML}
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.target).classList.add('active')});
-document.getElementById('simulate').onclick=()=>{const g=document.getElementById('geo').value,h=document.getElementById('hidro').value,i=document.getElementById('inmet').value;let l=Math.max(cm[g],cm[h],im[i]);if([cm[g],cm[h],im[i]].filter(x=>x>=3).length>=2)l=Math.min(5,l+1);document.getElementById('geoCard').textContent=g;document.getElementById('hidroCard').textContent=h;document.getElementById('inmetCard').textContent=i;applyLevel(l,'SIMULADO: nível calculado a partir das seleções de risco.')};
-setTimes();renderActions(1);document.getElementById('historyBody').innerHTML='<tr><td>'+new Date().toLocaleString('pt-BR')+'</td><td>1 · Vigilância</td><td>Versão de demonstração iniciada</td><td>HST Alerta</td></tr>';
+function applyLevel(l,reason,generatedAt){
+  const h=document.getElementById('hero');
+  h.className='hero l'+l;
+  document.getElementById('levelNum').textContent=l;
+  document.getElementById('levelLabel').textContent=labels[l];
+  document.getElementById('levelReason').textContent=reason;
+  renderActions(l);
+  const base=generatedAt?new Date(generatedAt):new Date();
+  document.getElementById('updatedAt').textContent=fmtDate(base);
+  document.getElementById('nextAt').textContent=fmtDate(new Date(base.getTime()+15*60000));
+}
+function sourceBadge(source){
+  if(!source) return 'SEM DADO';
+  if(source.status==='ok') return 'CEMADEN-RJ · ATUAL';
+  if(source.status==='stale') return 'CEMADEN-RJ · DADO ANTIGO';
+  if(source.status==='unavailable') return 'CEMADEN-RJ · INDISPONÍVEL';
+  return 'CEMADEN-RJ · '+String(source.status||'PENDENTE').toUpperCase();
+}
+function sourceMeta(source){
+  if(!source) return 'Sem informação da fonte.';
+  const parts=[];
+  if(source.official_updated_at) parts.push('Oficial: '+fmtDate(source.official_updated_at));
+  if(source.age_hours!=null) parts.push('idade '+source.age_hours+' h');
+  if(source.status==='unavailable') parts.push('último valor válido mantido');
+  return parts.join(' · ');
+}
+async function loadOfficialData(){
+  try{
+    const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const g=data.sources?.cemaden_geological;
+    const h=data.sources?.cemaden_hydrological;
+    document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
+    document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
+    document.getElementById('geoBadge').textContent=sourceBadge(g);
+    document.getElementById('hidroBadge').textContent=sourceBadge(h);
+    document.getElementById('geoMeta').textContent=sourceMeta(g);
+    document.getElementById('hidroMeta').textContent=sourceMeta(h);
+    const states=[g?.status,h?.status];
+    document.getElementById('cemadenHealth').textContent=
+      states.includes('unavailable')?'Fonte oficial com indisponibilidade; último valor válido preservado.':
+      states.includes('stale')?'Fonte acessível, porém há leitura oficial desatualizada.':
+      states.every(x=>x==='ok')?'Coleta automática ativa e fontes com atualização recente.':
+      'Coleta automática ativa; aguardando consolidação do status.';
+    const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
+    applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
+    document.getElementById('systemMode').textContent='CEMADEN-RJ AUTOMÁTICO';
+    document.getElementById('historyBody').innerHTML=
+      '<tr><td>'+fmtDate(data.generated_at)+'</td><td>'+level+' · '+labels[level]+'</td><td>'+String(data.overall?.reason||'Snapshot automático')+'</td><td>CEMADEN-RJ</td></tr>';
+  }catch(err){
+    document.getElementById('cemadenHealth').textContent='Não foi possível carregar o snapshot publicado. A tela não rebaixa o nível automaticamente.';
+    document.getElementById('systemMode').textContent='DADOS INDISPONÍVEIS';
+    document.getElementById('levelReason').textContent='Falha ao carregar o snapshot oficial publicado: '+err.message;
+  }
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById(b.dataset.target).classList.add('active');
+});
+document.getElementById('simulate').onclick=()=>{
+  const g=document.getElementById('geo').value,h=document.getElementById('hidro').value,i=document.getElementById('inmet').value;
+  let l=Math.max(cm[g],cm[h],im[i]);
+  if([cm[g],cm[h],im[i]].filter(x=>x>=3).length>=2)l=Math.min(5,l+1);
+  document.getElementById('geoCard').textContent=g;
+  document.getElementById('hidroCard').textContent=h;
+  document.getElementById('inmetCard').textContent=i;
+  document.getElementById('systemMode').textContent='MODO SIMULADO';
+  applyLevel(l,'SIMULADO: nível calculado a partir das seleções de risco.',new Date().toISOString());
+};
+renderActions(1);
+loadOfficialData();
+setInterval(loadOfficialData,60000);
 </script>
 </body>
 </html>
