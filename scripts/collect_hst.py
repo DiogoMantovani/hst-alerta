@@ -774,9 +774,7 @@ def climate_period(dt):
         return "manha", "Manhã"
     if 12 <= hour < 18:
         return "tarde", "Tarde"
-    if 18 <= hour < 24:
-        return "noite", "Noite"
-    return None, None
+    return "noite", "Noite"
 
 def climate_sample(weather, weather_reference, now):
     official_ok=(weather or {}).get("status")=="ok" and (weather or {}).get("temperature_c") is not None
@@ -817,7 +815,10 @@ def persist_climate_history(weather, weather_reference):
     except Exception:
         periods=[]
 
-    date_key=now.strftime("%Y-%m-%d")
+    # The night period spans midnight: 18:00–05:59.
+    # Readings after midnight belong to the night that started the previous day.
+    period_date=now if now.hour>=6 else now-timedelta(days=1)
+    date_key=period_date.strftime("%Y-%m-%d")
     existing=None
     for item in periods:
         if isinstance(item,dict) and item.get("date")==date_key and item.get("period")==period_key:
@@ -898,7 +899,7 @@ def persist_climate_history(weather, weather_reference):
             "period_definition":{
                 "manha":"06:00–11:59",
                 "tarde":"12:00–17:59",
-                "noite":"18:00–23:59"
+                "noite":"18:00–05:59"
             },
             "periods":kept,
         },f,ensure_ascii=False,separators=(",",":"))
