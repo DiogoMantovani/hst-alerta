@@ -18,14 +18,15 @@ O HST Alerta utiliza e-mail via Resend para notificações automáticas do Grupo
 Cadastrar em Settings > Secrets and variables > Actions:
 
 - `RESEND_API_KEY` — chave nova do Resend, preferencialmente com permissão Sending access.
-- `HST_EMAIL_GRUPO_OPERACIONAL` — e-mail que receberá os alertas.
+- `HST_EMAIL_GRUPO_OPERACIONAL` — um ou mais e-mails do Grupo Operacional, separados por vírgula; recebe níveis 3, 4 e 5.
+- `HST_EMAIL_GRUPO_GERENTES` — um ou mais e-mails do Grupo de Gerentes, separados por vírgula; recebe somente níveis 4 e 5.
 - `HST_EMAIL_ENABLED` — usar `true` somente depois do teste.
 - `HST_EMAIL_FROM` — opcional. Se não informado, o teste usa `HST Alerta <onboarding@resend.dev>`.
 - `HST_EMAIL_REPLY_TO` — opcional.
 
 ## Segurança
 - Não gravar a chave do Resend em HTML, JavaScript, Python ou arquivos públicos.
-- Não gravar o e-mail do destinatário em arquivos públicos.
+- Não gravar os e-mails dos destinatários em arquivos públicos; as listas ficam em GitHub Secrets.
 - Se uma chave tiver sido compartilhada por chat, mensagem ou outro canal, revogá-la e criar outra.
 - Para o HST Alerta, uma chave com acesso apenas a envio é suficiente.
 
@@ -70,3 +71,13 @@ Se Gmail SMTP e Resend estiverem configurados ao mesmo tempo, o HST Alerta prior
 
 ## Estado de produção
 Após a validação do envio por Gmail SMTP, o canal pode ser habilitado com `HST_EMAIL_ENABLED=true`. Antes da primeira ativação real, o estado de teste deve ser limpo para que um nível 3, 4 ou 5 vigente gere o primeiro aviso operacional normalmente.
+
+
+## Grupos de destinatários
+O controle de notificação é independente por grupo:
+
+- Grupo Operacional: níveis 3, 4 e 5.
+- Grupo de Gerentes: níveis 4 e 5.
+- Cada Secret pode conter vários endereços separados por vírgula ou ponto e vírgula.
+- Os envios são feitos individualmente para cada destinatário, evitando expor a lista de endereços aos demais.
+- Se o nível cair abaixo do mínimo de um grupo, o estado desse grupo é liberado para que uma futura reentrada no nível aplicável gere novo aviso.
