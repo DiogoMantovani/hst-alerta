@@ -21,7 +21,7 @@ HISTORY_URL = "https://diogomantovani.github.io/hst-alerta/data/history.json"
 
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
 CEMADEN_PLUVIO = "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ"
-CEMADEN_COORDS_LAYER = "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/FeatureServer/1/query"
+CEMADEN_COORDS_LAYER = "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/MapServer/1/query"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
 INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
@@ -613,6 +613,7 @@ def fetch_cemaden_pluviometers(previous):
             "recent_stations":len(recent),
             "hidden_stations":len(stations)-len(recent),
             "time_anomaly_stations":len(anomalies),
+            "georeferenced_stations":len(georeferenced),
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
             "nearest_to_hst":nearest,
@@ -948,7 +949,7 @@ def history_snapshot(payload):
     sources=payload.get("sources") or {}
     pv=payload.get("pluviometers") or {}
     bingen=next(
-        (s for s in (pv.get("stations") or []) if norm((s or {}).get("name"))=="BINGEN GEO"),
+        (s for s in (pv.get("stations") or []) if str((s or {}).get("name") or "").strip().casefold()=="bingen - geo"),
         None,
     )
     return {
