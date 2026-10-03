@@ -783,10 +783,10 @@ footer{
 <div class="source-health-list">
   <div class="source-health-row"><div class="source-health-name">Grupo</div><strong>Grupo Operacional</strong></div>
   <div class="source-health-row"><div class="source-health-name">Canal</div><strong>WhatsApp</strong></div>
-  <div class="source-health-row"><div class="source-health-name">Contato</div><strong>•••• 0880</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Contato</div><strong id="notificationMaskedContact">•••• 0880</strong></div>
   <div class="source-health-row"><div class="source-health-name">Recebe</div><strong>Níveis 3, 4 e 5</strong></div>
-  <div class="source-health-row"><div class="source-health-name">Número</div><span class="connection-pill connection-ok">Protegido no GitHub</span></div>
-  <div class="source-health-row"><div class="source-health-name">Envio real</div><span class="connection-pill connection-warn">Aguardando API WhatsApp</span></div>
+  <div class="source-health-row"><div class="source-health-name">Número</div><span id="notificationNumberStatus" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Envio real</div><span id="notificationSendStatus" class="connection-pill connection-na">Verificando</span></div>
 </div>
 <div class="source-health-footer">O número completo fica em GitHub Secret e não é publicado no site. O HST Alerta só exibirá informações mascaradas do destinatário.</div>
 </article>
@@ -1534,6 +1534,20 @@ async function loadOfficialData(){
     const roadsConnected=roads?.status==='ok';
     const roadsDegraded=roads?.status==='degraded';
     setConnection('roadsConnection',roadsConnected?'ok':roadsDegraded?'warn':'off',roadsConnected?'Conectividade ativa':roadsDegraded?'Conectividade parcial':'Sem confirmação');
+
+    const notificationCfg=data?.notifications?.group_operational_test||{};
+    const notificationMasked=document.getElementById('notificationMaskedContact');
+    if(notificationMasked && notificationCfg.recipient_masked) notificationMasked.textContent=notificationCfg.recipient_masked;
+    setConnection(
+      'notificationNumberStatus',
+      notificationCfg.recipient_configured?'ok':'off',
+      notificationCfg.recipient_configured?'Protegido no GitHub':'Secret não localizado'
+    );
+    setConnection(
+      'notificationSendStatus',
+      notificationCfg.provider_configured?'ok':'warn',
+      notificationCfg.provider_configured?'API pronta':'Aguardando API WhatsApp'
+    );
     const ep=roads?.endpoint_status||{};
     const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
     document.getElementById('roadsAlertState').textContent=alerts.length
