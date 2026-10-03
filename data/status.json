@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-03T20:47:19.562346-03:00",
+  "generated_at": "2026-10-03T20:48:55.890423-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -39,7 +39,7 @@
       "last_known_updated_at": "2026-09-30T18:30:13-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-03T20:47:02.288507-03:00",
+      "collected_at": "2026-10-03T20:48:31.017585-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -50,13 +50,13 @@
       "risk": "Moderado",
       "level": 3,
       "official_updated_at": "2026-10-03T05:38:50-03:00",
-      "age_hours": 15.1,
+      "age_hours": 15.2,
       "last_known_risk": "Moderado",
       "last_known_level": 3,
       "last_known_updated_at": "2026-10-03T05:38:50-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-03T20:47:03.253638-03:00",
+      "collected_at": "2026-10-03T20:48:31.893118-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -70,7 +70,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-03T20:47:09.495788-03:00",
+      "collected_at": "2026-10-03T20:48:38.938389-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -98,9 +98,9 @@
         "operational_signal_hours": 12
       },
       "message": "Não foi possível confirmar a Defesa Civil de Petrópolis nesta coleta. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-03T20:47:11.059761-03:00",
+      "collected_at": "2026-10-03T20:48:41.042916-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
-      "error": "HTTPSConnectionPool(host='www.petropolis.rj.gov.br', port=443): Max retries exceeded with url: /pmp/index.php/defesa-civil (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.petropolis.rj.gov.br', port=443) at 0x7f4d5a23a8d0>, 'Connection to www.petropolis.rj.gov.br timed out. (connect timeout=8)'))"
+      "error": "HTTPSConnectionPool(host='petropolis.rj.gov.br', port=443): Max retries exceeded with url: /pmp/index.php/defesa-civil (Caused by ConnectTimeoutError(<HTTPSConnection(host='petropolis.rj.gov.br', port=443) at 0x7f1784298920>, 'Connection to petropolis.rj.gov.br timed out. (connect timeout=7)'))"
     }
   },
   "weather": {
@@ -111,7 +111,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-03T20:47:04.185999-03:00",
+    "collected_at": "2026-10-03T20:48:32.731117-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-02"
   },
@@ -126,7 +126,7 @@
       "longitude": -43.19345
     },
     "observed_at": "2026-10-03T20:45:00-03:00",
-    "age_hours": 0.0,
+    "age_hours": 0.1,
     "temperature_c": 15.9,
     "apparent_temperature_c": 17.3,
     "humidity_pct": 99.0,
@@ -136,7 +136,7 @@
     "wind_gust_kmh": 19.8,
     "weather_code": 3,
     "condition": "Nublado",
-    "collected_at": "2026-10-03T20:47:06.132030-03:00",
+    "collected_at": "2026-10-03T20:48:34.994305-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -152,7 +152,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-03T20:47:06.203923-03:00",
+    "grid_updated_at": "2026-10-03T20:48:35.386329-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -805,14 +805,14 @@
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-03T20:47:06.203923-03:00",
+    "collected_at": "2026-10-03T20:48:35.386329-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas estáticas são usadas somente para ordenar as estações por distância do HST.",
-    "collected_at": "2026-10-03T20:47:06.704503-03:00",
+    "collected_at": "2026-10-03T20:48:36.189571-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 16,
@@ -1384,7 +1384,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-03T20:47:07.852237-03:00",
+    "collected_at": "2026-10-03T20:48:37.345548-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -1977,7 +1977,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-03T20:47:19.301055-03:00",
+    "collected_at": "2026-10-03T20:48:55.644325-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
