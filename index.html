@@ -537,7 +537,7 @@ footer{
 <div class="callout"><strong>Padrão HST de atualidade:</strong> informações de risco com mais de 24 horas saem do estado atual e permanecem no histórico. Quando não houver atualização recente, o painel informa isso sem interpretar como ausência de risco.</div>
 
 <div class="grid2">
-<article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
+<article class="card"><div class="section"><div><h3>Ações prioritárias</h3><div id="actionContextNote" class="small">Prioridades definidas pelo nível HST e pelo tipo de ameaça identificado.</div></div><span id="actionContextBadge" class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
 <article class="card">
 <div class="section"><h3>Conectividade das fontes</h3></div>
 <div class="source-health-list">
@@ -827,6 +827,7 @@ footer{
   <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ e os avisos meteorológicos do INMET.</li>
   <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HST Alerta pode elevar o nível geral em uma faixa, limitado ao nível 5.</li>
   <li>Previsão de chuva forte/intensa ou tempestade e pluviometria elevada são sinais complementares de antecipação e podem elevar somente para <strong>2 · Observação</strong>, caso as fontes oficiais ainda estejam em Vigilância.</li>
+  <li>Quando o contexto predominante for chuva, as ações recomendadas tratam <strong>água, energia e acessos de forma conjunta</strong>, pois chuva intensa também pode provocar quedas de árvores, interrupções na rede elétrica externa e bloqueios viários.</li>
   <li>Como referência operacional de Observação pluviométrica, o sistema considera acumulado recente igual ou superior a <strong>20 mm em 1 hora</strong> ou <strong>50 mm em 24 horas</strong> em estação CEMADEN com leitura recente.</li>
 </ul>
 
@@ -962,14 +963,141 @@ function relativeWeatherTime(value){
   if(mins>=0 && mins<60) return 'Atualizado há '+mins+' min · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
   return 'Atualizado em '+d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
-function renderActions(l){document.getElementById('actions').innerHTML=acts[l].map(x=>'<div class="action">• '+x+'</div>').join('')}
-function applyLevel(l,reason,generatedAt){
+function deriveActionContext(data){
+  if(!data) return {key:'general',label:'Nível atual',note:'Prioridades definidas pelo nível HST e pelo tipo de ameaça identificado.'};
+
+  const g=data.sources?.cemaden_geological||{};
+  const h=data.sources?.cemaden_hydrological||{};
+  const imet=data.sources?.inmet_alerts||{};
+  const fc=data.forecast||{};
+  const roads=data.roads||{};
+  const pv=data.pluviometers||{};
+  const parts=[
+    data.overall?.reason,
+    g.risk,g.message,
+    h.risk,h.message,
+    imet.risk,imet.title,
+    ...(data.overall?.supplemental_signals||[]),
+    ...((fc.days||[]).slice(0,2).map(d=>d?.summary)),
+    roads.alert_state,roads.message
+  ].filter(Boolean);
+  const txt=parts.join(' ').toLowerCase();
+
+  const rainTerms=['chuva','pancada','tempestade','precipita','alag','enchent','inunda','hidrol'];
+  const windTerms=['vento forte','rajada','vendaval','tempestade','árvore','arvore'];
+  const geoTerms=['desliz','movimento de massa','geológ','geolog'];
+  const roadTerms=['interdi','bloque','trânsito','transito','rodovia','br-040','br-495','queda de árvore','queda de arvore'];
+
+  const highRain1=Number(pv.highest_1h?.value)>=20;
+  const highRain24=Number(pv.highest_24h?.value)>=50;
+  const rain=Number(h.level)>1 || highRain1 || highRain24 || rainTerms.some(t=>txt.includes(t));
+  const wind=windTerms.some(t=>txt.includes(t));
+  const geo=Number(g.level)>1 || geoTerms.some(t=>txt.includes(t));
+  const road=roadTerms.some(t=>txt.includes(t));
+
+  if(rain){
+    return {
+      key:'rain',
+      label:'Chuva · Água + Energia + Acessos',
+      note:'Em cenários de chuva, o HST Alerta trata água, energia e acessos de forma conjunta, considerando também quedas de árvores e interferências na rede elétrica.'
+    };
+  }
+  if(wind){
+    return {
+      key:'wind',
+      label:'Vento · Energia + Acessos',
+      note:'Prioridades reforçadas para continuidade elétrica, segurança externa e acessos.'
+    };
+  }
+  if(geo){
+    return {
+      key:'geo',
+      label:'Geológico · Acessos + Infraestrutura',
+      note:'Prioridades reforçadas para encostas, acessos e impactos sobre infraestrutura.'
+    };
+  }
+  if(road){
+    return {
+      key:'road',
+      label:'Acessos · Logística',
+      note:'Prioridades reforçadas para mobilidade, equipes, fornecedores e continuidade logística.'
+    };
+  }
+  return {key:'general',label:'Nível atual',note:'Prioridades definidas pelo nível HST e pelo tipo de ameaça identificado.'};
+}
+
+function contextualActions(l,ctx){
+  if(!ctx || l<=1) return [];
+  if(ctx.key==='rain'){
+    const byLevel={
+      2:[
+        'Acompanhar pluviometria, drenagem e tendência de alagamentos ou enchentes',
+        'Conferir prontidão elétrica: geradores, nobreaks, combustível e possíveis interferências na rede da concessionária',
+        'Acompanhar acessos, condições viárias e risco de queda de árvores'
+      ],
+      3:[
+        'Verificar níveis de água e pontos vulneráveis a alagamento, mantendo recursos de abastecimento em prontidão',
+        'Verificar geradores, QTA, nobreaks, diesel e capacidade de resposta a eventual falta de energia',
+        'Reforçar acompanhamento de acessos, BR-040/495 e ocorrências de queda de árvores'
+      ],
+      4:[
+        'Manter água, energia e acessos no mesmo quadro de situação operacional',
+        'Confirmar autonomia elétrica e prontidão de fornecedores caso haja instabilidade da rede externa',
+        'Avaliar antecipadamente restrições de acesso, logística de equipes e chegada de recursos críticos'
+      ],
+      5:[
+        'Tratar simultaneamente continuidade de água, energia e acessos na avaliação da Direção',
+        'Confirmar autonomia e redundância elétrica diante de possível interrupção prolongada da rede externa',
+        'Priorizar acesso seguro de equipes, ambulâncias, fornecedores e recursos emergenciais'
+      ]
+    };
+    return byLevel[l]||[];
+  }
+  if(ctx.key==='wind'){
+    return l>=3?[
+      'Verificar geradores, nobreaks, diesel e condição da alimentação elétrica externa',
+      'Acompanhar quedas de árvores, obstruções e segurança dos acessos',
+      'Avaliar áreas externas e elementos sujeitos a danos por vento'
+    ]:[
+      'Acompanhar rajadas e possíveis interferências na rede elétrica',
+      'Verificar acessos e risco de queda de árvores'
+    ];
+  }
+  if(ctx.key==='geo'){
+    return [
+      'Acompanhar risco de deslizamentos e condições das encostas no entorno',
+      'Verificar acessos alternativos e possibilidade de bloqueios',
+      'Avaliar impactos potenciais sobre infraestrutura e logística hospitalar'
+    ];
+  }
+  if(ctx.key==='road'){
+    return [
+      'Acompanhar condições da BR-040/495 e demais acessos relevantes',
+      'Antecipar alternativas para chegada de equipes, pacientes e fornecedores',
+      'Verificar impacto sobre abastecimento e logística de recursos críticos'
+    ];
+  }
+  return [];
+}
+
+function renderActions(l,data){
+  const ctx=deriveActionContext(data);
+  const base=acts[l]||[];
+  const extra=contextualActions(l,ctx);
+  const unique=[...new Set([...extra,...base])];
+  document.getElementById('actions').innerHTML=unique.map(x=>'<div class="action">• '+x+'</div>').join('');
+  const badge=document.getElementById('actionContextBadge');
+  const note=document.getElementById('actionContextNote');
+  if(badge) badge.textContent=ctx.label;
+  if(note) note.textContent=ctx.note;
+}
+function applyLevel(l,reason,generatedAt,data){
   const h=document.getElementById('hero');
   h.className='hero l'+l;
   document.getElementById('levelNum').textContent=l;
   document.getElementById('levelLabel').textContent=labels[l];
   document.getElementById('levelReason').textContent=reason;
-  renderActions(l);
+  renderActions(l,data||latestOfficialData);
   const base=generatedAt?new Date(generatedAt):new Date();
   document.getElementById('updatedAt').textContent=fmtDate(base);
   document.getElementById('nextAt').textContent=fmtDate(new Date(base.getTime()+15*60000));
@@ -1415,7 +1543,7 @@ async function loadOfficialData(){
     if(rb.pdf_url){rbLink.href=rb.pdf_url;rbLink.style.display='inline-block';}else{rbLink.style.display='none';}
 
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
-    applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
+    applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at,data);
     document.getElementById('systemMode').textContent='CEMADEN + INMET';
     document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
     if(!window.currentHistory?.length){
