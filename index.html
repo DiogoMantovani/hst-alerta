@@ -779,22 +779,24 @@ footer{
 </article>
 
 <article class="card">
-<h3>Grupo Operacional</h3>
+<h3>Grupos de destinatários</h3>
 <div class="source-health-list">
-  <div class="source-health-row"><div class="source-health-name">Canal</div><strong>E-mail</strong></div>
-  <div class="source-health-row"><div class="source-health-name">Recebe</div><strong>Níveis 3, 4 e 5</strong></div>
-  <div class="source-health-row"><div class="source-health-name">Destinatário</div><span id="notificationRecipientStatus" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Grupo Operacional</div><strong>Níveis 3, 4 e 5</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Destinatários</div><span id="notificationOperationalRecipients" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Último envio</div><strong id="notificationOperationalLastSent">—</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Grupo de Gerentes</div><strong>Níveis 4 e 5</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Destinatários</div><span id="notificationManagersRecipients" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Último envio</div><strong id="notificationManagersLastSent">—</strong></div>
   <div class="source-health-row"><div class="source-health-name">Serviço</div><span id="notificationProviderStatus" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Envio automático</div><span id="notificationSendStatus" class="connection-pill connection-na">Verificando</span></div>
-  <div class="source-health-row"><div class="source-health-name">Último envio</div><strong id="notificationLastSent">—</strong></div>
 </div>
-<div class="source-health-footer">O endereço de e-mail e a chave do Resend ficam protegidos em GitHub Secrets e não são publicados no site.</div>
+<div class="source-health-footer">Os endereços dos destinatários e as credenciais de envio ficam protegidos em GitHub Secrets e não são publicados no site.</div>
 </article>
 </div>
 
 <article class="card">
 <h3>Regra de disparo</h3>
-<p>O Grupo Operacional receberá e-mail quando o HST entrar ou subir para os níveis 3, 4 ou 5. O sistema não repete a mesma mensagem a cada coleta de 15 minutos. Quando houver rebaixamento após um nível notificado, será enviada uma única atualização de melhora.</p>
+<p>O Grupo Operacional recebe e-mail nos níveis 3, 4 e 5. O Grupo de Gerentes recebe somente quando o nível vigente estiver em 4 ou 5. Cada grupo possui controle independente para evitar repetição a cada coleta de 15 minutos e garantir que a entrada em um nível aplicável gere o aviso correspondente.</p>
 <div class="callout"><strong>Conteúdo previsto:</strong> nível HST, causa predominante, contexto operacional — por exemplo, Chuva · Água + Energia + Acessos —, ações prioritárias e horário da atualização.</div>
 </article>
 </section>
@@ -1535,25 +1537,41 @@ async function loadOfficialData(){
     const roadsDegraded=roads?.status==='degraded';
     setConnection('roadsConnection',roadsConnected?'ok':roadsDegraded?'warn':'off',roadsConnected?'Conectividade ativa':roadsDegraded?'Conectividade parcial':'Sem confirmação');
 
-    const notificationCfg=data?.notifications?.group_operational_email||{};
+    const operationalEmail=data?.notifications?.group_operational_email||{};
+    const managersEmail=data?.notifications?.group_managers_email||{};
+    const recipientLabel=(cfg)=>{
+      const count=Number(cfg?.recipient_count||0);
+      return cfg?.recipient_configured
+        ?(count>1?count+' destinatários · protegido':count===1?'1 destinatário · protegido':'Configurado · protegido')
+        :'Não configurado';
+    };
     setConnection(
-      'notificationRecipientStatus',
-      notificationCfg.recipient_configured?'ok':'off',
-      notificationCfg.recipient_configured?'Protegido no GitHub':'E-mail não configurado'
+      'notificationOperationalRecipients',
+      operationalEmail.recipient_configured?'ok':'off',
+      recipientLabel(operationalEmail)
     );
-    const emailProvider=notificationCfg.provider==='smtp'?'Gmail SMTP':notificationCfg.provider==='resend'?'Resend':'Serviço de e-mail';
+    setConnection(
+      'notificationManagersRecipients',
+      managersEmail.recipient_configured?'ok':'warn',
+      recipientLabel(managersEmail)
+    );
+    const providerCfg=operationalEmail.provider_configured?operationalEmail:managersEmail;
+    const emailProvider=providerCfg.provider==='smtp'?'Gmail SMTP':providerCfg.provider==='resend'?'Resend':'Serviço de e-mail';
     setConnection(
       'notificationProviderStatus',
-      notificationCfg.provider_configured?'ok':'warn',
-      notificationCfg.provider_configured?emailProvider+' configurado':'Aguardando serviço de e-mail'
+      providerCfg.provider_configured?'ok':'warn',
+      providerCfg.provider_configured?emailProvider+' configurado':'Aguardando serviço de e-mail'
     );
+    const emailEnabled=!!(operationalEmail.automatic_sending_enabled||managersEmail.automatic_sending_enabled);
     setConnection(
       'notificationSendStatus',
-      notificationCfg.automatic_sending_enabled?'ok':notificationCfg.provider_configured?'warn':'off',
-      notificationCfg.automatic_sending_enabled?'Ativo':notificationCfg.provider_configured?'Pronto · desativado':'Não configurado'
+      emailEnabled?'ok':providerCfg.provider_configured?'warn':'off',
+      emailEnabled?'Ativo':providerCfg.provider_configured?'Pronto · desativado':'Não configurado'
     );
-    const lastEmailSent=document.getElementById('notificationLastSent');
-    if(lastEmailSent) lastEmailSent.textContent=notificationCfg.last_sent_at?fmtDate(notificationCfg.last_sent_at):'Nenhum envio';
+    const operationalLast=document.getElementById('notificationOperationalLastSent');
+    if(operationalLast) operationalLast.textContent=operationalEmail.last_sent_at?fmtDate(operationalEmail.last_sent_at):'Nenhum envio';
+    const managersLast=document.getElementById('notificationManagersLastSent');
+    if(managersLast) managersLast.textContent=managersEmail.last_sent_at?fmtDate(managersEmail.last_sent_at):'Nenhum envio';
     const ep=roads?.endpoint_status||{};
     const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
     document.getElementById('roadsAlertState').textContent=alerts.length
