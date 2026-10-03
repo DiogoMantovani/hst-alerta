@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-03T16:28:24.201595-03:00",
+  "generated_at": "2026-10-03T16:29:50.012487-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -26,7 +26,7 @@
       "last_known_updated_at": "2026-09-30T18:30:13-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-03T16:28:10.166082-03:00",
+      "collected_at": "2026-10-03T16:29:38.190753-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -43,7 +43,7 @@
       "last_known_updated_at": "2026-10-03T05:38:50-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-03T16:28:11.429430-03:00",
+      "collected_at": "2026-10-03T16:29:39.294056-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -57,7 +57,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-03T16:28:21.201818-03:00",
+      "collected_at": "2026-10-03T16:29:47.704713-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     }
@@ -70,7 +70,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-03T16:28:12.659470-03:00",
+    "collected_at": "2026-10-03T16:29:40.374634-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-02"
   },
@@ -95,7 +95,7 @@
     "wind_gust_kmh": 11.2,
     "weather_code": 51,
     "condition": "Garoa fraca",
-    "collected_at": "2026-10-03T16:28:15.611334-03:00",
+    "collected_at": "2026-10-03T16:29:42.875606-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -111,7 +111,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-03T16:28:16.288449-03:00",
+    "grid_updated_at": "2026-10-03T16:29:43.472009-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -764,14 +764,14 @@
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-03T16:28:16.288449-03:00",
+    "collected_at": "2026-10-03T16:29:43.472009-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
-    "collected_at": "2026-10-03T16:28:17.533494-03:00",
+    "collected_at": "2026-10-03T16:29:44.335356-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 14,
@@ -816,7 +816,7 @@
         "distance_to_hst_km": 3.19,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.1,
+        "age_hours": 0.2,
         "last_mm": 0.2,
         "acc1h_mm": 0.2,
         "acc3h_mm": 2.2,
@@ -858,7 +858,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 18:50",
         "observed_at": "2026-10-03T15:50:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": 2.96,
@@ -879,7 +879,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.1,
+        "age_hours": 0.2,
         "last_mm": 0.2,
         "acc1h_mm": 0.2,
         "acc3h_mm": 1.8,
@@ -1026,7 +1026,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.1,
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1047,7 +1047,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.1,
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1089,7 +1089,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 18:50",
         "observed_at": "2026-10-03T15:50:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1110,7 +1110,7 @@
         "distance_to_hst_km": 4.7,
         "raw_timestamp": "03/10/26 20:20",
         "observed_at": "2026-10-03T17:20:00-03:00",
-        "age_hours": -0.9,
+        "age_hours": -0.8,
         "last_mm": 0.0,
         "acc1h_mm": 0.4,
         "acc3h_mm": 2.39,
@@ -1131,7 +1131,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:50",
         "observed_at": "2026-10-03T16:50:00-03:00",
-        "age_hours": -0.4,
+        "age_hours": -0.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1152,7 +1152,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 20:20",
         "observed_at": "2026-10-03T17:20:00-03:00",
-        "age_hours": -0.9,
+        "age_hours": -0.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1299,7 +1299,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "27/04/25 12:50",
         "observed_at": "2025-04-27T09:50:00-03:00",
-        "age_hours": 12582.6,
+        "age_hours": 12582.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1340,7 +1340,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-03T16:28:19.006698-03:00",
+    "collected_at": "2026-10-03T16:29:45.904333-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -1453,26 +1453,6 @@
     ],
     "error": null
   },
-  "roads": {
-    "provider": "Elovias",
-    "scope": "BR-040/495 MG/RJ e Serra de Petrópolis",
-    "status": "ok",
-    "traffic_status": "Sem boletim operacional identificado nesta coleta",
-    "automated_traffic": false,
-    "bulletin": null,
-    "bulletin_time": null,
-    "serra_status": null,
-    "works_title": null,
-    "works_url": null,
-    "emergency_phone": "0800-040-0495",
-    "accessibility_phone": "0800-040-1495",
-    "whatsapp": "(21) 98040-0113",
-    "home_url": "https://elovias.com.br/home",
-    "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-03T16:28:23.438318-03:00",
-    "message": "Informação extraída do portal oficial da Elovias. Quando o boletim não trouxer data completa, o HST Alerta exibe o conteúdo sem inferir atualidade além da coleta.",
-    "error": null
-  },
   "integrations": {
     "cemaden_rj": "active",
     "inmet_alerts": "active",
@@ -1482,7 +1462,6 @@
     "weather_map": "ok",
     "radar": "ok",
     "pluviometers": "ok",
-    "roads": "ok",
     "utilities": "pending"
   }
 }
