@@ -1459,8 +1459,10 @@ def main():
       "notifications":{
           "group_operational_email":{
               "channel":"email",
+              "label":"Grupo Operacional",
               "levels":[3,4,5],
               "recipient_configured":bool(os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()),
+              "recipient_count":len([x for x in re.split(r"[,;\\n]+",os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","")) if x.strip()]),
               "provider_configured":bool(
                   os.getenv("RESEND_API_KEY","").strip()
                   or (
@@ -1473,16 +1475,33 @@ def main():
                   and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
               ) else "resend" if os.getenv("RESEND_API_KEY","").strip() else None,
               "automatic_sending_enabled":os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim"),
-              "status":"ready_disabled" if (
-                  os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()
-                  and (
-                      os.getenv("RESEND_API_KEY","").strip()
-                      or (
-                          os.getenv("HST_SMTP_USER","").strip()
-                          and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
-                      )
+              "status":"active" if (
+                  os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim")
+                  and os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()
+              ) else "ready_disabled" if os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip() else "awaiting_recipient"
+          },
+          "group_managers_email":{
+              "channel":"email",
+              "label":"Grupo de Gerentes",
+              "levels":[4,5],
+              "recipient_configured":bool(os.getenv("HST_EMAIL_GRUPO_GERENTES","").strip()),
+              "recipient_count":len([x for x in re.split(r"[,;\\n]+",os.getenv("HST_EMAIL_GRUPO_GERENTES","")) if x.strip()]),
+              "provider_configured":bool(
+                  os.getenv("RESEND_API_KEY","").strip()
+                  or (
+                      os.getenv("HST_SMTP_USER","").strip()
+                      and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
                   )
-              ) else "awaiting_provider" if os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip() else "recipient_missing"
+              ),
+              "provider":"smtp" if (
+                  os.getenv("HST_SMTP_USER","").strip()
+                  and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
+              ) else "resend" if os.getenv("RESEND_API_KEY","").strip() else None,
+              "automatic_sending_enabled":os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim"),
+              "status":"active" if (
+                  os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim")
+                  and os.getenv("HST_EMAIL_GRUPO_GERENTES","").strip()
+              ) else "ready_disabled" if os.getenv("HST_EMAIL_GRUPO_GERENTES","").strip() else "awaiting_recipient"
           }
       },
       "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
