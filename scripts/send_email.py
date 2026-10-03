@@ -193,7 +193,7 @@ def config():
     return {
         "recipient": os.getenv("HST_EMAIL_GRUPO_OPERACIONAL", "").strip(),
         "api_key": os.getenv("RESEND_API_KEY", "").strip(),
-        "from_email": os.getenv("HST_EMAIL_FROM", "").strip(),
+        "from_email": os.getenv("HST_EMAIL_FROM", "HST Alerta <onboarding@resend.dev>").strip(),
         "reply_to": os.getenv("HST_EMAIL_REPLY_TO", "").strip(),
         "public_url": os.getenv("HST_ALERTA_PUBLIC_URL", "https://diogomantovani.github.io/hst-alerta/").strip(),
     }
@@ -317,7 +317,7 @@ def update_public_status(data, state, cfg, enabled):
         "channel": "email",
         "levels": [3, 4, 5],
         "recipient_configured": bool(cfg["recipient"]),
-        "provider_configured": bool(cfg["api_key"] and cfg["from_email"]),
+        "provider_configured": bool(cfg["api_key"]),
         "automatic_sending_enabled": bool(enabled),
         "status": (
             "active" if configured(cfg) and enabled
