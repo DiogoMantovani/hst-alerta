@@ -166,7 +166,6 @@
 <button class="tab" data-target="checklists">Checklists</button>
 <button class="tab" data-target="historico">Histórico</button>
 <button class="tab" data-target="plano">Plano</button>
-<button class="tab" data-target="admin">Simulação</button>
 </nav>
 
 <main>
@@ -418,18 +417,7 @@
 </article>
 </section>
 
-<section id="admin" class="panel">
-<div class="section"><h2>Modo Simulado</h2><span class="badge demo">treinamento</span></div>
-<div class="card">
-<div class="controls">
-<label>Deslizamento<select id="geo"><option>Muito Baixo</option><option>Baixo</option><option>Moderado</option><option>Alto</option><option>Muito Alto</option></select></label>
-<label>Hidrológico<select id="hidro"><option>Muito Baixo</option><option>Baixo</option><option>Moderado</option><option>Alto</option><option>Muito Alto</option></select></label>
-<label>INMET<select id="inmet"><option>Sem aviso</option><option>Amarelo</option><option>Laranja</option><option>Vermelho</option></select></label>
-<button id="simulate" class="btn primary">Simular nível HST</button>
-</div>
-<p class="small">Simulação não altera dados oficiais e serve apenas para treinamento e validação das regras.</p>
-</div>
-</section>
+
 </main>
 
 <footer><strong>Rede Santa Catarina · Hospital Santa Teresa</strong><br>HST Alerta · apoio à decisão. Fontes oficiais permanecem soberanas.</footer>
@@ -437,8 +425,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
 const labels={1:'Vigilância',2:'Observação',3:'Atenção',4:'Alerta',5:'Alerta Máximo'};
-const cm={'Muito Baixo':1,'Baixo':2,'Moderado':3,'Alto':4,'Muito Alto':5};
-const im={'Sem aviso':1,'Amarelo':2,'Laranja':3,'Vermelho':4};
 const acts={
 1:['Manter monitoramento de rotina','Verificar integridade das fontes oficiais'],
 2:['Aumentar frequência de acompanhamento','Conferir disponibilidade de equipes e recursos'],
@@ -1139,16 +1125,7 @@ document.querySelectorAll('[data-map-mode]').forEach(btn=>btn.onclick=()=>activa
 document.getElementById('mapStationsToggle').onclick=()=>toggleMapSupport('stations');
 document.getElementById('mapRadiusToggle').onclick=()=>toggleMapSupport('radius');
 
-document.getElementById('simulate').onclick=()=>{
-  const g=document.getElementById('geo').value,h=document.getElementById('hidro').value,i=document.getElementById('inmet').value;
-  let l=Math.max(cm[g],cm[h],im[i]);
-  if([cm[g],cm[h],im[i]].filter(x=>x>=3).length>=2)l=Math.min(5,l+1);
-  document.getElementById('geoCard').textContent=g;
-  document.getElementById('hidroCard').textContent=h;
-  document.getElementById('inmetCard').textContent=i;
-  document.getElementById('systemMode').textContent='MODO SIMULADO';
-  applyLevel(l,'SIMULADO: nível calculado a partir das seleções de risco.',new Date().toISOString());
-};
+
 renderActions(1);
 loadOfficialData();
 loadClimateHistory();
