@@ -454,7 +454,7 @@ footer{
 <button class="tab" data-target="servicos">Rodovias</button>
 <button class="tab" data-target="historico">Histórico</button>
 <button class="tab" data-target="plano">Plano</button>
-<button class="tab" data-target="checklists">Checklists</button>
+<button class="tab" data-target="avisos">Avisos</button>
 </nav>
 
 <main>
@@ -757,15 +757,46 @@ footer{
 <div class="callout" style="margin-top:16px"><strong>Importante:</strong> ausência de aviso ativo na API não significa garantia de trânsito livre. O HST Alerta exibe os dados oficiais disponíveis sem inferir normalidade da via.</div>
 </section>
 
-<section id="checklists" class="panel">
-<div class="section"><h2>Checklists Operacionais</h2></div>
-<div class="checkgrid">
-<article class="card"><h3>Manutenção</h3><ul><li>Geradores e diesel</li><li>Nobreaks/UPS</li><li>Bombas críticas</li><li>Drenagem, calhas e coberturas</li><li>Reservatórios de água</li></ul></article>
-<article class="card"><h3>Segurança</h3><ul><li>Acessos ao hospital</li><li>Interdições e rotas alternativas</li><li>Contato com órgãos oficiais de emergência</li><li>Registro de ocorrências</li></ul></article>
-<article class="card"><h3>Suprimentos</h3><ul><li>Gases medicinais</li><li>Óleo diesel</li><li>Água e alimentação</li><li>Materiais críticos</li></ul></article>
-<article class="card"><h3>Assistência</h3><ul><li>Capacidade de atendimento</li><li>Áreas críticas</li><li>Equipes e deslocamentos</li><li>Pacientes vulneráveis</li></ul></article>
-<article class="card"><h3>Gestão</h3><ul><li>Pré-alerta de lideranças</li><li>Avaliação do Comitê de Crise</li><li>Comunicação institucional</li><li>Registro das decisões</li></ul></article>
+<section id="avisos" class="panel">
+<div class="section">
+  <div><h2>Avisos e Notificações</h2><div class="small">Política de comunicação automática do HST Alerta conforme o nível operacional.</div></div>
+  <span class="badge">CONFIGURAÇÃO DE TESTE</span>
 </div>
+
+<div class="grid2">
+<article class="card">
+<h3>Política por nível</h3>
+<div class="table"><table>
+<thead><tr><th>Nível</th><th>Aviso</th><th>Diretriz</th></tr></thead>
+<tbody>
+<tr><td><strong>1 · Vigilância</strong></td><td>Sem envio</td><td>Monitoramento normal.</td></tr>
+<tr><td><strong>2 · Observação</strong></td><td>Informativo opcional</td><td>Reservado para aviso antecipado, caso seja habilitado para o destinatário.</td></tr>
+<tr><td><strong>3 · Atenção</strong></td><td>Pré-alerta operacional</td><td>Enviar contexto da ameaça e ações prioritárias.</td></tr>
+<tr><td><strong>4 · Alerta</strong></td><td>Alerta de gestão</td><td>Envio imediato com riscos e ações prioritárias.</td></tr>
+<tr><td><strong>5 · Alerta Máximo</strong></td><td>Alta prioridade</td><td>Envio imediato para avaliação da Direção e dos critérios do Comitê de Crise.</td></tr>
+</tbody>
+</table></div>
+</article>
+
+<article class="card">
+<h3>Destinatário de teste</h3>
+<div class="source-health-list">
+  <div class="source-health-row"><div class="source-health-name">Grupo</div><strong>Grupo Operacional</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Canal</div><strong>WhatsApp</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Contato</div><strong>•••• 0880</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Recebe</div><strong>Níveis 3, 4 e 5</strong></div>
+  <div class="source-health-row"><div class="source-health-name">Número</div><span class="connection-pill connection-ok">Protegido no GitHub</span></div>
+  <div class="source-health-row"><div class="source-health-name">Envio real</div><span class="connection-pill connection-warn">Aguardando API WhatsApp</span></div>
+</div>
+<div class="source-health-footer">O número completo fica em GitHub Secret e não é publicado no site. O HST Alerta só exibirá informações mascaradas do destinatário.</div>
+</article>
+</div>
+
+<article class="card">
+<h3>Regra de disparo</h3>
+<p>O Grupo Operacional de teste receberá aviso quando o HST entrar ou subir para os níveis 3, 4 ou 5. O sistema não deve repetir a mesma mensagem a cada coleta de 15 minutos. Quando houver rebaixamento após um nível notificado, será enviada uma única atualização de melhora.</p>
+<div class="callout"><strong>Conteúdo previsto:</strong> nível HST, causa predominante, contexto operacional — por exemplo, Chuva · Água + Energia + Acessos —, ações prioritárias e horário da atualização.</div>
+</article>
 </section>
 
 <section id="historico" class="panel">
@@ -856,7 +887,7 @@ footer{
 <p>Ausência de dados não significa ausência de risco. A indisponibilidade é sinalizada, impede rebaixamento automático indevido e deve ser considerada na avaliação humana.</p>
 
 <h3>8. Registros, revisão e governança</h3>
-<p>Históricos, alterações de nível, checklists e decisões relevantes devem permanecer rastreáveis. Esta lógica deve ser revisada anualmente ou sempre que houver mudança relevante em fontes, critérios, infraestrutura ou documentos institucionais. O Docnix permanece como repositório oficial dos documentos controlados.</p>
+<p>Históricos, alterações de nível, avisos enviados e decisões relevantes devem permanecer rastreáveis. Esta lógica deve ser revisada anualmente ou sempre que houver mudança relevante em fontes, critérios, infraestrutura ou documentos institucionais. O Docnix permanece como repositório oficial dos documentos controlados.</p>
 </article>
 </section>
 
