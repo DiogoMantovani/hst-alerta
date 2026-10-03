@@ -7,8 +7,8 @@
   "last_sent_at": "2026-10-03T23:09:49.141105+00:00",
   "last_attempt_at": "2026-10-03T23:09:47.842969+00:00",
   "last_event": "test",
-  "last_result": "sent",
+  "last_result": "no_event",
   "last_error": null,
   "last_message_id": null,
-  "updated_at": "2026-10-03T23:09:47.842851+00:00"
+  "updated_at": "2026-10-03T23:10:35.420668+00:00"
 }
