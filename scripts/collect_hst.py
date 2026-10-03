@@ -1456,6 +1456,27 @@ def main():
       "pluviometers":pluviometers,
       "forecast":forecast,
       "roads":roads,
+      "notifications":{
+          "group_operational_test":{
+              "channel":"whatsapp",
+              "levels":[3,4,5],
+              "recipient_configured":bool(os.getenv("HST_WPP_GRUPO_OPERACIONAL_TESTE","").strip()),
+              "recipient_masked":("•••• "+os.getenv("HST_WPP_GRUPO_OPERACIONAL_TESTE","").strip()[-4:]) if os.getenv("HST_WPP_GRUPO_OPERACIONAL_TESTE","").strip() else None,
+              "provider_configured":all([
+                  os.getenv("HST_WPP_ACCESS_TOKEN","").strip(),
+                  os.getenv("HST_WPP_PHONE_NUMBER_ID","").strip(),
+                  os.getenv("HST_WPP_TEMPLATE_NAME","").strip(),
+                  os.getenv("HST_WPP_GRAPH_VERSION","").strip(),
+              ]),
+              "status":"ready" if all([
+                  os.getenv("HST_WPP_GRUPO_OPERACIONAL_TESTE","").strip(),
+                  os.getenv("HST_WPP_ACCESS_TOKEN","").strip(),
+                  os.getenv("HST_WPP_PHONE_NUMBER_ID","").strip(),
+                  os.getenv("HST_WPP_TEMPLATE_NAME","").strip(),
+                  os.getenv("HST_WPP_GRAPH_VERSION","").strip(),
+              ]) else "awaiting_provider" if os.getenv("HST_WPP_GRUPO_OPERACIONAL_TESTE","").strip() else "recipient_missing"
+          }
+      },
       "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
