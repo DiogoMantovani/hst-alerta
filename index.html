@@ -35,7 +35,7 @@
 .weather-theme-storm{background:linear-gradient(145deg,#f4f2f9,#eceaf4)}
 .weather-theme-storm .weather-iconbox{background:#e4e0f0;border-color:#d4cdea}
 .weather-theme-fog{background:linear-gradient(145deg,#f7f8f8,#eef1f1)}
-.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
 .risk{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:215px;display:flex;flex-direction:column}
 .risk-title{font-size:16px;font-weight:900;color:#173038;letter-spacing:.01em;margin-bottom:14px}
 .risk-state-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:3px}
@@ -517,6 +517,14 @@ footer{
   <div class="risk-source"><span id="inmetBadge" class="badge">INMET</span></div>
   <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="inmetMeta" class="risk-observation-text">Carregando informação…</div></div>
 </article>
+<article class="risk">
+  <div class="risk-title">Defesa Civil de Petrópolis</div>
+  <div class="risk-state-label">Estado atual</div>
+  <div id="defesaCard" class="value">Carregando…</div>
+  <div class="risk-source-label">Fonte</div>
+  <div class="risk-source"><span id="defesaBadge" class="badge">DEFESA CIVIL</span></div>
+  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="defesaMeta" class="risk-observation-text">Carregando informação…</div></div>
+</article>
 </div>
 <article class="card nearest-pluvio">
   <div class="nearest-pluvio-head">
@@ -544,6 +552,7 @@ footer{
   <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">CEMADEN · Pluviômetros</div><span id="pluvioConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span></div>
+  <div class="source-health-row"><div class="source-health-name">Defesa Civil de Petrópolis</div><span id="defesaConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Elovias · BR-040/495</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span></div>
   <div class="source-health-row"><div class="source-health-name">Enel Rio / Águas do Imperador</div><span class="connection-pill connection-na">Canal cadastrado</span></div>
@@ -822,12 +831,12 @@ footer{
 
 <div id="historyRiskPanel" class="history-subpanel active">
   <div class="history-section-head">
-    <div><h3>Histórico de Riscos</h3><div class="small">Uma nova linha é criada somente quando muda o nível HST ou o estado visível de Geológico, Hidrológico ou INMET.</div></div>
+    <div><h3>Histórico de Riscos</h3><div class="small">Uma nova linha é criada somente quando muda o nível HST ou o estado visível de Geológico, Hidrológico, INMET ou Defesa Civil.</div></div>
     <button id="exportHistory" class="btn">Exportar riscos CSV</button>
   </div>
   <div class="card table"><table>
-    <thead><tr><th>Período</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Observação</th></tr></thead>
-    <tbody id="historyBody"><tr><td colspan="6">Carregando histórico de riscos…</td></tr></tbody>
+    <thead><tr><th>Período</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Defesa Civil</th><th>Observação</th></tr></thead>
+    <tbody id="historyBody"><tr><td colspan="7">Carregando histórico de riscos…</td></tr></tbody>
   </table></div>
 </div>
 
@@ -857,7 +866,8 @@ footer{
 
 <h3>2. Como o nível é calculado</h3>
 <ul>
-  <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ e os avisos meteorológicos do INMET.</li>
+  <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ, os avisos meteorológicos do INMET e a informação operacional recente da Defesa Civil de Petrópolis.</li>
+  <li>A Defesa Civil pode elevar o nível quando houver estágio operacional recente ou sinal oficial recente, como primeiro/segundo toque de sirene, alerta de risco com mobilização ou abertura de pontos de apoio. Sinais antigos não provocam nova escalada.</li>
   <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HST Alerta pode elevar o nível geral em uma faixa, limitado ao nível 5.</li>
   <li>Previsão de chuva forte/intensa ou tempestade e pluviometria elevada são sinais complementares de antecipação e podem elevar somente para <strong>2 · Observação</strong>, caso as fontes oficiais ainda estejam em Vigilância.</li>
   <li>Quando o contexto predominante for chuva, as ações recomendadas tratam <strong>água, energia e acessos de forma conjunta</strong>, pois chuva intensa também pode provocar quedas de árvores, interrupções na rede elétrica externa e bloqueios viários.</li>
@@ -1389,6 +1399,7 @@ async function loadOfficialData(){
     const g=data.sources?.cemaden_geological;
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
+    const dc=data.sources?.defesa_civil||{};
     const roads=data.roads||{};
     const w=data.weather||{};
     const wr=data.weather_reference||{};
@@ -1416,6 +1427,13 @@ async function loadOfficialData(){
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
     document.getElementById('inmetBadge').textContent='INMET';
     document.getElementById('inmetMeta').textContent=imet?.status==='ok'?(imet?.active_count?((imet?.title||'Aviso meteorológico')+' · '+imet.active_count+' aviso(s) ativo(s).'):'Nenhum aviso meteorológico ativo identificado para Petrópolis/RJ.'):'Sem informação meteorológica recente confirmada nesta coleta.';
+    document.getElementById('defesaCard').textContent=dc?.status==='ok'?(dc.stage||dc.risk||'Informação operacional'):(dc?.status==='no_recent_update'?'Sem atualização recente':'Indisponível');
+    document.getElementById('defesaBadge').textContent='DEFESA CIVIL';
+    document.getElementById('defesaMeta').textContent=dc?.status==='ok'
+      ?((dc.basis||'Informação operacional oficial')+(dc.official_updated_at?' · '+fmtDate(dc.official_updated_at):''))
+      :dc?.status==='no_recent_update'
+        ?'Canal oficial acessível, sem estágio ou sinal operacional recente dentro da janela definida.'
+        :'Não foi possível confirmar a fonte oficial nesta coleta.';
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
@@ -1442,7 +1460,7 @@ async function loadOfficialData(){
       document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HST';
       document.getElementById('weatherTitle').textContent='Hospital Santa Teresa · Centro';
       document.getElementById('weatherSourceBadge').textContent='Fonte complementar';
-      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HST. Não substitui INMET ou CEMADEN para definição de alertas.';
+      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
     }
     const chips=[];
     if(chosen?.humidity_pct!=null) chips.push(weatherChip('◉','Umidade',numBR(chosen.humidity_pct,0)+'%'));
@@ -1531,6 +1549,8 @@ async function loadOfficialData(){
     setConnection('pluvioConnection',pluvioConnected?'ok':'off',pluvioConnected?'Conectividade ativa':'Sem confirmação');
     const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
     setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
+    const defesaConnected=dc?.status==='ok' || dc?.status==='no_recent_update';
+    setConnection('defesaConnection',defesaConnected?'ok':'off',defesaConnected?'Conectividade ativa':'Sem confirmação');
     const weatherRefConnected=wr?.status==='ok';
     setConnection('weatherRefConnection',weatherRefConnected?'ok':'off',weatherRefConnected?'Conectividade ativa':'Sem confirmação');
     const roadsConnected=roads?.status==='ok';
@@ -1613,7 +1633,7 @@ async function loadOfficialData(){
 
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at,data);
-    document.getElementById('systemMode').textContent='CEMADEN + INMET';
+    document.getElementById('systemMode').textContent='CEMADEN + INMET + DEFESA CIVIL';
     document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
     if(!window.currentHistory?.length){
       document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico ainda não carregado.</td></tr>';
@@ -1772,7 +1792,8 @@ function riskHistorySignature(s){
     Number(s?.level)||0,
     normalizeHistoryText(s?.geological?.risk),
     normalizeHistoryText(s?.hydrological?.risk),
-    normalizeHistoryText(s?.inmet?.risk)
+    normalizeHistoryText(s?.inmet?.risk),
+    normalizeHistoryText(s?.defesa_civil?.basis||s?.defesa_civil?.risk)
   ].join('|');
 }
 function groupRiskHistory(snaps){
@@ -1803,11 +1824,12 @@ function riskObservation(s){
   const drivers=[];
   const stale=[];
   const level=Number(s?.level)||1;
-  const geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{};
+  const geo=s?.geological||{}, hydro=s?.hydrological||{}, imet=s?.inmet||{}, dcHist=s?.defesa_civil||{};
 
   if(Number(geo.level)===level && level>1 && geo.risk) drivers.push('Geológico: '+geo.risk);
   if(Number(hydro.level)===level && level>1 && hydro.risk) drivers.push('Hidrológico: '+hydro.risk);
   if(Number(imet.level)===level && level>1 && imet.risk) drivers.push('INMET: '+imet.risk);
+  if(Number(dcHist.level)===level && level>1 && (dcHist.basis||dcHist.risk)) drivers.push('Defesa Civil: '+(dcHist.basis||dcHist.risk));
 
   if(normalizeHistoryText(geo.risk).includes('sem atualização')) stale.push('Deslizamento sem atualização oficial recente');
   if(normalizeHistoryText(hydro.risk).includes('sem atualização')) stale.push('Hidrológico sem atualização oficial recente');
@@ -1823,7 +1845,7 @@ function renderRiskHistory(){
   const display=groupRiskHistory(currentHistory).sort((a,b)=>String(b._to||b.ts||'').localeCompare(String(a._to||a.ts||'')));
   const body=document.getElementById('historyBody');
   if(!display.length){
-    body.innerHTML='<tr><td colspan="6">Nenhum registro de risco disponível.</td></tr>';
+    body.innerHTML='<tr><td colspan="7">Nenhum registro de risco disponível.</td></tr>';
   }else{
     body.innerHTML=display.map(s=>'<tr>'+
       '<td>'+historyPeriod(s)+'</td>'+
@@ -1831,6 +1853,7 @@ function renderRiskHistory(){
       '<td>'+esc(s.geological?.risk||'—')+'</td>'+
       '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
       '<td>'+esc(s.inmet?.risk||'—')+'</td>'+
+      '<td>'+esc(s.defesa_civil?.basis||s.defesa_civil?.risk||'—')+'</td>'+
       '<td class="small">'+esc(riskObservation(s))+'</td>'+
     '</tr>').join('');
   }
@@ -1969,8 +1992,8 @@ document.getElementById('pluvioHistoryAll').onclick=()=>{
 document.getElementById('exportHistory').onclick=()=>{
   const rows=groupRiskHistory(currentHistory);
   if(!rows.length) return;
-  const cols=['inicio','fim','coletas_no_estado','nivel_hst','rotulo','geologico','hidrologico','inmet','observacao'];
-  const data=rows.map(s=>[s._from,s._to,s._count,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,riskObservation(s)]);
+  const cols=['inicio','fim','coletas_no_estado','nivel_hst','rotulo','geologico','hidrologico','inmet','defesa_civil','observacao'];
+  const data=rows.map(s=>[s._from,s._to,s._count,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,s.defesa_civil?.basis||s.defesa_civil?.risk,riskObservation(s)]);
   const csv=[cols,...data].map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\n');
   const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hst-alerta-historico-riscos.csv';a.click();URL.revokeObjectURL(a.href);
