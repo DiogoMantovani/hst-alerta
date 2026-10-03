@@ -103,40 +103,84 @@ def observation_datetime(row):
 def fetch_inmet_weather(previous):
     prev=previous.get("weather") or {}
     now=datetime.now(TZ)
-    start=(now-timedelta(days=1)).strftime("%Y-%m-%d")
-    end=now.strftime("%Y-%m-%d")
-    url=INMET_WEATHER.format(start=start,end=end)
-    try:
-        data=get_json(url)
-        if isinstance(data,dict):
-            candidates=data.get("dados") or data.get("data") or data.get("results") or []
-        else:
-            candidates=data
-        if not isinstance(candidates,list) or not candidates:
-            raise RuntimeError("API do INMET retornou lista vazia")
-        rows=[r for r in candidates if isinstance(r,dict)]
-        if not rows: raise RuntimeError("Sem observações válidas do INMET")
-        rows.sort(key=lambda r: observation_datetime(r) or datetime.min.replace(tzinfo=TZ))
-        row=rows[-1]
-        obs=observation_datetime(row)
-        age=round((now-obs).total_seconds()/3600,1) if obs else None
-        status="stale" if age is not None and age>6 else "ok"
-        return {
-          "provider":"INMET","station":{"code":"A610","name":"Pico do Couto","type":"referência regional"},
-          "status":status,
-          "observed_at":obs.isoformat() if obs else None,
-          "age_hours":age,
-          "temperature_c":safe_float(row.get("TEM_INS") or row.get("temperatura")),
-          "humidity_pct":safe_float(row.get("UMD_INS") or row.get("umidade")),
-          "rain_1h_mm":safe_float(row.get("CHUVA") or row.get("precipitacao")),
-          "wind_gust_ms":safe_float(row.get("VEN_RAJ") or row.get("rajada")),
-          "pressure_hpa":safe_float(row.get("PRE_INS") or row.get("pressao")),
-          "collected_at":now.isoformat(),"url":url,"error":None
-        }
-    except Exception as exc:
-        fallback=dict(prev)
-        fallback.update({"provider":"INMET","station":{"code":"A610","name":"Pico do Couto","type":"referência regional"},"status":"unavailable","collected_at":now.isoformat(),"url":url,"error":str(exc)[:300]})
-        return fallback
+    today=now.strftime("%Y-%m-%d")
+    yesterday=(now-timedelta(days=1)).strftime("%Y-%m-%d")
+
+    # INMET has changed/retired some public API paths over time. Try the
+    # documented station range path first, then the official all-stations
+    # daily paths and filter A610 locally.
+    candidates_urls=[
+        INMET_WEATHER.format(start=yesterday,end=today),
+        f"https://apitempo.inmet.gov.br/estacao/dados/{today}",
+        f"https://apitempo.inmet.gov.br/estacao/dados/{yesterday}",
+    ]
+    errors=[]
+    for url in candidates_urls:
+        try:
+            r=requests.get(url,timeout=18,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json,text/plain,*/*"})
+            if r.status_code==204 or not r.text.strip():
+                raise RuntimeError(f"HTTP {r.status_code} sem conteúdo")
+            r.raise_for_status()
+            try:
+                data=r.json()
+            except Exception:
+                raise RuntimeError(f"Resposta não JSON (HTTP {r.status_code}, content-type={r.headers.get('content-type')})")
+
+            if isinstance(data,dict):
+                rows=data.get("dados") or data.get("data") or data.get("results") or []
+                if not rows:
+                    # Some APIs may key records by station/time.
+                    rows=[v for v in data.values() if isinstance(v,dict)]
+            else:
+                rows=data
+            if not isinstance(rows,list):
+                raise RuntimeError("Formato de dados inesperado")
+
+            valid=[]
+            for row in rows:
+                if not isinstance(row,dict): continue
+                code=norm(row.get("CD_ESTACAO") or row.get("codigo") or row.get("station"))
+                name=norm(row.get("DC_NOME") or row.get("nome") or row.get("station_name"))
+                if code=="A610" or "PICO DO COUTO" in name:
+                    valid.append(row)
+            # The station-specific endpoint may omit CD_ESTACAO in every row.
+            if not valid and "A610" in url and rows:
+                valid=[r for r in rows if isinstance(r,dict)]
+
+            if not valid:
+                raise RuntimeError("A610 não encontrada na resposta")
+
+            valid.sort(key=lambda row: observation_datetime(row) or datetime.min.replace(tzinfo=TZ))
+            row=valid[-1]
+            obs=observation_datetime(row)
+            age=round((now-obs).total_seconds()/3600,1) if obs else None
+            status="stale" if age is not None and age>6 else "ok"
+            return {
+              "provider":"INMET",
+              "station":{"code":"A610","name":"Pico do Couto","type":"referência regional"},
+              "status":status,
+              "observed_at":obs.isoformat() if obs else None,
+              "age_hours":age,
+              "temperature_c":safe_float(row.get("TEM_INS") if row.get("TEM_INS") is not None else row.get("temperatura")),
+              "humidity_pct":safe_float(row.get("UMD_INS") if row.get("UMD_INS") is not None else row.get("umidade")),
+              "rain_1h_mm":safe_float(row.get("CHUVA") if row.get("CHUVA") is not None else row.get("precipitacao")),
+              "wind_gust_ms":safe_float(row.get("VEN_RAJ") if row.get("VEN_RAJ") is not None else row.get("rajada")),
+              "pressure_hpa":safe_float(row.get("PRE_INS") if row.get("PRE_INS") is not None else row.get("pressao")),
+              "collected_at":now.isoformat(),"url":url,"error":None
+            }
+        except Exception as exc:
+            errors.append(url+" -> "+str(exc)[:180])
+
+    fallback=dict(prev)
+    fallback.update({
+      "provider":"INMET",
+      "station":{"code":"A610","name":"Pico do Couto","type":"referência regional"},
+      "status":"unavailable",
+      "collected_at":now.isoformat(),
+      "url":candidates_urls[0],
+      "error":" | ".join(errors)[:900]
+    })
+    return fallback
 
 def severity_from_alert(item):
     blob=norm(json.dumps(item,ensure_ascii=False))
