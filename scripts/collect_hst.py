@@ -1461,11 +1461,27 @@ def main():
               "channel":"email",
               "levels":[3,4,5],
               "recipient_configured":bool(os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()),
-              "provider_configured":bool(os.getenv("RESEND_API_KEY","").strip()),
+              "provider_configured":bool(
+                  os.getenv("RESEND_API_KEY","").strip()
+                  or (
+                      os.getenv("HST_SMTP_USER","").strip()
+                      and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
+                  )
+              ),
+              "provider":"smtp" if (
+                  os.getenv("HST_SMTP_USER","").strip()
+                  and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
+              ) else "resend" if os.getenv("RESEND_API_KEY","").strip() else None,
               "automatic_sending_enabled":os.getenv("HST_EMAIL_ENABLED","").strip().lower() in ("1","true","yes","on","sim"),
               "status":"ready_disabled" if (
                   os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip()
-                  and os.getenv("RESEND_API_KEY","").strip()
+                  and (
+                      os.getenv("RESEND_API_KEY","").strip()
+                      or (
+                          os.getenv("HST_SMTP_USER","").strip()
+                          and os.getenv("HST_SMTP_APP_PASSWORD","").strip()
+                      )
+                  )
               ) else "awaiting_provider" if os.getenv("HST_EMAIL_GRUPO_OPERACIONAL","").strip() else "recipient_missing"
           }
       },
