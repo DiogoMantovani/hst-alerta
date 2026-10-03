@@ -51,3 +51,18 @@ Cada alerta contém:
 
 ## Ativação
 Enquanto `HST_EMAIL_ENABLED` não estiver como `true`, o sistema permanece preparado, porém sem envio automático.
+
+
+## Alternativa gratuita sem domínio verificado — Gmail SMTP
+Quando o Resend estiver limitado ao e-mail da própria conta de teste, o HST Alerta pode usar Gmail SMTP.
+
+Secrets:
+- `HST_SMTP_USER` — conta Gmail remetente.
+- `HST_SMTP_APP_PASSWORD` — senha de app de 16 caracteres criada na Conta Google.
+- `HST_SMTP_HOST` — opcional; padrão `smtp.gmail.com`.
+- `HST_SMTP_PORT` — opcional; padrão `465`.
+- `HST_EMAIL_FROM` — opcional; pode ser omitido para usar o Gmail como remetente.
+
+A senha normal da conta Google não deve ser usada. A senha de app exige verificação em duas etapas na Conta Google.
+
+Se Gmail SMTP e Resend estiverem configurados ao mesmo tempo, o HST Alerta prioriza Gmail SMTP.
