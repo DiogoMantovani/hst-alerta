@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-03T14:44:38.134812-03:00",
+  "generated_at": "2026-10-03T14:45:33.013435-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -21,7 +21,7 @@
       "level": 3,
       "official_updated_at": "2026-09-30T18:30:13-03:00",
       "age_hours": 68.2,
-      "collected_at": "2026-10-03T14:44:06.537402-03:00",
+      "collected_at": "2026-10-03T14:45:01.573084-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -33,7 +33,7 @@
       "level": 3,
       "official_updated_at": "2026-10-03T05:38:50-03:00",
       "age_hours": 9.1,
-      "collected_at": "2026-10-03T14:44:07.804073-03:00",
+      "collected_at": "2026-10-03T14:45:03.075158-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -47,7 +47,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-03T14:44:15.344990-03:00",
+      "collected_at": "2026-10-03T14:45:10.108991-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -67,9 +67,9 @@
         "bulletin": "https://www.petropolis.rj.gov.br/boletim",
         "home": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil"
       },
-      "collected_at": "2026-10-03T14:44:17.359937-03:00",
+      "collected_at": "2026-10-03T14:45:11.962429-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
-      "error": "HTTPSConnectionPool(host='www.petropolis.rj.gov.br', port=443): Max retries exceeded with url: /pmp/index.php/defesa-civil (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.petropolis.rj.gov.br', port=443) at 0x7fc97a2f2240>, 'Connection to www.petropolis.rj.gov.br timed out. (connect timeout=20)'))"
+      "error": "HTTPSConnectionPool(host='www.petropolis.rj.gov.br', port=443): Max retries exceeded with url: /pmp/index.php/defesa-civil (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.petropolis.rj.gov.br', port=443) at 0x7f48d290e5d0>, 'Connection to www.petropolis.rj.gov.br timed out. (connect timeout=20)'))"
     }
   },
   "weather": {
@@ -80,7 +80,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-03T14:44:09.035436-03:00",
+    "collected_at": "2026-10-03T14:45:03.992981-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-02"
   },
@@ -88,11 +88,11 @@
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
-    "collected_at": "2026-10-03T14:44:11.805563-03:00",
+    "collected_at": "2026-10-03T14:45:06.179799-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
-    "recent_stations": 14,
-    "time_anomaly_stations": 3,
+    "recent_stations": 15,
+    "time_anomaly_stations": 2,
     "highest_1h": {
       "value": 1.98,
       "station": "Itaipava2"
@@ -108,7 +108,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.2,
         "acc1h_mm": 1.2,
         "acc3h_mm": 4.4,
@@ -126,7 +126,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.2,
         "acc1h_mm": 1.0,
         "acc3h_mm": 4.0,
@@ -144,7 +144,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.39,
         "acc1h_mm": 1.77,
         "acc3h_mm": 4.94,
@@ -180,7 +180,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.4,
         "acc1h_mm": 1.0,
         "acc3h_mm": 3.8,
@@ -216,7 +216,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.2,
         "acc1h_mm": 1.39,
         "acc3h_mm": 4.36,
@@ -229,12 +229,30 @@
         "station_type": 1
       },
       {
+        "id": 3320,
+        "name": "Nogueira",
+        "status": "ok",
+        "raw_timestamp": "03/10/26 18:00",
+        "observed_at": "2026-10-03T15:00:00-03:00",
+        "age_hours": -0.2,
+        "last_mm": 0.2,
+        "acc1h_mm": 1.4,
+        "acc3h_mm": 3.6,
+        "acc6h_mm": 7.97,
+        "acc12h_mm": 15.15,
+        "acc24h_mm": 22.54,
+        "acc48h_mm": 61.01,
+        "acc72h_mm": 69.9,
+        "acc96h_mm": 69.9,
+        "station_type": 1
+      },
+      {
         "id": 3325,
         "name": "Estrada da Cachoeira",
         "status": "ok",
         "raw_timestamp": "03/10/26 17:30",
         "observed_at": "2026-10-03T14:30:00-03:00",
-        "age_hours": 0.2,
+        "age_hours": 0.3,
         "last_mm": 0.2,
         "acc1h_mm": 0.2,
         "acc3h_mm": 0.6,
@@ -324,7 +342,7 @@
         "status": "ok",
         "raw_timestamp": "03/10/26 16:00",
         "observed_at": "2026-10-03T13:00:00-03:00",
-        "age_hours": 1.7,
+        "age_hours": 1.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -370,24 +388,6 @@
         "acc48h_mm": 121.76,
         "acc72h_mm": 130.86,
         "acc96h_mm": 132.25,
-        "station_type": 1
-      },
-      {
-        "id": 3320,
-        "name": "Nogueira",
-        "status": "time_anomaly",
-        "raw_timestamp": "03/10/26 18:00",
-        "observed_at": "2026-10-03T15:00:00-03:00",
-        "age_hours": -0.3,
-        "last_mm": 0.2,
-        "acc1h_mm": 1.4,
-        "acc3h_mm": 3.6,
-        "acc6h_mm": 7.97,
-        "acc12h_mm": 15.15,
-        "acc24h_mm": 22.54,
-        "acc48h_mm": 61.01,
-        "acc72h_mm": 69.9,
-        "acc96h_mm": 69.9,
         "station_type": 1
       },
       {
@@ -450,7 +450,7 @@
         "status": "stale",
         "raw_timestamp": "31/12/16 23:00",
         "observed_at": "2016-12-31T21:00:00-02:00",
-        "age_hours": 85505.7,
+        "age_hours": 85505.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -468,7 +468,7 @@
         "status": "stale",
         "raw_timestamp": "22/05/26 20:30",
         "observed_at": "2026-05-22T17:30:00-03:00",
-        "age_hours": 3213.2,
+        "age_hours": 3213.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -486,7 +486,7 @@
         "status": "stale",
         "raw_timestamp": "05/01/25 11:00",
         "observed_at": "2025-01-05T08:00:00-03:00",
-        "age_hours": 15270.7,
+        "age_hours": 15270.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -540,7 +540,7 @@
         "status": "stale",
         "raw_timestamp": "01/10/26 17:00",
         "observed_at": "2026-10-01T14:00:00-03:00",
-        "age_hours": 48.7,
+        "age_hours": 48.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -560,7 +560,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-03T14:44:13.289666-03:00",
+    "collected_at": "2026-10-03T14:45:07.720635-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -684,7 +684,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-03T14:44:37.821053-03:00",
+    "collected_at": "2026-10-03T14:45:32.709002-03:00",
     "error": null
   },
   "integrations": {
