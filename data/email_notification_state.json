@@ -2,13 +2,13 @@
   "schema_version": 1,
   "last_seen_level": 3,
   "last_seen_context": "rain",
-  "last_notified_level": null,
-  "last_notified_context": null,
-  "last_sent_at": null,
-  "last_attempt_at": null,
-  "last_event": "entry",
-  "last_result": "disabled",
+  "last_notified_level": 3,
+  "last_notified_context": "rain",
+  "last_sent_at": "2026-10-03T23:09:49.141105+00:00",
+  "last_attempt_at": "2026-10-03T23:09:47.842969+00:00",
+  "last_event": "test",
+  "last_result": "sent",
   "last_error": null,
   "last_message_id": null,
-  "updated_at": "2026-10-03T23:05:37.320431+00:00"
+  "updated_at": "2026-10-03T23:09:47.842851+00:00"
 }
