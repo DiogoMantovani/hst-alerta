@@ -22,6 +22,7 @@ HISTORY_URL = "https://diogomantovani.github.io/hst-alerta/data/history.json"
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
 CEMADEN_PLUVIO = "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ"
 CEMADEN_COORDS_LAYER = "https://observatorio.infraestrutura.mg.gov.br/server/rest/services/00_PUBLICACOES/cemaden_estacoes_pluviometricas/MapServer/1/query"
+CEMADEN_COORDS_LAYER_FALLBACK = "https://gis.vitoria.es.gov.br/arcgis/rest/services/Opendata/DadosAbertos/MapServer/18/query"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
 INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
@@ -478,39 +479,72 @@ KNOWN_CEMADEN_COORDS={
 def fetch_cemaden_station_coordinates():
     """Return cadastral coordinates for Petrópolis CEMADEN stations.
 
-    Rain values continue to come from the CEMADEN interactive endpoint. This
-    auxiliary public geospatial layer is used only to calculate distance/order.
+    Rain values continue to come from the CEMADEN interactive endpoint. Public
+    geospatial mirrors are used only to obtain station coordinates for distance
+    and ordering. Static verified coordinates remain as a final fallback.
     """
-    try:
-        r=requests.get(
+    sources=[
+        (
             CEMADEN_COORDS_LAYER,
-            params={
-                "where":"codibge=3303906",
-                "outFields":"idestacao,nomeestacao,latitude,longitude",
-                "returnGeometry":"false",
-                "f":"json",
-            },
-            timeout=15,
-            headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"},
-        )
-        r.raise_for_status()
-        data=r.json()
-        result={}
-        for feature in data.get("features") or []:
-            attrs=(feature or {}).get("attributes") or {}
-            lat=safe_float(attrs.get("latitude"))
-            lon=safe_float(attrs.get("longitude"))
-            if lat is None or lon is None:
-                continue
-            station_id=attrs.get("idestacao")
-            station_name=attrs.get("nomeestacao")
-            if station_id is not None:
-                result[("id",str(station_id))]=(lat,lon)
-            if station_name:
-                result[("name",norm(station_name))]=(lat,lon)
-        return result
-    except Exception:
-        return {}
+            "camada pública CEMADEN/MG",
+            "codibge=3303906",
+        ),
+        (
+            CEMADEN_COORDS_LAYER_FALLBACK,
+            "camada pública CEMADEN/Vitória",
+            "codibge='3303906'",
+        ),
+    ]
+    errors=[]
+    for url,label,where in sources:
+        try:
+            r=requests.get(
+                url,
+                params={
+                    "where":where,
+                    "outFields":"*",
+                    "returnGeometry":"true",
+                    "f":"json",
+                },
+                timeout=15,
+                headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"},
+            )
+            r.raise_for_status()
+            data=r.json()
+            if data.get("error"):
+                raise RuntimeError(str(data.get("error"))[:300])
+            result={}
+            for feature in data.get("features") or []:
+                attrs=(feature or {}).get("attributes") or {}
+                geom=(feature or {}).get("geometry") or {}
+                station_id=attrs.get("idestacao")
+                if station_id is None:
+                    station_id=attrs.get("IDESTACAO") or attrs.get("dados_idestacao")
+                station_name=attrs.get("nomeestacao")
+                if station_name is None:
+                    station_name=attrs.get("NOMEESTACAO") or attrs.get("dados_nomeestacao")
+                lat=safe_float(attrs.get("latitude"))
+                lon=safe_float(attrs.get("longitude"))
+                if lat is None:
+                    lat=safe_float(attrs.get("LATITUDE"))
+                if lon is None:
+                    lon=safe_float(attrs.get("LONGITUDE"))
+                if lon is None:
+                    lon=safe_float(geom.get("x"))
+                if lat is None:
+                    lat=safe_float(geom.get("y"))
+                if lat is None or lon is None:
+                    continue
+                if station_id is not None:
+                    result[("id",str(station_id))]=(lat,lon)
+                if station_name:
+                    result[("name",norm(station_name))]=(lat,lon)
+            if result:
+                return result,label,None
+            errors.append(label+": sem coordenadas retornadas")
+        except Exception as exc:
+            errors.append(label+": "+str(exc)[:220])
+    return {},"fallback estático","; ".join(errors)[:600]
 
 def fetch_cemaden_pluviometers(previous):
     prev=previous.get("pluviometers") or {}
@@ -522,7 +556,7 @@ def fetch_cemaden_pluviometers(previous):
         if not isinstance(data,list):
             raise RuntimeError("Formato inesperado do endpoint público de pluviômetros")
 
-        coordinate_map=fetch_cemaden_station_coordinates()
+        coordinate_map,coordinate_source,coordinate_error=fetch_cemaden_station_coordinates()
         stations=[]
         for row in data:
             if not isinstance(row,dict) or str(row.get("codibge"))!="3303906":
@@ -614,6 +648,8 @@ def fetch_cemaden_pluviometers(previous):
             "hidden_stations":len(stations)-len(recent),
             "time_anomaly_stations":len(anomalies),
             "georeferenced_stations":len(georeferenced),
+            "coordinate_source":coordinate_source,
+            "coordinate_error":coordinate_error,
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
             "nearest_to_hst":nearest,
