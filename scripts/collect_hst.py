@@ -726,18 +726,70 @@ def fetch_roads(previous):
     try:
         r=requests.get(ELOVIAS_HOME,timeout=18,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
         r.raise_for_status()
+        soup=BeautifulSoup(r.text,"html.parser")
+        page_text=re.sub(r"\s+"," ",soup.get_text(" ",strip=True)).strip()
+
+        bulletin=None
+        bulletin_time=None
+        serra_status=None
+
+        # The Elovias portal publishes a highlighted operational bulletin in the
+        # "Atenção" area. Keep the text descriptive; do not infer free traffic
+        # when the bulletin is missing.
+        m=re.search(
+            r"Boletim\s+Elovias\s*\(([^)]*)\)\s*:\s*(.*?)(?=Serviços\s+e\s+Informações|Últimas\s+Notícias|$)",
+            page_text,
+            flags=re.I,
+        )
+        if m:
+            bulletin_time=m.group(1).strip()
+            bulletin=re.sub(r"\s+"," ",m.group(2)).strip()
+            bulletin=re.sub(r"\s*(Desacelere\..*)$","",bulletin,flags=re.I).strip()
+            serra_match=re.search(
+                r"Serra\s+de\s+Petrópolis\s*:\s*(.*?)(?=(?:Baixada\s+Fluminense|Planalto|Para\s+consultar|WhatsApp|$))",
+                bulletin,
+                flags=re.I,
+            )
+            if serra_match:
+                serra_status=re.sub(r"\s+"," ",serra_match.group(1)).strip(" .,:;-")
+
+        works_title=None
+        works_url=None
+        for a in soup.find_all("a",href=True):
+            txt=re.sub(r"\s+"," ",a.get_text(" ",strip=True)).strip()
+            if re.search(r"Cronograma\s+de\s+Obras",txt,re.I):
+                href=a.get("href","").strip()
+                if href.startswith("/"):
+                    href="https://elovias.com.br"+href
+                elif href and not href.startswith("http"):
+                    href="https://elovias.com.br/"+href.lstrip("/")
+                works_title=txt
+                works_url=href or None
+                break
+
+        if not works_title:
+            mt=re.search(r"(Cronograma\s+de\s+Obras\s*[-–—]\s*[^|]+?)(?=\s+\d{2}/\d{2}/\d{4}|Últimas\s+Notícias|$)",page_text,re.I)
+            if mt:
+                works_title=re.sub(r"\s+"," ",mt.group(1)).strip()
+
         return {
             "provider":"Elovias",
             "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
-            "status":"official_channel_available",
-            "traffic_status":"Consulta oficial necessária",
-            "automated_traffic":False,
+            "status":"ok",
+            "traffic_status":serra_status or ("Boletim operacional disponível" if bulletin else "Sem boletim operacional identificado nesta coleta"),
+            "automated_traffic":bool(bulletin),
+            "bulletin":bulletin,
+            "bulletin_time":bulletin_time,
+            "serra_status":serra_status,
+            "works_title":works_title,
+            "works_url":works_url,
             "emergency_phone":"0800-040-0495",
             "accessibility_phone":"0800-040-1495",
             "whatsapp":"(21) 98040-0113",
             "home_url":ELOVIAS_HOME,
             "map_url":ELOVIAS_MAP,
             "collected_at":now.isoformat(),
+            "message":"Informação extraída do portal oficial da Elovias. Quando o boletim não trouxer data completa, o HST Alerta exibe o conteúdo sem inferir atualidade além da coleta.",
             "error":None,
         }
     except Exception as exc:
@@ -746,7 +798,7 @@ def fetch_roads(previous):
             "provider":"Elovias",
             "scope":"BR-040/495 MG/RJ e Serra de Petrópolis",
             "status":"unavailable",
-            "traffic_status":"Não determinado",
+            "traffic_status":"Sem informação operacional confirmada nesta coleta",
             "automated_traffic":False,
             "home_url":ELOVIAS_HOME,
             "map_url":ELOVIAS_MAP,
