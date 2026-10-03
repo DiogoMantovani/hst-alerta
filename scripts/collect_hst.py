@@ -29,6 +29,9 @@ DEFESA_CIVIL_BOLETIM = "https://www.petropolis.rj.gov.br/boletim"
 DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
 ELOVIAS_HOME = "https://elovias.com.br/home"
 ELOVIAS_MAP = "https://elovias.com.br/mapa"
+HST_LAT = -22.50825
+HST_LON = -43.19345
+OPEN_METEO_CURRENT = "https://api.open-meteo.com/v1/forecast"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
 LEVEL_LABELS = {1:"Vigilância",2:"Observação",3:"Atenção",4:"Alerta",5:"Alerta Máximo"}
@@ -85,17 +88,63 @@ def fetch_cemaden(action,key,label,previous):
             if cells and norm(cells[0])==norm(CITY):
                 match=cells; break
         if not match or len(match)<4: raise RuntimeError(f"{CITY} não encontrado")
-        risk=match[2].strip().upper()
-        if risk not in RISK_TO_LEVEL: raise RuntimeError(f"Risco não reconhecido: {risk}")
+        raw_risk=match[2].strip().upper()
+        if raw_risk not in RISK_TO_LEVEL: raise RuntimeError(f"Risco não reconhecido: {raw_risk}")
         observed=parse_dt(match[3])
         age=round((now-observed).total_seconds()/3600,1) if observed else None
-        status="stale" if age is not None and age>12 else "ok"
-        return {"name":label,"provider":"CEMADEN-RJ / Defesa Civil RJ","status":status,"risk":risk.title(),"level":RISK_TO_LEVEL[risk],"official_updated_at":observed.isoformat() if observed else match[3],"age_hours":age,"collected_at":now.isoformat(),"url":url,"error":None}
+
+        if age is None or age>24:
+            return {
+                "name":label,
+                "provider":"CEMADEN-RJ / Defesa Civil RJ",
+                "status":"no_recent_update",
+                "risk":"Sem atualização oficial recente",
+                "level":None,
+                "official_updated_at":observed.isoformat() if observed else match[3],
+                "age_hours":age,
+                "last_known_risk":raw_risk.title(),
+                "last_known_level":RISK_TO_LEVEL[raw_risk],
+                "last_known_updated_at":observed.isoformat() if observed else match[3],
+                "freshness_limit_hours":24,
+                "message":"Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
+                "collected_at":now.isoformat(),
+                "url":url,
+                "error":None,
+            }
+
+        return {
+            "name":label,
+            "provider":"CEMADEN-RJ / Defesa Civil RJ",
+            "status":"ok",
+            "risk":raw_risk.title(),
+            "level":RISK_TO_LEVEL[raw_risk],
+            "official_updated_at":observed.isoformat() if observed else match[3],
+            "age_hours":age,
+            "last_known_risk":raw_risk.title(),
+            "last_known_level":RISK_TO_LEVEL[raw_risk],
+            "last_known_updated_at":observed.isoformat() if observed else match[3],
+            "freshness_limit_hours":24,
+            "message":"Informação oficial dentro da janela de 24 h.",
+            "collected_at":now.isoformat(),
+            "url":url,
+            "error":None,
+        }
     except Exception as exc:
-        fallback=dict(prev) if prev else {}
-        fallback.update({"name":label,"provider":"CEMADEN-RJ / Defesa Civil RJ","status":"unavailable","collected_at":now.isoformat(),"url":url,"error":str(exc)[:300]})
-        if "level" not in fallback: fallback.update({"level":None,"risk":"Indisponível"})
-        return fallback
+        return {
+            "name":label,
+            "provider":"CEMADEN-RJ / Defesa Civil RJ",
+            "status":"source_unconfirmed",
+            "risk":"Sem informação oficial recente confirmada",
+            "level":None,
+            "last_known_risk":prev.get("last_known_risk") or prev.get("risk"),
+            "last_known_level":prev.get("last_known_level") if prev.get("last_known_level") is not None else prev.get("level"),
+            "last_known_updated_at":prev.get("last_known_updated_at") or prev.get("official_updated_at"),
+            "freshness_limit_hours":24,
+            "message":"Não foi possível confirmar uma atualização oficial recente nesta coleta. Isso não significa ausência de risco.",
+            "collected_at":now.isoformat(),
+            "url":url,
+            "error":str(exc)[:300],
+        }
 
 def observation_datetime(row):
     date=row.get("DT_MEDICAO") or row.get("data") or row.get("DATA")
@@ -194,6 +243,74 @@ def fetch_inmet_weather(previous):
       "error":" | ".join(errors)[:900]
     })
     return fallback
+
+def weather_code_text(code):
+    mapping={
+        0:"Céu limpo",1:"Predominantemente limpo",2:"Parcialmente nublado",3:"Nublado",
+        45:"Nevoeiro",48:"Nevoeiro com geada",
+        51:"Garoa fraca",53:"Garoa moderada",55:"Garoa forte",
+        61:"Chuva fraca",63:"Chuva moderada",65:"Chuva forte",
+        80:"Pancadas de chuva fracas",81:"Pancadas de chuva moderadas",82:"Pancadas de chuva fortes",
+        95:"Trovoada",96:"Trovoada com granizo fraco",99:"Trovoada com granizo forte",
+    }
+    return mapping.get(int(code) if code is not None else -1,"Condição não classificada")
+
+def fetch_open_meteo_current(previous):
+    prev=previous.get("weather_reference") or {}
+    now=datetime.now(TZ)
+    params={
+        "latitude":HST_LAT,
+        "longitude":HST_LON,
+        "current":"temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,wind_speed_10m,wind_gusts_10m",
+        "timezone":"America/Sao_Paulo",
+    }
+    try:
+        r=requests.get(OPEN_METEO_CURRENT,params=params,timeout=18,headers={"User-Agent":"HST-Alerta/1.0"})
+        r.raise_for_status()
+        data=r.json()
+        cur=data.get("current") or {}
+        observed=parse_dt(cur.get("time"))
+        if observed is None and cur.get("time"):
+            try:
+                observed=datetime.fromisoformat(str(cur["time"])).replace(tzinfo=TZ)
+            except Exception:
+                observed=None
+        age=round((now-observed).total_seconds()/3600,1) if observed else None
+        status="ok" if age is not None and -0.25<=age<=2 else "stale"
+        return {
+            "provider":"Open-Meteo",
+            "source_type":"estimativa meteorológica complementar",
+            "official":False,
+            "status":status,
+            "location":{"name":"Hospital Santa Teresa","latitude":HST_LAT,"longitude":HST_LON},
+            "observed_at":observed.isoformat() if observed else cur.get("time"),
+            "age_hours":age,
+            "temperature_c":safe_float(cur.get("temperature_2m")),
+            "apparent_temperature_c":safe_float(cur.get("apparent_temperature")),
+            "humidity_pct":safe_float(cur.get("relative_humidity_2m")),
+            "precipitation_mm":safe_float(cur.get("precipitation")),
+            "rain_mm":safe_float(cur.get("rain")),
+            "wind_speed_kmh":safe_float(cur.get("wind_speed_10m")),
+            "wind_gust_kmh":safe_float(cur.get("wind_gusts_10m")),
+            "weather_code":cur.get("weather_code"),
+            "condition":weather_code_text(cur.get("weather_code")),
+            "collected_at":now.isoformat(),
+            "url":r.url,
+            "message":"Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
+            "error":None,
+        }
+    except Exception as exc:
+        fallback=dict(prev)
+        fallback.update({
+            "provider":"Open-Meteo",
+            "source_type":"estimativa meteorológica complementar",
+            "official":False,
+            "status":"source_unconfirmed",
+            "collected_at":now.isoformat(),
+            "message":"Sem condição meteorológica complementar recente confirmada. Isso não significa ausência de risco.",
+            "error":str(exc)[:500],
+        })
+        return fallback
 
 def severity_from_alert(item):
     blob=norm(json.dumps(item,ensure_ascii=False))
@@ -452,9 +569,9 @@ def fetch_defesa_civil(previous):
         return {
             "name":"Defesa Civil",
             "provider":"Defesa Civil de Petrópolis",
-            "status":"no_recent_bulletin",
+            "status":"no_recent_update",
             "stage":None,
-            "risk":"Sem estágio recente automatizável",
+            "risk":"Sem atualização oficial recente",
             "level":None,
             "official_updated_at":latest_stage[0].isoformat() if latest_stage else None,
             "age_hours":round((now-latest_stage[0]).total_seconds()/3600,1) if latest_stage else None,
@@ -469,9 +586,9 @@ def fetch_defesa_civil(previous):
         return {
             "name":"Defesa Civil",
             "provider":"Defesa Civil de Petrópolis",
-            "status":"unavailable",
+            "status":"source_unconfirmed",
             "stage":None,
-            "risk":"Fonte indisponível",
+            "risk":"Sem informação oficial recente confirmada",
             "level":None,
             "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
             "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
@@ -551,8 +668,9 @@ def history_snapshot(payload):
             "total_stations":pv.get("total_stations"),
         },
         "weather":{
-            "status":(payload.get("weather") or {}).get("status"),
-            "temperature_c":(payload.get("weather") or {}).get("temperature_c"),
+            "status":(payload.get("weather_reference") or {}).get("status") or (payload.get("weather") or {}).get("status"),
+            "provider":(payload.get("weather_reference") or {}).get("provider") or (payload.get("weather") or {}).get("provider"),
+            "temperature_c":(payload.get("weather_reference") or {}).get("temperature_c") if (payload.get("weather_reference") or {}).get("temperature_c") is not None else (payload.get("weather") or {}).get("temperature_c"),
         },
         "roads":{
             "status":(payload.get("roads") or {}).get("status"),
@@ -721,6 +839,7 @@ def main():
     geo=fetch_cemaden(1,"cemaden_geological","Deslizamento",previous)
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
     weather=fetch_inmet_weather(previous)
+    weather_reference=fetch_open_meteo_current(previous)
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
@@ -744,10 +863,9 @@ def main():
             top.append(f'{s["name"]}: {s.get("risk")}')
     reason=", ".join(top) or "Sem nova leitura válida."
     if escalated: reason += ". Escalada por duas fontes independentes em nível 3 ou superior."
-    unavailable=[s["name"] for s in (geo,hydro,inmet,defesa) if s.get("status")=="unavailable"]
-    stale=[s["name"] for s in (geo,hydro) if s.get("status")=="stale"]
-    if unavailable: reason += ". Fonte(s) indisponível(is): "+", ".join(unavailable)+"; último valor válido preservado quando disponível"
-    if stale: reason += ". Atenção: atualização oficial antiga em "+", ".join(stale)+"."
+    gaps=[s["name"] for s in (geo,hydro,defesa) if s.get("status") in ("no_recent_update","source_unconfirmed")]
+    if gaps:
+        reason += ". Sem atualização oficial recente confirmada em: "+", ".join(gaps)+". Isso não significa ausência de risco."
 
     now=datetime.now(TZ)
     payload={
@@ -757,10 +875,11 @@ def main():
       "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
+      "weather_reference":weather_reference,
       "pluviometers":pluviometers,
       "forecast":forecast,
       "roads":roads,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":defesa.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":defesa.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
