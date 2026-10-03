@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#006d6f">
 <title>HST Alerta | Hospital Santa Teresa</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
 :root{--bg:#f4f8f8;--ink:#173038;--muted:#64777e;--line:#dce7e7;--brand:#006d6f;--brand2:#00a39a;--card:#fff;--l1:#2d8a56;--l2:#c89a05;--l3:#df7419;--l4:#c63b35;--l5:#70233d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif}.top{background:linear-gradient(135deg,#004e53,#007b78 60%,#155d68);color:#fff;padding:24px clamp(18px,4vw,56px);display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{display:flex;gap:20px;align-items:center}.brand img{width:230px;max-width:32vw;object-fit:contain}.divider{width:1px;height:72px;background:#ffffff55}.hospital{font-weight:800;letter-spacing:.04em}.top h1{margin:3px 0;font-size:34px}.top p{margin:0;opacity:.9}.badge{display:inline-flex;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#edf2f4;color:#42565f}.badge.demo{background:#fff0bd;color:#765900}.tabs{position:sticky;top:0;z-index:9;background:white;border-bottom:1px solid var(--line);padding:0 clamp(10px,4vw,56px);display:flex;overflow:auto}.tab{border:0;background:transparent;padding:14px 12px;font-weight:750;color:#586b72;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}.tab.active{color:var(--brand);border-color:var(--brand)}main{max-width:1450px;margin:auto;padding:24px clamp(14px,3vw,42px) 48px}.panel{display:none}.panel.active{display:block}.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:18px}.card,.hero{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(20,40,60,.04)}.hero{color:white;min-height:220px;display:flex;flex-direction:column;justify-content:space-between}.l1{background:linear-gradient(135deg,#267749,#2d8a56)}.l2{background:linear-gradient(135deg,#a77f00,#d3a10a)}.l3{background:linear-gradient(135deg,#c55e0d,#e47a20)}.l4{background:linear-gradient(135deg,#9f3029,#c73e36)}.l5{background:linear-gradient(135deg,#531529,#7a233c)}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;opacity:.72}.levelrow{display:flex;gap:20px;align-items:center}.num{font-size:82px;font-weight:900;line-height:1}.levelrow h2{margin:0 0 6px;font-size:30px}.levelrow p{margin:0;line-height:1.45}.timestamps{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;opacity:.9}.weather{display:flex;gap:18px;align-items:center;margin:22px 0}.temp{font-size:58px;font-weight:900;color:var(--brand)}
 .weather-card{position:relative;overflow:hidden;padding:0;background:linear-gradient(145deg,#f7fbfb,#eef7f7);border-color:#cfe2e1}
@@ -107,7 +108,31 @@
 .climate-period-condition{font-size:12px;font-weight:750;line-height:1.35}
 .climate-period-detail{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
 @media(max-width:1100px){.climate-periods{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
+@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.map-shell{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(20,40,60,.04)}
+.map-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fbfdfd;flex-wrap:wrap}
+.map-layer-group{display:flex;gap:7px;flex-wrap:wrap}
+.map-layer-btn{border:1px solid #c9dada;background:#fff;color:#486066;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;cursor:pointer}
+.map-layer-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.map-layer-btn.support.active{background:#e5f3f2;border-color:#b9dcd9;color:#006d6f}
+.map-status{font-size:12px;color:var(--muted);font-weight:750}
+.map-canvas-wrap{position:relative;isolation:isolate}
+#weatherMap{height:620px;width:100%;background:#e8f0ef}
+.leaflet-container{font-family:Inter,Segoe UI,Arial,sans-serif}
+.hst-map-icon{background:transparent;border:0}
+.hst-pin{width:44px;height:44px;border-radius:50% 50% 50% 12px;transform:rotate(-45deg);background:#a52f35;border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.28);display:grid;place-items:center}
+.hst-pin span{transform:rotate(45deg);font-size:26px;line-height:1;color:#fff;font-weight:900}
+.wind-map-icon{background:transparent;border:0}
+.wind-arrow{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #bcd0d2;box-shadow:0 2px 7px rgba(0,0,0,.15);font-size:21px;color:#0a6970;font-weight:900}
+.map-legend{position:absolute;z-index:500;left:12px;bottom:12px;max-width:285px;background:rgba(255,255,255,.95);border:1px solid #d7e3e3;border-radius:12px;padding:10px 12px;box-shadow:0 3px 12px rgba(0,0,0,.12);font-size:11px;line-height:1.4;color:#4b6168}
+.map-legend strong{display:block;color:#173038;margin-bottom:4px;font-size:12px}
+.legend-scale{display:flex;height:8px;border-radius:999px;overflow:hidden;margin:7px 0 4px}
+.legend-scale span{flex:1}
+.map-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.map-summary .card strong{display:block;font-size:18px;color:#0c6264;margin-top:5px}
+.map-source-note{margin-top:12px;font-size:11px;line-height:1.5;color:var(--muted)}
+@media(max-width:900px){#weatherMap{height:520px}.map-summary{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){#weatherMap{height:460px}.map-summary{grid-template-columns:1fr}.map-legend{max-width:230px}}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
 <body>
@@ -275,14 +300,41 @@
 </section>
 
 <section id="mapa" class="panel">
-<div class="section"><h2>Mapa Operacional de Petrópolis</h2></div>
-<div class="mapbox">
-<div><h3>Camadas previstas</h3><p>Hospital Santa Teresa · pluviômetros · áreas de risco · rodovias/acessos · alertas oficiais · pontos críticos institucionais.</p>
-<div class="maplinks">
-<a class="btn" target="_blank" href="https://painelcemadenrj.defesacivil.rj.gov.br/">CEMADEN-RJ</a>
-<a class="btn" target="_blank" href="https://mapas.inmet.gov.br/">Mapa INMET</a>
-<a class="btn" target="_blank" href="https://www2.cemaden.gov.br/mapainterativo/">CEMADEN Nacional</a>
-</div></div>
+<div class="section">
+  <div><h2>Mapa Meteorológico Operacional</h2><div class="small">Petrópolis/RJ · Hospital Santa Teresa como referência central.</div></div>
+  <span id="mapModeBadge" class="badge">RADAR + CEMADEN</span>
+</div>
+
+<div class="map-shell">
+  <div class="map-toolbar">
+    <div class="map-layer-group" aria-label="Camadas meteorológicas">
+      <button class="map-layer-btn active" data-map-mode="precip">Precipitação</button>
+      <button class="map-layer-btn" data-map-mode="temperature">Temperatura</button>
+      <button class="map-layer-btn" data-map-mode="cloud">Nebulosidade</button>
+      <button class="map-layer-btn" data-map-mode="wind">Vento</button>
+    </div>
+    <div class="map-layer-group">
+      <button id="mapStationsToggle" class="map-layer-btn support active">Pluviômetros</button>
+      <button id="mapRadiusToggle" class="map-layer-btn support active">Raio 5 km</button>
+    </div>
+    <div id="mapUpdated" class="map-status">Aguardando dados do mapa…</div>
+  </div>
+  <div class="map-canvas-wrap">
+    <div id="weatherMap"></div>
+    <div id="mapLegend" class="map-legend"><strong>Precipitação</strong>Carregando camada meteorológica…</div>
+  </div>
+</div>
+
+<div class="map-summary">
+  <article class="card"><span class="small">Radar de precipitação</span><strong id="mapRadarStatus">—</strong><span id="mapRadarTime" class="small"></span></article>
+  <article class="card"><span class="small">Pluviômetro mais próximo</span><strong id="mapNearestStation">—</strong><span id="mapNearestDistance" class="small"></span></article>
+  <article class="card"><span class="small">Chuva próxima ao HST</span><strong id="mapNearestRain">—</strong><span class="small">acumulados CEMADEN</span></article>
+  <article class="card"><span class="small">Condição no HST</span><strong id="mapCurrentWeather">—</strong><span id="mapCurrentWeatherTime" class="small"></span></article>
+</div>
+
+<div class="map-source-note">
+  <strong>Fontes:</strong> base cartográfica © OpenStreetMap contributors · radar RainViewer · temperatura, nebulosidade e vento Open‑Meteo · pluviômetros CEMADEN.
+  As camadas meteorológicas complementares apoiam a visualização operacional e não alteram sozinhas o nível HST.
 </div>
 </section>
 
@@ -368,6 +420,7 @@
 
 <footer><strong>Rede Santa Catarina · Hospital Santa Teresa</strong><br>HST Alerta · apoio à decisão. Fontes oficiais permanecem soberanas.</footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
 const labels={1:'Vigilância',2:'Observação',3:'Atenção',4:'Alerta',5:'Alerta Máximo'};
 const cm={'Muito Baixo':1,'Baixo':2,'Moderado':3,'Alto':4,'Muito Alto':5};
@@ -479,11 +532,210 @@ function sourceMeta(source){
   if(source.status==='source_unconfirmed') return 'Não foi possível confirmar nova informação nesta coleta.';
   return source.message||'Sem informação recente confirmada.';
 }
+let operationalMap=null;
+let operationalMapLayers={};
+let operationalMapMode='precip';
+let operationalMapStationsVisible=true;
+let operationalMapRadiusVisible=true;
+let latestOfficialData=null;
+
+function temperatureMapColor(v){
+  const n=Number(v);
+  if(n<=10) return '#3978b8';
+  if(n<=15) return '#58a7c7';
+  if(n<=20) return '#67bd91';
+  if(n<=25) return '#e3b94f';
+  if(n<=30) return '#e87c3d';
+  return '#c84b45';
+}
+function precipMapColor(v){
+  const n=Number(v||0);
+  if(n<=0) return '#d9edf3';
+  if(n<0.5) return '#84c9d8';
+  if(n<2) return '#4aa5c3';
+  if(n<5) return '#3478b5';
+  return '#704ca6';
+}
+function stationStatusColor(s){
+  if(s?.status==='ok') return '#17845b';
+  if(s?.status==='time_anomaly') return '#c78d16';
+  return '#7c8c91';
+}
+function mapMm(v){return v==null?'—':numBR(v,1)+' mm';}
+function mapPopupStation(s){
+  return '<strong>'+esc(s.name||'Pluviômetro CEMADEN')+'</strong><br>'+
+    '<span>Última leitura: '+esc(fmtDate(s.observed_at))+'</span><br>'+
+    '<span>1 h: <strong>'+esc(mapMm(s.acc1h_mm))+'</strong> · 6 h: '+esc(mapMm(s.acc6h_mm))+'</span><br>'+
+    '<span>12 h: '+esc(mapMm(s.acc12h_mm))+' · 24 h: <strong>'+esc(mapMm(s.acc24h_mm))+'</strong></span>'+
+    (s.distance_to_hst_km!=null?'<br><span>Distância do HST: '+esc(numBR(s.distance_to_hst_km,1))+' km</span>':'');
+}
+function updateMapLegend(mode,data){
+  const el=document.getElementById('mapLegend');
+  if(!el) return;
+  const radar=data?.weather_map?.radar||{};
+  if(mode==='precip'){
+    el.innerHTML='<strong>Precipitação</strong>'+
+      (radar.status==='ok'
+        ?'Radar meteorológico mais recente disponível.<br>Horário: '+esc(fmtDate(radar.frame_time))+'<br><span style="opacity:.75">Fonte complementar: RainViewer</span>'
+        :'Radar não disponível nesta coleta. Exibindo precipitação estimada na grade complementar.');
+  }else if(mode==='temperature'){
+    el.innerHTML='<strong>Temperatura atual</strong><div class="legend-scale"><span style="background:#3978b8"></span><span style="background:#58a7c7"></span><span style="background:#67bd91"></span><span style="background:#e3b94f"></span><span style="background:#e87c3d"></span><span style="background:#c84b45"></span></div>Mais frio → mais quente<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+  }else if(mode==='cloud'){
+    el.innerHTML='<strong>Nebulosidade</strong><div class="legend-scale"><span style="background:#edf3f4"></span><span style="background:#bac7cc"></span><span style="background:#72848c"></span></div>0% → 100% de cobertura<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+  }else if(mode==='wind'){
+    el.innerHTML='<strong>Vento a 10 m</strong>As setas indicam direção; clique para ver velocidade.<br><span style="opacity:.75">Grade complementar Open‑Meteo</span>';
+  }
+}
+function removePrimaryMapLayers(){
+  if(!operationalMap) return;
+  ['precip','temperature','cloud','wind'].forEach(k=>{
+    const layer=operationalMapLayers[k];
+    if(layer && operationalMap.hasLayer(layer)) operationalMap.removeLayer(layer);
+  });
+}
+function activateMapMode(mode){
+  operationalMapMode=mode;
+  document.querySelectorAll('[data-map-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mapMode===mode));
+  if(!operationalMap) return;
+  removePrimaryMapLayers();
+  const layer=operationalMapLayers[mode];
+  if(layer) layer.addTo(operationalMap);
+  updateMapLegend(mode,latestOfficialData);
+}
+function toggleMapSupport(kind){
+  if(!operationalMap) return;
+  if(kind==='stations'){
+    operationalMapStationsVisible=!operationalMapStationsVisible;
+    const layer=operationalMapLayers.stations;
+    if(layer){
+      if(operationalMapStationsVisible) layer.addTo(operationalMap); else operationalMap.removeLayer(layer);
+    }
+    document.getElementById('mapStationsToggle').classList.toggle('active',operationalMapStationsVisible);
+  }else{
+    operationalMapRadiusVisible=!operationalMapRadiusVisible;
+    const layer=operationalMapLayers.radius;
+    if(layer){
+      if(operationalMapRadiusVisible) layer.addTo(operationalMap); else operationalMap.removeLayer(layer);
+    }
+    document.getElementById('mapRadiusToggle').classList.toggle('active',operationalMapRadiusVisible);
+  }
+}
+function buildOperationalMapLayers(data){
+  if(!operationalMap || !window.L) return;
+  const wm=data?.weather_map||{};
+  const grid=Array.isArray(wm.grid)?wm.grid:[];
+  const pv=data?.pluviometers||{};
+  const stations=Array.isArray(pv.stations)?pv.stations.filter(s=>s.latitude!=null&&s.longitude!=null):[];
+
+  Object.values(operationalMapLayers).forEach(layer=>{
+    if(layer && operationalMap.hasLayer(layer)) operationalMap.removeLayer(layer);
+  });
+  operationalMapLayers={};
+
+  const radar=wm.radar||{};
+  if(radar.status==='ok' && radar.host && radar.path){
+    operationalMapLayers.precip=L.tileLayer(
+      radar.host+radar.path+'/256/{z}/{x}/{y}/2/1_0.png',
+      {opacity:.62,maxNativeZoom:7,maxZoom:18,attribution:'Radar © RainViewer'}
+    );
+  }else{
+    operationalMapLayers.precip=L.layerGroup(grid.filter(p=>p.precipitation_mm!=null).map(p=>
+      L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+        radius:1250,stroke:false,fillColor:precipMapColor(p.precipitation_mm),fillOpacity:.42
+      }).bindTooltip('Precipitação estimada: '+mapMm(p.precipitation_mm))
+    ));
+  }
+
+  operationalMapLayers.temperature=L.layerGroup(grid.filter(p=>p.temperature_c!=null).map(p=>
+    L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      radius:1450,color:temperatureMapColor(p.temperature_c),weight:0,fillColor:temperatureMapColor(p.temperature_c),fillOpacity:.38
+    }).bindTooltip(numBR(p.temperature_c,1)+' °C')
+  ));
+
+  operationalMapLayers.cloud=L.layerGroup(grid.filter(p=>p.cloud_cover_pct!=null).map(p=>
+    L.circle([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      radius:1450,color:'#657982',weight:0,fillColor:'#657982',fillOpacity:.08+Math.min(100,Number(p.cloud_cover_pct))/100*.58
+    }).bindTooltip('Nebulosidade: '+numBR(p.cloud_cover_pct,0)+'%')
+  ));
+
+  operationalMapLayers.wind=L.layerGroup(grid.filter(p=>p.wind_speed_kmh!=null).map(p=>{
+    const dir=Number(p.wind_direction_deg||0);
+    const html='<div class="wind-arrow" style="transform:rotate('+dir+'deg)">➤</div>';
+    return L.marker([p.requested_latitude??p.latitude,p.requested_longitude??p.longitude],{
+      icon:L.divIcon({className:'wind-map-icon',html,iconSize:[38,38],iconAnchor:[19,19]})
+    }).bindTooltip('Vento: '+numBR(p.wind_speed_kmh,0)+' km/h · '+numBR(dir,0)+'°');
+  }));
+
+  operationalMapLayers.stations=L.layerGroup(stations.map(s=>
+    L.circleMarker([s.latitude,s.longitude],{
+      radius:8,color:'#fff',weight:2,fillColor:stationStatusColor(s),fillOpacity:.95
+    }).bindPopup(mapPopupStation(s))
+  ));
+
+  const center=wm.center||{latitude:-22.50825,longitude:-43.19345};
+  operationalMapLayers.radius=L.circle([center.latitude,center.longitude],{
+    radius:5000,color:'#006d6f',weight:2,dashArray:'7 6',fillColor:'#00a39a',fillOpacity:.04
+  }).bindTooltip('Raio operacional de 5 km do HST');
+
+  activateMapMode(operationalMapMode);
+  if(operationalMapStationsVisible) operationalMapLayers.stations.addTo(operationalMap);
+  if(operationalMapRadiusVisible) operationalMapLayers.radius.addTo(operationalMap);
+}
+function ensureOperationalMap(data){
+  latestOfficialData=data||latestOfficialData;
+  const host=document.getElementById('weatherMap');
+  if(!host || !latestOfficialData) return;
+  if(!window.L){
+    host.innerHTML='<div style="padding:30px">Não foi possível carregar a biblioteca do mapa nesta sessão.</div>';
+    return;
+  }
+  const wm=latestOfficialData.weather_map||{};
+  const center=wm.center||{latitude:-22.50825,longitude:-43.19345};
+  if(!operationalMap){
+    operationalMap=L.map('weatherMap',{center:[center.latitude,center.longitude],zoom:11,zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,
+      attribution:'© OpenStreetMap contributors'
+    }).addTo(operationalMap);
+
+    const hstIcon=L.divIcon({
+      className:'hst-map-icon',
+      html:'<div class="hst-pin"><span>+</span></div>',
+      iconSize:[44,44],
+      iconAnchor:[22,40],
+      popupAnchor:[0,-38]
+    });
+    L.marker([center.latitude,center.longitude],{icon:hstIcon,zIndexOffset:1000})
+      .addTo(operationalMap)
+      .bindPopup('<strong>Hospital Santa Teresa</strong><br>Referência central do HST Alerta.<br>Nível atual: <strong>'+esc(latestOfficialData.overall?.level||'—')+' · '+esc(latestOfficialData.overall?.label||'')+'</strong>');
+  }
+  buildOperationalMapLayers(latestOfficialData);
+  setTimeout(()=>operationalMap.invalidateSize(),80);
+}
+function updateOperationalMapSummary(data){
+  const wm=data?.weather_map||{};
+  const radar=wm.radar||{};
+  const nearest=data?.pluviometers?.nearest_to_hst||{};
+  const current=(data?.weather?.status==='ok'&&data?.weather?.temperature_c!=null)?data.weather:(data?.weather_reference||{});
+
+  document.getElementById('mapUpdated').textContent='Mapa atualizado: '+fmtDate(wm.collected_at||data?.generated_at);
+  document.getElementById('mapRadarStatus').textContent=radar.status==='ok'?'Radar disponível':'Radar sem confirmação';
+  document.getElementById('mapRadarTime').textContent=radar.status==='ok'?fmtDate(radar.frame_time):'camada complementar será usada como fallback';
+  document.getElementById('mapNearestStation').textContent=nearest.name||'—';
+  document.getElementById('mapNearestDistance').textContent=nearest.distance_to_hst_km!=null?'aprox. '+numBR(nearest.distance_to_hst_km,1)+' km do HST':'';
+  document.getElementById('mapNearestRain').textContent=nearest.name?mapMm(nearest.acc1h_mm)+' / '+mapMm(nearest.acc24h_mm):'—';
+  document.getElementById('mapCurrentWeather').textContent=current?.temperature_c!=null?numBR(current.temperature_c,1)+' °C · '+(current.condition||'condição atual'):'—';
+  document.getElementById('mapCurrentWeatherTime').textContent=current?.observed_at?relativeWeatherTime(current.observed_at):'';
+}
+
 async function loadOfficialData(){
   try{
     const r=await fetch('data/status.json?ts='+Date.now(),{cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const data=await r.json();
+    latestOfficialData=data;
+    updateOperationalMapSummary(data);
+    if(operationalMap) buildOperationalMapLayers(data);
     const g=data.sources?.cemaden_geological;
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
@@ -843,7 +1095,12 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
   b.classList.add('active');
   document.getElementById(b.dataset.target).classList.add('active');
+  if(b.dataset.target==='mapa') setTimeout(()=>ensureOperationalMap(latestOfficialData),60);
 });
+document.querySelectorAll('[data-map-mode]').forEach(btn=>btn.onclick=()=>activateMapMode(btn.dataset.mapMode));
+document.getElementById('mapStationsToggle').onclick=()=>toggleMapSupport('stations');
+document.getElementById('mapRadiusToggle').onclick=()=>toggleMapSupport('radius');
+
 document.getElementById('simulate').onclick=()=>{
   const g=document.getElementById('geo').value,h=document.getElementById('hidro').value,i=document.getElementById('inmet').value;
   let l=Math.max(cm[g],cm[h],im[i]);
