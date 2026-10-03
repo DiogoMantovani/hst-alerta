@@ -15,6 +15,7 @@ OUT = os.path.join("data", "status.json")
 PREVIOUS_URL = "https://diogomantovani.github.io/hst-alerta/data/status.json"
 
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
+CEMADEN_PLUVIO = "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
 INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
@@ -233,6 +234,85 @@ def fetch_inmet_alerts(previous):
         if "level" not in fallback: fallback.update({"level":None,"risk":"Indisponível","title":"Fonte de avisos INMET indisponível"})
         return fallback
 
+def fetch_cemaden_pluviometers(previous):
+    prev=previous.get("pluviometers") or {}
+    now=datetime.now(TZ)
+    try:
+        r=requests.get(CEMADEN_PLUVIO,timeout=25,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json,text/plain,*/*"})
+        r.raise_for_status()
+        data=json.loads(r.text)
+        if not isinstance(data,list):
+            raise RuntimeError("Formato inesperado do endpoint público de pluviômetros")
+
+        stations=[]
+        for row in data:
+            if not isinstance(row,dict) or str(row.get("codibge"))!="3303906":
+                continue
+            raw_dt=str(row.get("datahoraUltimovalor") or "").strip()
+            observed=None
+            try:
+                observed=datetime.strptime(raw_dt,"%d/%m/%y %H:%M").replace(tzinfo=ZoneInfo("UTC")).astimezone(TZ)
+            except Exception:
+                pass
+            age=round((now-observed).total_seconds()/3600,1) if observed else None
+            health="ok" if age is not None and age<=2 else "stale"
+            def mm(key):
+                v=row.get(key)
+                return safe_float(v) if v not in ("-",None,"") else None
+            stations.append({
+                "id":row.get("idestacao"),
+                "name":row.get("nomeestacao") or "Estação sem nome",
+                "status":health,
+                "observed_at":observed.isoformat() if observed else raw_dt or None,
+                "age_hours":age,
+                "last_mm":mm("ultimovalor"),
+                "acc1h_mm":mm("acc1hr"),
+                "acc3h_mm":mm("acc3hr"),
+                "acc6h_mm":mm("acc6hr"),
+                "acc12h_mm":mm("acc12hr"),
+                "acc24h_mm":mm("acc24hr"),
+                "acc48h_mm":mm("acc48hr"),
+                "acc72h_mm":mm("acc72hr"),
+                "acc96h_mm":mm("acc96hr"),
+                "station_type":row.get("tipoestacao"),
+            })
+
+        if not stations:
+            raise RuntimeError("Nenhum pluviômetro de Petrópolis encontrado")
+
+        recent=[s for s in stations if s["status"]=="ok"]
+        def highest(key):
+            vals=[s for s in stations if isinstance(s.get(key),(int,float))]
+            if not vals: return {"value":None,"station":None}
+            top=max(vals,key=lambda s:s[key])
+            return {"value":top[key],"station":top["name"]}
+
+        # Fresh stations first, then highest 24h accumulation.
+        stations.sort(key=lambda s:(0 if s["status"]=="ok" else 1,-(s.get("acc24h_mm") or 0),s["name"]))
+        return {
+            "provider":"CEMADEN",
+            "status":"ok" if recent else "stale",
+            "source_note":"Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
+            "collected_at":now.isoformat(),
+            "url":CEMADEN_PLUVIO,
+            "total_stations":len(stations),
+            "recent_stations":len(recent),
+            "highest_1h":highest("acc1h_mm"),
+            "highest_24h":highest("acc24h_mm"),
+            "stations":stations,
+            "error":None,
+        }
+    except Exception as exc:
+        fallback=dict(prev)
+        fallback.update({
+            "provider":"CEMADEN",
+            "status":"unavailable",
+            "collected_at":now.isoformat(),
+            "url":CEMADEN_PLUVIO,
+            "error":str(exc)[:600],
+        })
+        return fallback
+
 def fetch_inmet_forecast(previous):
     prev=previous.get("forecast") or {}
     now=datetime.now(TZ)
@@ -330,6 +410,7 @@ def main():
     geo=fetch_cemaden(1,"cemaden_geological","Deslizamento",previous)
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
     weather=fetch_inmet_weather(previous)
+    pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
 
@@ -363,8 +444,9 @@ def main():
       "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
+      "pluviometers":pluviometers,
       "forecast":forecast,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":"pending","defesa_civil":"pending","roads":"pending","utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":"pending","roads":"pending","utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     print(json.dumps(payload,ensure_ascii=False,indent=2))
