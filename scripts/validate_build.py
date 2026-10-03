@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 REQUIRED_IDS = {
     "hero","levelNum","levelLabel","levelReason","updatedAt","nextAt",
     "geoCard","hidroCard","inmetCard","cemadenHealth","inmetHealth",
-    "pluvioBody","historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
+    "pluvioBody","pluvioHidden","bingenHistoryBody","bingenHistoryStatus","bingenHistoryLast","bingenHistory1h","bingenHistory24h","bingenHistoryDistance",
+    "historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
     "climateCurrentCard","climateCurrentIcon","climateCurrentTemp","climateHistoryGrid",
     "weatherMap","mapLegend","mapUpdated","mapRadarStatus","mapNearestStation","mapNearestRain","mapCurrentWeather",
@@ -50,6 +51,12 @@ if roads.get("provider")!="Elovias" or not isinstance(roads.get("endpoint_status
 
 if not (status.get("pluviometers") or {}).get("nearest_to_hst"):
     raise SystemExit("Pluviômetro de referência próximo ao HST não identificado")
+stations=(status.get("pluviometers") or {}).get("stations") or []
+bingen=next((s for s in stations if s.get("name")=="Bingen - Geo"),None)
+if not bingen:
+    raise SystemExit("Bingen - Geo não localizada na coleta CEMADEN")
+if bingen.get("distance_to_hst_km") is None:
+    raise SystemExit("Bingen - Geo sem distância calculada para o HST")
 
 history=load_json("data/history.json")
 snaps=history.get("snapshots",[])
