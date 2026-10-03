@@ -760,7 +760,7 @@ footer{
 <section id="avisos" class="panel">
 <div class="section">
   <div><h2>Avisos e Notificações</h2><div class="small">Política de comunicação automática do HST Alerta conforme o nível operacional.</div></div>
-  <span class="badge">CONFIGURAÇÃO DE TESTE</span>
+  <span class="badge">NOTIFICAÇÕES ATIVAS</span>
 </div>
 
 <div class="grid2">
@@ -1556,7 +1556,7 @@ async function loadOfficialData(){
       recipientLabel(managersEmail)
     );
     const providerCfg=operationalEmail.provider_configured?operationalEmail:managersEmail;
-    const emailProvider=providerCfg.provider==='smtp'?'Gmail SMTP':providerCfg.provider==='resend'?'Resend':'Serviço de e-mail';
+    const emailProvider=providerCfg.provider==='smtp'?'Gmail SMTP':'Serviço de e-mail';
     setConnection(
       'notificationProviderStatus',
       providerCfg.provider_configured?'ok':'warn',
