@@ -41,7 +41,7 @@
 </article>
 <article class="card">
 <div class="eyebrow">Clima oficial · INMET</div>
-<div class="weather"><div class="temp">—</div><div><h3>Pico do Couto (A610)</h3><p>Integração automática pendente. Fonte oficial definida para produção.</p></div></div>
+<div class="weather"><div id="weatherTemp" class="temp">—</div><div><h3>Pico do Couto (A610)</h3><p id="weatherSummary">Carregando observação oficial do INMET…</p></div></div>
 <div class="small">A estação de referência regional não representa exatamente a temperatura no terreno do hospital.</div>
 </article>
 </div>
@@ -49,7 +49,7 @@
 <div class="riskgrid">
 <article class="risk"><div class="small">Deslizamento</div><div id="geoCard" class="value">Carregando…</div><span id="geoBadge" class="badge">CEMADEN-RJ</span><div id="geoMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Hidrológico</div><div id="hidroCard" class="value">Carregando…</div><span id="hidroBadge" class="badge">CEMADEN-RJ</span><div id="hidroMeta" class="small" style="margin-top:8px"></div></article>
-<article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Sem aviso</div><span class="badge">INMET · demo</span></article>
+<article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Carregando…</div><span id="inmetBadge" class="badge">INMET</span><div id="inmetMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Defesa Civil</div><div class="value">Sem evento</div><span class="badge">Integração pendente</span></article>
 </div>
 
@@ -57,7 +57,7 @@
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
 <article class="card"><div class="section"><h3>Integridade das fontes</h3></div>
 <div class="action"><strong>CEMADEN-RJ</strong><br><span id="cemadenHealth" class="small">Carregando status das fontes…</span></div>
-<div class="action"><strong>INMET</strong><br><span class="small">Clima, previsão e avisos · automação pendente</span></div>
+<div class="action"><strong>INMET</strong><br><span id="inmetHealth" class="small">Carregando clima e avisos…</span></div>
 <div class="action"><strong>Elovias / BR-040</strong><br><span class="small">Monitoramento rodoviário · automação pendente</span></div>
 <div class="action"><strong>Enel Rio / Águas do Imperador</strong><br><span class="small">Canais oficiais cadastrados</span></div>
 </article>
@@ -65,8 +65,8 @@
 </section>
 
 <section id="clima" class="panel">
-<div class="section"><h2>Clima & Previsão</h2><span class="badge demo">dados simulados</span></div>
-<div class="callout">A versão final consultará dados oficiais do INMET e manterá horário da observação, estação utilizada e indicador de indisponibilidade. “Sem dado” nunca será interpretado como “sem risco”.</div>
+<div class="section"><h2>Clima & Previsão</h2><span id="climateMode" class="badge">INMET AUTOMÁTICO</span></div>
+<div id="weatherDetails" class="callout">Carregando dados oficiais do INMET. “Sem dado” nunca é interpretado como “sem risco”.</div>
 <div class="forecast">
 <article class="card"><h4>Próximas 24 h</h4><strong>Integração pendente</strong><p class="small">Temperatura, chuva, vento e avisos INMET.</p></article>
 <article class="card"><h4>Próximas 48 h</h4><strong>Integração pendente</strong><p class="small">Tendência para preparação preventiva.</p></article>
@@ -213,13 +213,27 @@ async function loadOfficialData(){
     const data=await r.json();
     const g=data.sources?.cemaden_geological;
     const h=data.sources?.cemaden_hydrological;
+    const imet=data.sources?.inmet_alerts;
+    const w=data.weather||{};
     document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
     document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
+    document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
+    document.getElementById('inmetBadge').textContent=imet?.status==='ok'?'INMET · ATUAL':(imet?.status==='unavailable'?'INMET · INDISPONÍVEL':'INMET · '+String(imet?.status||'PENDENTE').toUpperCase());
+    document.getElementById('inmetMeta').textContent=(imet?.title||'')+(imet?.active_count!=null?' · avisos ativos: '+imet.active_count:'');
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
     document.getElementById('hidroMeta').textContent=sourceMeta(h);
     const states=[g?.status,h?.status];
+    const temp=w.temperature_c;
+    document.getElementById('weatherTemp').textContent=(temp==null?'—':temp.toFixed(1)+'°');
+    const weatherParts=[];
+    if(w.humidity_pct!=null) weatherParts.push('Umidade '+w.humidity_pct.toFixed(0)+'%');
+    if(w.rain_1h_mm!=null) weatherParts.push('Chuva 1h '+w.rain_1h_mm.toFixed(1)+' mm');
+    if(w.wind_gust_ms!=null) weatherParts.push('Rajada '+(w.wind_gust_ms*3.6).toFixed(0)+' km/h');
+    document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem observação válida')+' · '+fmtDate(w.observed_at);
+    document.getElementById('weatherDetails').textContent='Estação INMET Pico do Couto (A610), referência regional. '+(weatherParts.join(' · ')||'Dados indisponíveis')+(w.pressure_hpa!=null?' · Pressão '+w.pressure_hpa.toFixed(1)+' hPa':'')+' · Observação: '+fmtDate(w.observed_at)+'.';
+    document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos automáticos ativos; clima da A610 '+(w.status==='ok'?'atualizado':'com status '+String(w.status||'indisponível'))+'.':'Fonte de avisos indisponível; último valor válido é preservado quando possível.';
     document.getElementById('cemadenHealth').textContent=
       states.includes('unavailable')?'Fonte oficial com indisponibilidade; último valor válido preservado.':
       states.includes('stale')?'Fonte acessível, porém há leitura oficial desatualizada.':
@@ -227,7 +241,8 @@ async function loadOfficialData(){
       'Coleta automática ativa; aguardando consolidação do status.';
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
-    document.getElementById('systemMode').textContent='CEMADEN-RJ AUTOMÁTICO';
+    document.getElementById('systemMode').textContent='CEMADEN + INMET AUTOMÁTICO';
+    document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
     document.getElementById('historyBody').innerHTML=
       '<tr><td>'+fmtDate(data.generated_at)+'</td><td>'+level+' · '+labels[level]+'</td><td>'+String(data.overall?.reason||'Snapshot automático')+'</td><td>CEMADEN-RJ</td></tr>';
   }catch(err){
