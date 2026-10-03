@@ -179,7 +179,7 @@ def fetch_inmet_weather(previous):
     errors=[]
     for url in candidates_urls:
         try:
-            r=requests.get(url,timeout=18,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json,text/plain,*/*"})
+            r=requests.get(url,timeout=5,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json,text/plain,*/*"})
             if r.status_code==204 or not r.text.strip():
                 raise RuntimeError(f"HTTP {r.status_code} sem conteúdo")
             r.raise_for_status()
@@ -500,9 +500,9 @@ def fetch_defesa_civil(previous):
         "home":DEFESA_CIVIL_HOME,
     }
     try:
-        home=requests.get(DEFESA_CIVIL_HOME,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        home=requests.get(DEFESA_CIVIL_HOME,timeout=8,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
         home.raise_for_status()
-        tag=requests.get(DEFESA_CIVIL_TAG,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        tag=requests.get(DEFESA_CIVIL_TAG,timeout=8,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
         tag.raise_for_status()
         soup=BeautifulSoup(tag.text,"html.parser")
         links=[]
@@ -523,7 +523,7 @@ def fetch_defesa_civil(previous):
         latest_news=None
         for url in links:
             try:
-                r=requests.get(url,timeout=12,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+                r=requests.get(url,timeout=6,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
                 r.raise_for_status()
                 art=BeautifulSoup(r.text,"html.parser")
                 title_el=art.find("h1") or art.find("h2")
