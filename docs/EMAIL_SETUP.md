@@ -12,7 +12,7 @@ O HST Alerta utiliza Gmail SMTP como canal de produção para notificações aut
 - Não repetir a mesma mensagem a cada coleta.
 - Enviar novamente quando houver agravamento de nível.
 - Permitir nova mensagem no mesmo nível quando o contexto predominante mudar de forma relevante.
-- Após um nível notificado, enviar uma única atualização quando houver rebaixamento.
+- Após um nível notificado, enviar atualização quando houver rebaixamento. Se o nível sair da faixa do grupo, enviar uma única mensagem de melhora e então limpar o estado desse grupo.
 
 ## Secrets necessários no GitHub
 Cadastrar em Settings > Secrets and variables > Actions:
@@ -78,4 +78,4 @@ O controle de notificação é independente por grupo:
 - Grupo de Gerentes: níveis 4 e 5.
 - Cada Secret pode conter vários endereços separados por vírgula ou ponto e vírgula.
 - Os envios são feitos individualmente para cada destinatário, evitando expor a lista de endereços aos demais.
-- Se o nível cair abaixo do mínimo de um grupo, o estado desse grupo é liberado para que uma futura reentrada no nível aplicável gere novo aviso.
+- Se o nível cair abaixo do mínimo de um grupo, é enviada uma única mensagem de melhora com nível anterior e nível atual; após o envio, o estado desse grupo é liberado para que uma futura reentrada gere novo aviso.
