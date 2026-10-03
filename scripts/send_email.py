@@ -174,18 +174,22 @@ def determine_event(level, context_key, state, min_level, force_test=False):
     last_level = state.get("last_notified_level")
     last_context = state.get("last_notified_context")
 
-    if level >= min_level:
-        if last_level is None:
-            return "entry"
-        last_level = int(last_level)
-        if level > last_level:
-            return "escalation"
-        if level < last_level:
-            return "deescalation"
-        if context_key != last_context and hours_since(state.get("last_sent_at")) >= CONTEXT_CHANGE_COOLDOWN_HOURS:
-            return "context_change"
-        return None
+    if last_level is None:
+        return "entry" if level >= min_level else None
 
+    last_level = int(last_level)
+
+    # If this group was previously notified and the HST level leaves the
+    # group's notification range, send one recovery message before clearing state.
+    if level < min_level:
+        return "recovery"
+
+    if level > last_level:
+        return "escalation"
+    if level < last_level:
+        return "deescalation"
+    if context_key != last_context and hours_since(state.get("last_sent_at")) >= CONTEXT_CHANGE_COOLDOWN_HOURS:
+        return "context_change"
     return None
 
 
@@ -249,15 +253,36 @@ def event_label(event):
     }.get(event, "ATUALIZAÇÃO")
 
 
-def build_message(data, level, context_key, context_label, event, cfg):
+def build_message(data, level, context_key, context_label, event, cfg, previous_level=None):
     overall = data.get("overall") or {}
     reason = clean_text(overall.get("reason") or "Atualização do monitoramento HST.", 1400)
-    actions = actions_for(level, context_key)
+    if event == "recovery":
+        actions = [
+            "Manter o monitoramento pelo HST Alerta.",
+            "O cenário saiu da faixa automática de aviso deste grupo.",
+        ]
+    else:
+        actions = actions_for(level, context_key)
     generated_at = data.get("generated_at") or now_iso()
     label = LEVEL_LABELS.get(level, "Nível HST")
+    previous_label = LEVEL_LABELS.get(previous_level, "Nível HST") if previous_level else None
     event_text = event_label(event)
 
     subject = f"HST Alerta | {event_text} | Nível {level} · {label}"
+
+    transition_html = ""
+    transition_text = ""
+    if previous_level is not None and previous_level != level:
+        transition_html = (
+            '<div style="margin-bottom:20px;padding:12px 14px;background:#eef6f6;border-radius:10px">'
+            f'<strong>Nível anterior:</strong> {previous_level} · {html.escape(previous_label)}<br>'
+            f'<strong>Nível atual:</strong> {level} · {html.escape(label)}'
+            '</div>'
+        )
+        transition_text = (
+            f"Nível anterior: {previous_level} · {previous_label}\n"
+            f"Nível atual: {level} · {label}\n\n"
+        )
 
     action_html = "".join(f"<li style=\"margin:0 0 8px\">{html.escape(a)}</li>" for a in actions)
     action_text = "\n".join(f"- {a}" for a in actions)
@@ -271,6 +296,7 @@ def build_message(data, level, context_key, context_label, event, cfg):
       <div style="font-size:25px;font-weight:800;margin-top:6px">HST ALERTA · NÍVEL {level} · {html.escape(label)}</div>
     </div>
     <div style="padding:26px">
+      {transition_html}
       <div style="font-size:13px;color:#617779;margin-bottom:5px">CONTEXTO OPERACIONAL</div>
       <div style="font-size:19px;font-weight:700;margin-bottom:20px">{html.escape(context_label)}</div>
       <div style="font-size:13px;color:#617779;margin-bottom:5px">MOTIVO</div>
@@ -292,7 +318,7 @@ def build_message(data, level, context_key, context_label, event, cfg):
 </html>"""
 
     body_text = f"""HST ALERTA — {event_text}
-Nível: {level} · {label}
+{transition_text}Nível: {level} · {label}
 Contexto: {context_label}
 
 Motivo:
@@ -445,10 +471,7 @@ def main():
     for group_key, group in cfg["groups"].items():
         group_state = state["groups"].setdefault(group_key, default_group_state())
 
-        if level < group["min_level"] and group_state.get("last_notified_level") is not None:
-            group_state["last_notified_level"] = None
-            group_state["last_notified_context"] = None
-            group_state["last_result"] = "below_threshold"
+        previous_level = group_state.get("last_notified_level")
 
         event = determine_event(
             level,
@@ -459,8 +482,7 @@ def main():
         )
 
         if not event:
-            if group_state.get("last_result") != "below_threshold":
-                group_state["last_result"] = "no_event"
+            group_state["last_result"] = "no_event"
             continue
 
         group_state["last_event"] = event
@@ -476,7 +498,13 @@ def main():
             continue
 
         subject, body_html, body_text = build_message(
-            data, level, context_key, context_label, event, cfg
+            data,
+            level,
+            context_key,
+            context_label,
+            event,
+            cfg,
+            previous_level=previous_level,
         )
         subject = f"{subject} | {group['label']}"
         group_state["last_attempt_at"] = now_iso()
@@ -494,8 +522,12 @@ def main():
             group_state["last_error"] = None
             group_state["last_message_id"] = message_ids
             group_state["last_sent_at"] = now_iso()
-            group_state["last_notified_level"] = level
-            group_state["last_notified_context"] = context_key
+            if event == "recovery":
+                group_state["last_notified_level"] = None
+                group_state["last_notified_context"] = None
+            else:
+                group_state["last_notified_level"] = level
+                group_state["last_notified_context"] = context_key
             print(
                 f"EMAIL_SENT group={group_key} event={event} "
                 f"level={level} recipients={len(group['recipients'])}"
