@@ -1104,6 +1104,9 @@ def history_snapshot(payload):
             "status":(sources.get("defesa_civil") or {}).get("status"),
             "stage":(sources.get("defesa_civil") or {}).get("stage"),
             "basis":(sources.get("defesa_civil") or {}).get("basis"),
+            "official_updated_at":(sources.get("defesa_civil") or {}).get("official_updated_at"),
+            "signal_type":((sources.get("defesa_civil") or {}).get("operational_signal") or {}).get("type"),
+            "signal_label":((sources.get("defesa_civil") or {}).get("operational_signal") or {}).get("label"),
         },
         "pluviometers":{
             "highest_1h":pv.get("highest_1h"),
