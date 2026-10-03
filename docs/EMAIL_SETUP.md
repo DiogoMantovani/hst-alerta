@@ -74,6 +74,8 @@ Após a validação do envio por Gmail SMTP, o canal pode ser habilitado com `HS
 
 
 ## Grupos de destinatários
+
+- Alterações nas listas de destinatários em GitHub Secrets passam a valer na próxima execução do workflow; não exigem alteração de código.
 O controle de notificação é independente por grupo:
 
 - Grupo Operacional: níveis 3, 4 e 5.
