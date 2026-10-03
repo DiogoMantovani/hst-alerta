@@ -1016,8 +1016,8 @@ async function loadOfficialData(){
       '<div class="road-alert-item"><strong>'+esc(a.title||'Aviso Elovias')+'</strong>'+(a.message?'<br>'+esc(a.message):'')+'</div>'
     ).join('');
     document.getElementById('roadsAlertNote').textContent=roads?.no_active_alerts
-      ?'Nenhum aviso operacional foi publicado pela Elovias na consulta mais recente.'
-      :'Última atualização: '+fmtDate(roads?.collected_at);
+      ?'Elovias não publicou aviso na última consulta. Isso não equivale a garantia de tráfego livre. Última consulta: '+fmtDate(roads?.collected_at)+'.'
+      :'Última consulta: '+fmtDate(roads?.collected_at)+'.';
 
     const rw=roads?.petropolis_weather||{};
     const roadVisual=weatherIconSvg(null,rw.condition||'');
