@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "last_seen_level": null,
-  "last_seen_context": null,
+  "last_seen_level": 3,
+  "last_seen_context": "rain",
   "last_notified_level": null,
   "last_notified_context": null,
   "last_sent_at": null,
   "last_attempt_at": null,
-  "last_event": null,
-  "last_result": null,
-  "last_error": null,
+  "last_event": "entry",
+  "last_result": "not_configured",
+  "last_error": "Credenciais da WhatsApp Cloud API ainda incompletas.",
   "last_message_id": null,
-  "updated_at": null
+  "updated_at": "2026-10-03T21:58:45.583689+00:00"
 }
