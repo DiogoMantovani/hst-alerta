@@ -3,12 +3,14 @@ name: Deploy HST Alerta to GitHub Pages
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - "data/**"
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -37,6 +39,15 @@ jobs:
       - name: Collect HST sources
         run: python scripts/collect_hst.py
 
+      - name: Persist monitoring history
+        run: |
+          git config user.name "hst-alerta-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/status.json data/history.json data/history_index.json data/archive/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(data): registra snapshot HST [skip ci]"
+            git push origin HEAD:main
+          fi
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
