@@ -103,6 +103,7 @@ def derive_context(data):
     geo = sources.get("cemaden_geological") or {}
     hydro = sources.get("cemaden_hydrological") or {}
     inmet = sources.get("inmet_alerts") or {}
+    defesa = sources.get("defesa_civil") or {}
     roads = data.get("roads") or {}
     overall = data.get("overall") or {}
     pv = data.get("pluviometers") or {}
@@ -113,6 +114,8 @@ def derive_context(data):
         geo.get("risk"), geo.get("message"),
         hydro.get("risk"), hydro.get("message"),
         inmet.get("risk"), inmet.get("title"),
+        defesa.get("stage"), defesa.get("basis"), defesa.get("message"),
+        (defesa.get("operational_signal") or {}).get("label"),
         roads.get("alert_state"), roads.get("message"),
     ]
     parts.extend(overall.get("supplemental_signals") or [])
