@@ -1504,13 +1504,14 @@ def main():
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
+    defesa=fetch_defesa_civil(previous)
     roads=fetch_roads(previous)
 
     # Only fresh/confirmed official sources may create a new escalation.
     # Stale or unavailable sources can hold a previous level through hysteresis,
     # but their preserved numeric level must not drive a new increase.
     usable=[
-        s for s in (geo,hydro,inmet)
+        s for s in (geo,hydro,inmet,defesa)
         if s.get("status")=="ok" and isinstance(s.get("level"),int)
     ]
     official_candidate=max([s["level"] for s in usable], default=1)
@@ -1533,7 +1534,7 @@ def main():
     escalated=False
     candidate=official_candidate
     if cemaden_level>=3 and inmet_level>=3:
-        candidate=min(5,max(cemaden_level,inmet_level)+1)
+        candidate=max(candidate,min(5,max(cemaden_level,inmet_level)+1))
         escalated=True
 
     # Forecast and pluviometers are early-warning evidence only.
@@ -1548,14 +1549,15 @@ def main():
 
     driver_floor=max(1,candidate-(1 if escalated else 0))
     top=[]
-    for s in (geo,hydro,inmet):
+    for s in (geo,hydro,inmet,defesa):
         if (
             s.get("status")=="ok"
             and isinstance(s.get("level"),int)
             and s["level"]>=driver_floor
             and s["level"]>1
         ):
-            top.append(f'{s["name"]}: {s.get("risk")}')
+            detail=s.get("basis") or s.get("risk")
+            top.append(f'{s["name"]}: {detail}')
 
     reason_parts=[]
     if top:
@@ -1599,9 +1601,9 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Valores preservados de fontes sem atualização recente, não confirmadas ou indisponíveis não provocam nova subida; nesses casos, o nível anterior pode ser mantido pela histerese. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna de fonte oficial."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Valores preservados de fontes sem atualização recente, não confirmadas ou indisponíveis não provocam nova subida; nesses casos, o nível anterior pode ser mantido pela histerese. Defesa Civil de Petrópolis pode elevar o nível por estágio operacional recente ou por sinal operacional oficial recente, como acionamento de sirenes e abertura de pontos de apoio. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna das fontes-base CEMADEN/INMET."
       },
-      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
+      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
       "weather_reference":weather_reference,
       "weather_map":weather_map,
@@ -1650,7 +1652,7 @@ def main():
               ) else "ready_disabled" if os.getenv("HST_EMAIL_GRUPO_GERENTES","").strip() else "awaiting_recipient"
           }
       },
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","defesa_civil_petropolis":defesa.get("status","source_unconfirmed"),"inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
