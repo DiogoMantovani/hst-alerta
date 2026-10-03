@@ -69,7 +69,44 @@
 .rain-metric{background:#fff;border:1px solid #d9e7e6;border-radius:12px;padding:11px}
 .rain-metric span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
 .rain-metric strong{display:block;margin-top:5px;font-size:18px;color:#0d6264}
-@media(max-width:900px){.nearest-pluvio{grid-template-columns:1fr}.nearest-pluvio-values{grid-template-columns:repeat(2,1fr)}}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
+@media(max-width:900px){.nearest-pluvio{grid-template-columns:1fr}.nearest-pluvio-values{grid-template-columns:repeat(2,1fr)}}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}
+.climate-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-bottom:22px}
+.climate-current{position:relative;overflow:hidden;background:linear-gradient(145deg,#f6fbfb,#eaf5f4);border:1px solid #cfe2e1;border-radius:18px;padding:22px}
+.climate-current:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-125px;top:-125px;background:rgba(0,109,111,.06)}
+.climate-current-main{position:relative;z-index:1;display:grid;grid-template-columns:110px 1fr;gap:20px;align-items:center}
+.climate-big-icon{width:110px;height:110px;border-radius:28px;display:grid;place-items:center;background:rgba(255,255,255,.7);border:1px solid #d4e5e4}
+.climate-big-icon svg{width:78px;height:78px}
+.climate-big-temp{font-size:64px;font-weight:900;line-height:.9;letter-spacing:-.05em;color:#104d52}
+.climate-big-condition{font-size:21px;font-weight:850;margin-top:9px}
+.climate-big-meta{font-size:12px;color:var(--muted);margin-top:6px}
+.climate-current .weather-chips{position:relative;z-index:1;margin-top:18px}
+.climate-source-card{display:flex;flex-direction:column;justify-content:space-between}
+.climate-source-card h3{margin:4px 0 10px}
+.climate-source-row{padding:11px 0;border-bottom:1px solid #edf2f2}
+.climate-source-row:last-child{border-bottom:0}
+.forecast-card{position:relative;overflow:hidden}
+.forecast-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.forecast-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:#eef6f5;border:1px solid #d9e8e6}
+.forecast-icon svg{width:39px;height:39px}
+.forecast-summary{line-height:1.45;margin-top:10px}
+.climate-history-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin:26px 0 14px}
+.climate-period-legend{display:flex;gap:8px;flex-wrap:wrap}
+.climate-period-legend span{font-size:11px;padding:6px 9px;border-radius:999px;background:#edf4f4;color:#52686e;font-weight:800}
+.climate-history-grid{display:grid;gap:14px}
+.climate-day{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
+.climate-day-title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.climate-day-title strong{font-size:16px}
+.climate-periods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.climate-period-card{border:1px solid #dce8e8;border-radius:13px;padding:13px;background:#fbfdfd;min-height:145px}
+.climate-period-card.empty{display:grid;place-items:center;color:#8a999e;background:#fafcfc;border-style:dashed}
+.climate-period-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.climate-period-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#edf5f4}
+.climate-period-icon svg{width:32px;height:32px}
+.climate-period-name{font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:900;color:var(--muted)}
+.climate-period-temp{font-size:21px;font-weight:900;color:#164e54;margin:6px 0}
+.climate-period-condition{font-size:12px;font-weight:750;line-height:1.35}
+.climate-period-detail{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
 <body>
@@ -190,12 +227,59 @@
 </section>
 
 <section id="clima" class="panel">
-<div class="section"><h2>Clima & Previsão</h2><span id="climateMode" class="badge">INMET AUTOMÁTICO</span></div>
-<div id="weatherDetails" class="callout">Carregando dados oficiais do INMET. “Sem dado” nunca é interpretado como “sem risco”.</div>
+<div class="section">
+  <div><h2>Clima & Previsão</h2><div class="small">Condição atual próxima ao HST + previsão oficial INMET.</div></div>
+  <span id="climateMode" class="badge">MONITORAMENTO AUTOMÁTICO</span>
+</div>
+
+<div class="climate-hero">
+  <article id="climateCurrentCard" class="climate-current weather-theme-cloud">
+    <div class="climate-current-main">
+      <div id="climateCurrentIcon" class="climate-big-icon"></div>
+      <div>
+        <div class="eyebrow">Condição atual próxima ao HST</div>
+        <div id="climateCurrentTemp" class="climate-big-temp">—°</div>
+        <div id="climateCurrentCondition" class="climate-big-condition">Carregando…</div>
+        <div id="climateCurrentTime" class="climate-big-meta">—</div>
+      </div>
+    </div>
+    <div id="climateCurrentChips" class="weather-chips"></div>
+  </article>
+
+  <article class="card climate-source-card">
+    <div>
+      <div class="eyebrow">Como interpretar</div>
+      <h3>Fontes meteorológicas</h3>
+      <div class="climate-source-row"><strong>Condição atual</strong><div class="small">Referência complementar próxima ao Hospital Santa Teresa.</div></div>
+      <div class="climate-source-row"><strong>Previsão e avisos</strong><div class="small">INMET — fonte oficial utilizada pelo HST Alerta.</div></div>
+      <div class="climate-source-row"><strong>Nível HST</strong><div class="small">A condição complementar não eleva o nível sozinha; os alertas seguem as fontes oficiais integradas.</div></div>
+    </div>
+    <span id="climateCurrentSource" class="weather-source-badge">Carregando fonte</span>
+  </article>
+</div>
+
+<div class="section"><div><h3>Previsão</h3><div class="small">Horizonte de 24, 48 e 72 horas para preparação operacional.</div></div><span class="badge">INMET</span></div>
 <div class="forecast">
-<article class="card"><h4 id="forecastTitle0">Próximas 24 h</h4><strong id="forecastTemp0">Carregando…</strong><p id="forecastText0" class="small">Previsão oficial INMET.</p></article>
-<article class="card"><h4 id="forecastTitle1">Próximas 48 h</h4><strong id="forecastTemp1">Carregando…</strong><p id="forecastText1" class="small">Previsão oficial INMET.</p></article>
-<article class="card"><h4 id="forecastTitle2">Próximas 72 h</h4><strong id="forecastTemp2">Carregando…</strong><p id="forecastText2" class="small">Previsão oficial INMET.</p></article>
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle0">Próximas 24 h</h4><strong id="forecastTemp0">Carregando…</strong></div><div id="forecastIcon0" class="forecast-icon"></div></div>
+    <p id="forecastText0" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle1">Próximas 48 h</h4><strong id="forecastTemp1">Carregando…</strong></div><div id="forecastIcon1" class="forecast-icon"></div></div>
+    <p id="forecastText1" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+  <article class="card forecast-card">
+    <div class="forecast-head"><div><h4 id="forecastTitle2">Próximas 72 h</h4><strong id="forecastTemp2">Carregando…</strong></div><div id="forecastIcon2" class="forecast-icon"></div></div>
+    <p id="forecastText2" class="small forecast-summary">Previsão oficial INMET.</p>
+  </article>
+</div>
+
+<div class="climate-history-head">
+  <div><h3 style="margin:0 0 4px">Histórico climático</h3><div class="small">Registro resumido por período do dia. O histórico começa a partir da ativação desta função.</div></div>
+  <div class="climate-period-legend"><span>Manhã · 06–11:59</span><span>Tarde · 12–17:59</span><span>Noite · 18–23:59</span></div>
+</div>
+<div id="climateHistoryGrid" class="climate-history-grid">
+  <div class="card">Carregando histórico climático…</div>
 </div>
 </section>
 
@@ -323,8 +407,8 @@ function weatherIconSvg(code,condition=''){
   const fog='<g stroke="#91A7B2" stroke-width="3" stroke-linecap="round"><path d="M13 26h38M10 36h44M16 46h32"/></g>';
   const bolt='<path d="M35 42h9l-10 17 2-12h-9l10-17-2 12Z" fill="#E8A800"/>';
   let body='',theme='weather-theme-cloud';
-  if(c===0){body=sun;theme='weather-theme-clear';}
-  else if([1,2].includes(c)){body=sun+cloud;theme='weather-theme-clear';}
+  if(c===0 || txt.includes('céu claro') || txt.includes('tempo claro') || txt.includes('ensolar')){body=sun;theme='weather-theme-clear';}
+  else if([1,2].includes(c) || txt.includes('poucas nuvens') || txt.includes('parcial')){body=sun+cloud;theme='weather-theme-clear';}
   else if(c===3){body=cloud;theme='weather-theme-cloud';}
   else if([45,48].includes(c)||txt.includes('nevo')){body=fog;theme='weather-theme-fog';}
   else if([51,53,55,61,63,80,81].includes(c)||txt.includes('garoa')||txt.includes('chuva')){body=cloud+rain;theme='weather-theme-rain';}
@@ -452,6 +536,19 @@ async function loadOfficialData(){
     if(chosen?.wind_speed_kmh!=null) chips.push(weatherChip('→','Vento',numBR(chosen.wind_speed_kmh,0)+' km/h'));
     if(chosen?.wind_gust_kmh!=null) chips.push(weatherChip('≈','Rajada',numBR(chosen.wind_gust_kmh,0)+' km/h'));
     document.getElementById('weatherMetaChips').innerHTML=chips.join('');
+
+    const climateCard=document.getElementById('climateCurrentCard');
+    if(climateCard){
+      climateCard.classList.remove('weather-theme-clear','weather-theme-cloud','weather-theme-rain','weather-theme-storm','weather-theme-fog');
+      climateCard.classList.add(visual.theme);
+      document.getElementById('climateCurrentIcon').innerHTML=visual.svg;
+      document.getElementById('climateCurrentTemp').textContent=temp==null?'—°':numBR(temp,1)+'°';
+      document.getElementById('climateCurrentCondition').textContent=condition;
+      document.getElementById('climateCurrentTime').textContent=relativeWeatherTime(chosen?.observed_at);
+      document.getElementById('climateCurrentChips').innerHTML=chips.join('');
+      document.getElementById('climateCurrentSource').textContent=officialWeatherOk?'INMET · oficial':'Referência complementar';
+    }
+
     const detailParts=[condition];
     if(chosen?.humidity_pct!=null) detailParts.push('Umidade '+numBR(chosen.humidity_pct,0)+'%');
     if(chosen?.apparent_temperature_c!=null) detailParts.push('Sensação '+numBR(chosen.apparent_temperature_c,1)+'°C');
@@ -459,7 +556,7 @@ async function loadOfficialData(){
     if(chosen?.wind_speed_kmh!=null) detailParts.push('Vento '+numBR(chosen.wind_speed_kmh,0)+' km/h');
     if(chosen?.wind_gust_kmh!=null) detailParts.push('Rajada '+numBR(chosen.wind_gust_kmh,0)+' km/h');
     document.getElementById('weatherSummary').textContent=detailParts.join(' · ')+' · '+fmtDate(chosen?.observed_at);
-    document.getElementById('weatherDetails').textContent=(officialWeatherOk?'INMET Pico do Couto (A610). ':'Referência meteorológica complementar próxima ao Hospital Santa Teresa. ')+detailParts.join(' · ')+' · horário: '+fmtDate(chosen?.observed_at)+'. Alertas e níveis HST continuam baseados nas fontes oficiais.';
+
     document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
     document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'')+(pv.time_anomaly_stations?' · '+pv.time_anomaly_stations+' horário(s) inconsistente(s)':'');
     document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
@@ -490,9 +587,12 @@ async function loadOfficialData(){
         if(d.humidity_min_pct!=null) hum.push('umid. mín '+Number(d.humidity_min_pct).toFixed(0)+'%');
         if(d.humidity_max_pct!=null) hum.push('máx '+Number(d.humidity_max_pct).toFixed(0)+'%');
         p.textContent=(d.summary||'')+(hum.length?' · '+hum.join(' / '):'');
+        const forecastVisual=weatherIconSvg(null,d.summary||'');
+        document.getElementById('forecastIcon'+idx).innerHTML=forecastVisual.svg;
       }else{
         v.textContent=fc.status==='unavailable'?'Indisponível':'Aguardando';
         p.textContent=fc.error?'Fonte oficial sem resposta válida.':'Previsão oficial INMET.';
+        document.getElementById('forecastIcon'+idx).innerHTML=weatherIconSvg(null,'nublado').svg;
       }
     }
     const cemadenConnected=!states.some(x=>x==='source_unconfirmed');
@@ -539,6 +639,59 @@ async function loadOfficialData(){
     document.getElementById('levelReason').textContent='Falha ao carregar o snapshot oficial publicado: '+err.message;
   }
 }
+function climatePeriodCard(item,label){
+  if(!item) return '<div class="climate-period-card empty"><span>'+label+'<br><small>sem registro</small></span></div>';
+  const visual=weatherIconSvg(item.weather_code,item.condition||'');
+  const min=item.temperature_min_c, max=item.temperature_max_c;
+  const temp=min!=null && max!=null
+    ?(Math.abs(Number(min)-Number(max))<0.1?numBR(min,1)+'°C':numBR(min,1)+'–'+numBR(max,1)+'°C')
+    :(item.temperature_last_c!=null?numBR(item.temperature_last_c,1)+'°C':'—');
+  const hum=item.humidity_min_pct!=null && item.humidity_max_pct!=null
+    ?numBR(item.humidity_min_pct,0)+'–'+numBR(item.humidity_max_pct,0)+'%'
+    :(item.humidity_last_pct!=null?numBR(item.humidity_last_pct,0)+'%':'—');
+  const gust=item.wind_gust_max_kmh!=null?' · rajada '+numBR(item.wind_gust_max_kmh,0)+' km/h':'';
+  return '<div class="climate-period-card">'+
+    '<div class="climate-period-top"><div><div class="climate-period-name">'+esc(label)+'</div><div class="climate-period-temp">'+esc(temp)+'</div></div><div class="climate-period-icon">'+visual.svg+'</div></div>'+
+    '<div class="climate-period-condition">'+esc(item.condition||'Condição registrada')+'</div>'+
+    '<div class="climate-period-detail">Umidade '+esc(hum)+gust+'<br>'+esc(item.samples||1)+' coleta(s) no período</div>'+
+  '</div>';
+}
+async function loadClimateHistory(){
+  const grid=document.getElementById('climateHistoryGrid');
+  if(!grid) return;
+  try{
+    const r=await fetch('data/climate_history.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const periods=Array.isArray(data.periods)?data.periods:[];
+    const byDate={};
+    periods.forEach(p=>{
+      if(!byDate[p.date]) byDate[p.date]={};
+      byDate[p.date][p.period]=p;
+    });
+    const dates=Object.keys(byDate).sort().reverse().slice(0,7);
+    if(!dates.length){
+      grid.innerHTML='<div class="card">O histórico climático começará a aparecer após a primeira coleta de manhã, tarde ou noite.</div>';
+      return;
+    }
+    grid.innerHTML=dates.map(date=>{
+      const d=new Date(date+'T12:00:00');
+      const title=isNaN(d)?date:d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+      const row=byDate[date];
+      return '<article class="climate-day">'+
+        '<div class="climate-day-title"><strong>'+esc(title)+'</strong><span class="small">'+Object.keys(row).length+' período(s) registrado(s)</span></div>'+
+        '<div class="climate-periods">'+
+          climatePeriodCard(row.manha,'Manhã')+
+          climatePeriodCard(row.tarde,'Tarde')+
+          climatePeriodCard(row.noite,'Noite')+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }catch(err){
+    grid.innerHTML='<div class="card">Histórico climático ainda não disponível: '+esc(err.message)+'</div>';
+  }
+}
+
 let currentHistory=[];
 let historyDisplayMode='changes';
 
@@ -689,8 +842,10 @@ document.getElementById('simulate').onclick=()=>{
 };
 renderActions(1);
 loadOfficialData();
+loadClimateHistory();
 loadHistory();
 setInterval(loadOfficialData,60000);
+setInterval(loadClimateHistory,15*60000);
 setInterval(loadHistory,15*60000);
 </script>
 </body>
