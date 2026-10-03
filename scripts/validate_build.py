@@ -9,6 +9,7 @@ REQUIRED_IDS = {
     "geoCard","hidroCard","inmetCard","cemadenHealth","inmetHealth",
     "roadsHealth","pluvioBody","historyBody","historyCount",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
+    "climateCurrentCard","climateCurrentIcon","climateCurrentTemp","climateHistoryGrid",
     "historyOldest","historyNewest","historyMonths","exportHistory"
 }
 
@@ -56,3 +57,14 @@ for m in months:
         raise SystemExit(f"Arquivo mensal sem snapshots: {path}")
 
 print(f"VALIDATION_OK level={level} history={len(snaps)} months={len(months)}")
+
+
+climate=load_json("data/climate_history.json")
+periods=climate.get("periods",[])
+if not isinstance(periods,list):
+    raise SystemExit("Histórico climático inválido")
+valid_periods={"manha","tarde","noite"}
+for item in periods:
+    if item.get("period") not in valid_periods:
+        raise SystemExit(f"Período climático inválido: {item.get('period')}")
+print(f"CLIMATE_HISTORY_OK periods={len(periods)}")
