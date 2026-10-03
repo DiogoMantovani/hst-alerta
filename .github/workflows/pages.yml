@@ -34,8 +34,8 @@ jobs:
       - name: Install collector dependencies
         run: pip install --disable-pip-version-check requests beautifulsoup4
 
-      - name: Collect CEMADEN-RJ
-        run: python scripts/collect_cemaden.py
+      - name: Collect HST sources
+        run: python scripts/collect_hst.py
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
