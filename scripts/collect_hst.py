@@ -1045,8 +1045,24 @@ def fetch_inmet_forecast(previous):
         })
         return fallback
 
+def probe_elovias_assets():
+    try:
+        url="https://elovias.com.br/home"
+        r=requests.get(url,timeout=15,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+        print("ELOVIAS_PROBE_STATUS",r.status_code,"LEN",len(r.text))
+        soup=BeautifulSoup(r.text,"html.parser")
+        scripts=[s.get("src") for s in soup.find_all("script") if s.get("src")]
+        print("ELOVIAS_PROBE_SCRIPTS",json.dumps(scripts,ensure_ascii=False))
+        for s in soup.find_all("script"):
+            txt=s.get_text(" ",strip=True)
+            if txt and any(k in txt.lower() for k in ("boletim","trafego","tráfego","noticia","api")):
+                print("ELOVIAS_PROBE_INLINE",re.sub(r"\\s+"," ",txt)[:2500])
+    except Exception as exc:
+        print("ELOVIAS_PROBE_ERROR",repr(exc))
+
 def main():
     os.makedirs("data",exist_ok=True)
+    probe_elovias_assets()
     previous=load_previous()
     geo=fetch_cemaden(1,"cemaden_geological","Deslizamento",previous)
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
