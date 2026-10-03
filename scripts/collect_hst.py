@@ -362,6 +362,26 @@ def fetch_inmet_alerts(previous):
         if "level" not in fallback: fallback.update({"level":None,"risk":"Indisponível","title":"Fonte de avisos INMET indisponível"})
         return fallback
 
+def distance_km(lat1,lon1,lat2,lon2):
+    from math import radians,sin,cos,asin,sqrt
+    r=6371.0
+    p1,p2=radians(lat1),radians(lat2)
+    dlat=radians(lat2-lat1)
+    dlon=radians(lon2-lon1)
+    a=sin(dlat/2)**2+cos(p1)*cos(p2)*sin(dlon/2)**2
+    return 2*r*asin(sqrt(a))
+
+# Coordenadas publicadas para estações CEMADEN usadas como referências
+# geográficas do HST. Bingen - Geo é a estação verificada mais próxima
+# dentre as estações CEMADEN com coordenadas consolidadas nesta base.
+KNOWN_CEMADEN_COORDS={
+    "Bingen - Geo":(-22.51221,-43.20900),
+    "Dr. Thouzet - Geo":(-22.52832,-43.20200),
+    "São Sebastião - Geo":(-22.53690,-43.19300),
+    "Quitandinha - Geo":(-22.52490,-43.22300),
+    "Independência2":(-22.54800,-43.20900),
+}
+
 def fetch_cemaden_pluviometers(previous):
     prev=previous.get("pluviometers") or {}
     now=datetime.now(TZ)
@@ -397,10 +417,15 @@ def fetch_cemaden_pluviometers(previous):
             def mm(key):
                 v=row.get(key)
                 return safe_float(v) if v not in ("-",None,"") else None
+            station_name=row.get("nomeestacao") or "Estação sem nome"
+            coords=KNOWN_CEMADEN_COORDS.get(station_name)
             stations.append({
                 "id":row.get("idestacao"),
-                "name":row.get("nomeestacao") or "Estação sem nome",
+                "name":station_name,
                 "status":health,
+                "latitude":coords[0] if coords else None,
+                "longitude":coords[1] if coords else None,
+                "distance_to_hst_km":round(distance_km(HST_LAT,HST_LON,coords[0],coords[1]),2) if coords else None,
                 "raw_timestamp":raw_dt or None,
                 "observed_at":observed.isoformat() if observed else raw_dt or None,
                 "age_hours":age,
@@ -421,6 +446,8 @@ def fetch_cemaden_pluviometers(previous):
 
         recent=[s for s in stations if s["status"]=="ok"]
         anomalies=[s for s in stations if s["status"]=="time_anomaly"]
+        georeferenced=[s for s in stations if isinstance(s.get("distance_to_hst_km"),(int,float))]
+        nearest=min(georeferenced,key=lambda s:s["distance_to_hst_km"]) if georeferenced else None
         def highest(key):
             # Only fresh, internally time-consistent stations contribute to
             # dashboard maxima. Stale/anomalous values remain visible in the table.
@@ -442,6 +469,8 @@ def fetch_cemaden_pluviometers(previous):
             "time_anomaly_stations":len(anomalies),
             "highest_1h":highest("acc1h_mm"),
             "highest_24h":highest("acc24h_mm"),
+            "nearest_to_hst":nearest,
+            "nearest_note":"Distância aproximada em linha reta entre o HST e estações CEMADEN com coordenadas verificadas.",
             "stations":stations,
             "error":None,
         }
@@ -656,11 +685,6 @@ def history_snapshot(payload):
             "risk":(sources.get("inmet_alerts") or {}).get("risk"),
             "status":(sources.get("inmet_alerts") or {}).get("status"),
         },
-        "defesa_civil":{
-            "level":(sources.get("defesa_civil") or {}).get("level"),
-            "stage":(sources.get("defesa_civil") or {}).get("stage"),
-            "status":(sources.get("defesa_civil") or {}).get("status"),
-        },
         "pluviometers":{
             "highest_1h":pv.get("highest_1h"),
             "highest_24h":pv.get("highest_24h"),
@@ -843,10 +867,9 @@ def main():
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
-    defesa=fetch_defesa_civil(previous)
     roads=fetch_roads(previous)
 
-    usable=[s for s in (geo,hydro,inmet,defesa) if isinstance(s.get("level"),int)]
+    usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
     overall=max([s["level"] for s in usable], default=int((previous.get("overall") or {}).get("level") or 1))
 
     # Optional combined-source escalation: only independent providers count.
@@ -858,14 +881,14 @@ def main():
         escalated=True
 
     top=[]
-    for s in (geo,hydro,inmet,defesa):
+    for s in (geo,hydro,inmet):
         if isinstance(s.get("level"),int) and s["level"]>=max(1,overall-(1 if escalated else 0)):
             top.append(f'{s["name"]}: {s.get("risk")}')
     reason=", ".join(top) or "Sem nova leitura válida."
     if escalated: reason += ". Escalada por duas fontes independentes em nível 3 ou superior."
-    gaps=[s["name"] for s in (geo,hydro,defesa) if s.get("status") in ("no_recent_update","source_unconfirmed")]
+    gaps=[s["name"] for s in (geo,hydro) if s.get("status") in ("no_recent_update","source_unconfirmed")]
     if gaps:
-        reason += ". Sem atualização oficial recente confirmada em: "+", ".join(gaps)+". Isso não significa ausência de risco."
+        reason += ". Sem atualização oficial recente: "+", ".join(gaps)+"."
 
     now=datetime.now(TZ)
     payload={
@@ -873,13 +896,13 @@ def main():
       "generated_at":now.isoformat(),
       "location":{"city":"Petrópolis","state":"RJ","country":"Brasil"},
       "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
-      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
+      "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
       "weather_reference":weather_reference,
       "pluviometers":pluviometers,
       "forecast":forecast,
       "roads":roads,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"pluviometers":pluviometers.get("status","unavailable"),"defesa_civil":defesa.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
