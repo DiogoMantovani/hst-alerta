@@ -17,6 +17,7 @@ PREVIOUS_URL = "https://diogomantovani.github.io/hst-alerta/data/status.json"
 CEMADEN_BASE = "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/"
 INMET_WEATHER = "https://apitempo.inmet.gov.br/estacao/{start}/{end}/A610"
 INMET_ALERTS = "https://apiprevmet3.inmet.gov.br/avisos/ativos"
+INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
 LEVEL_LABELS = {1:"Vigilância",2:"Observação",3:"Atenção",4:"Alerta",5:"Alerta Máximo"}
@@ -232,12 +233,104 @@ def fetch_inmet_alerts(previous):
         if "level" not in fallback: fallback.update({"level":None,"risk":"Indisponível","title":"Fonte de avisos INMET indisponível"})
         return fallback
 
+def fetch_inmet_forecast(previous):
+    prev=previous.get("forecast") or {}
+    now=datetime.now(TZ)
+    try:
+        data=get_json(INMET_FORECAST, timeout=25)
+        root=data
+        if isinstance(data,dict) and "3303906" in data:
+            root=data["3303906"]
+        if not isinstance(root,dict):
+            raise RuntimeError("Formato inesperado da previsão INMET")
+
+        days=[]
+        for date_key, day in sorted(root.items(), key=lambda kv: str(kv[0])):
+            if not isinstance(day,dict):
+                continue
+            periods=[]
+            for period_name in ("manha","tarde","noite"):
+                p=day.get(period_name)
+                if isinstance(p,dict):
+                    periods.append((period_name,p))
+            if not periods and any(k in day for k in ("resumo","tempo","temp_min","temp_max")):
+                periods=[("dia",day)]
+            if not periods:
+                continue
+
+            mins=[safe_float(p.get("temp_min")) for _,p in periods]
+            maxs=[safe_float(p.get("temp_max")) for _,p in periods]
+            hum_min=[safe_float(p.get("umidade_min")) for _,p in periods]
+            hum_max=[safe_float(p.get("umidade_max")) for _,p in periods]
+            mins=[v for v in mins if v is not None]
+            maxs=[v for v in maxs if v is not None]
+            hum_min=[v for v in hum_min if v is not None]
+            hum_max=[v for v in hum_max if v is not None]
+
+            summaries=[]
+            period_payload=[]
+            for name,p in periods:
+                summary=str(p.get("resumo") or p.get("tempo") or "").strip()
+                if summary and summary not in summaries:
+                    summaries.append(summary)
+                period_payload.append({
+                    "period":name,
+                    "summary":summary or None,
+                    "temperature_min_c":safe_float(p.get("temp_min")),
+                    "temperature_max_c":safe_float(p.get("temp_max")),
+                    "humidity_min_pct":safe_float(p.get("umidade_min")),
+                    "humidity_max_pct":safe_float(p.get("umidade_max")),
+                    "wind_direction":p.get("dir_vento"),
+                    "wind_intensity":p.get("int_vento"),
+                    "weekday":p.get("dia_semana"),
+                    "icon":p.get("icone"),
+                })
+
+            days.append({
+                "date":str(date_key),
+                "summary":" / ".join(summaries) if summaries else "Previsão disponível",
+                "temperature_min_c":min(mins) if mins else None,
+                "temperature_max_c":max(maxs) if maxs else None,
+                "humidity_min_pct":min(hum_min) if hum_min else None,
+                "humidity_max_pct":max(hum_max) if hum_max else None,
+                "periods":period_payload,
+            })
+            if len(days)>=3:
+                break
+
+        if not days:
+            raise RuntimeError("Previsão INMET sem dias válidos")
+
+        return {
+            "provider":"INMET",
+            "status":"ok",
+            "municipality_code":"3303906",
+            "municipality":"Petrópolis/RJ",
+            "collected_at":now.isoformat(),
+            "url":INMET_FORECAST,
+            "days":days,
+            "error":None,
+        }
+    except Exception as exc:
+        fallback=dict(prev)
+        fallback.update({
+            "provider":"INMET",
+            "status":"unavailable",
+            "municipality_code":"3303906",
+            "municipality":"Petrópolis/RJ",
+            "collected_at":now.isoformat(),
+            "url":INMET_FORECAST,
+            "error":str(exc)[:600],
+        })
+        return fallback
+
 def main():
     os.makedirs("data",exist_ok=True)
     previous=load_previous()
     geo=fetch_cemaden(1,"cemaden_geological","Deslizamento",previous)
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
     weather=fetch_inmet_weather(previous)
+    forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
 
     usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
@@ -270,7 +363,8 @@ def main():
       "overall":{"level":overall,"label":LEVEL_LABELS[overall],"reason":reason,"rule":"Maior nível válido entre CEMADEN-RJ e INMET; se ambas as fontes independentes estiverem em nível >=3, escalada configurada de +1."},
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
-      "integrations":{"cemaden_rj":"active","inmet":"active","pluviometers":"pending","defesa_civil":"pending","roads":"pending","utilities":"pending"}
+      "forecast":forecast,
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"pluviometers":"pending","defesa_civil":"pending","roads":"pending","utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     print(json.dumps(payload,ensure_ascii=False,indent=2))
