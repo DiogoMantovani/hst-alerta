@@ -1,0 +1,34 @@
+name: One-time Email Test
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/email-test-once.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependency
+        run: pip install --disable-pip-version-check requests
+
+      - name: Send one-time HST email test
+        env:
+          HST_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HST_EMAIL_GRUPO_OPERACIONAL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          HST_EMAIL_FROM: ${{ secrets.HST_EMAIL_FROM }}
+          HST_EMAIL_REPLY_TO: ${{ secrets.HST_EMAIL_REPLY_TO }}
+          HST_EMAIL_FORCE_TEST: "true"
+        run: python scripts/send_email.py
