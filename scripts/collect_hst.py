@@ -728,25 +728,36 @@ def fetch_roads(previous):
         r.raise_for_status()
         soup=BeautifulSoup(r.text,"html.parser")
         page_text=re.sub(r"\s+"," ",soup.get_text(" ",strip=True)).strip()
+        raw_text=re.sub(r"\s+"," ",r.text.replace("\\u00f3","ó").replace("\\u00e9","é").replace("\\u00e7","ç").replace("\\u00e3","ã").replace("\\u00ed","í").replace("\\u00e1","á")).strip()
 
         bulletin=None
         bulletin_time=None
         serra_status=None
 
-        # The Elovias portal publishes a highlighted operational bulletin in the
-        # "Atenção" area. Keep the text descriptive; do not infer free traffic
-        # when the bulletin is missing.
-        m=re.search(
+        # The portal renders part of its home content dynamically. Search both
+        # visible text and serialized page data so the collector does not depend
+        # on a browser runtime.
+        bulletin_patterns=[
             r"Boletim\s+Elovias\s*\(([^)]*)\)\s*:\s*(.*?)(?=Serviços\s+e\s+Informações|Últimas\s+Notícias|$)",
-            page_text,
-            flags=re.I,
-        )
-        if m:
-            bulletin_time=m.group(1).strip()
-            bulletin=re.sub(r"\s+"," ",m.group(2)).strip()
-            bulletin=re.sub(r"\s*(Desacelere\..*)$","",bulletin,flags=re.I).strip()
+            r"Boletim\s+Elovias\s*\(([^)]*)\)\s*:\s*(.*?)(?=Desacelere|Seu\s+bem\s+maior|$)",
+        ]
+        for source_text in (page_text,raw_text):
+            for pattern in bulletin_patterns:
+                m=re.search(pattern,source_text,flags=re.I)
+                if m:
+                    bulletin_time=m.group(1).strip()
+                    bulletin=re.sub(r"<[^>]+>"," ",m.group(2))
+                    bulletin=bulletin.replace("\\n"," ").replace("\\r"," ").replace("\\t"," ")
+                    bulletin=re.sub(r"\\+["/]", " ", bulletin)
+                    bulletin=re.sub(r"\s+"," ",bulletin).strip()
+                    bulletin=re.sub(r"\s*(Desacelere\..*)$","",bulletin,flags=re.I).strip()
+                    break
+            if bulletin:
+                break
+
+        if bulletin:
             serra_match=re.search(
-                r"Serra\s+de\s+Petrópolis\s*:\s*(.*?)(?=(?:Baixada\s+Fluminense|Planalto|Para\s+consultar|WhatsApp|$))",
+                r"Serra\s+de\s+Petrópolis\s*:\s*(.*?)(?=(?:Baixada\s+Fluminense|Planalto|Para\s+consultar|WhatsApp|📲|$))",
                 bulletin,
                 flags=re.I,
             )
@@ -755,22 +766,37 @@ def fetch_roads(previous):
 
         works_title=None
         works_url=None
-        for a in soup.find_all("a",href=True):
-            txt=re.sub(r"\s+"," ",a.get_text(" ",strip=True)).strip()
-            if re.search(r"Cronograma\s+de\s+Obras",txt,re.I):
-                href=a.get("href","").strip()
-                if href.startswith("/"):
-                    href="https://elovias.com.br"+href
-                elif href and not href.startswith("http"):
-                    href="https://elovias.com.br/"+href.lstrip("/")
-                works_title=txt
-                works_url=href or None
+
+        # Prefer the current news feed because the home page can be client-rendered.
+        news_sources=[(soup,ELOVIAS_HOME)]
+        try:
+            nr=requests.get("https://elovias.com.br/noticias/cronograma-de-obras-05-janeiro-2026",timeout=12,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+            nr.raise_for_status()
+            news_sources.insert(0,(BeautifulSoup(nr.text,"html.parser"),nr.url))
+        except Exception:
+            pass
+
+        for news_soup,base_url in news_sources:
+            for a in news_soup.find_all("a",href=True):
+                txt=re.sub(r"\s+"," ",a.get_text(" ",strip=True)).strip()
+                if re.search(r"Cronograma\s+de\s+Obras",txt,re.I):
+                    href=a.get("href","").strip()
+                    if href.startswith("/"):
+                        href="https://elovias.com.br"+href
+                    elif href and not href.startswith("http"):
+                        href="https://elovias.com.br/"+href.lstrip("/")
+                    works_title=txt
+                    works_url=href or base_url
+                    break
+            if works_title:
                 break
 
         if not works_title:
-            mt=re.search(r"(Cronograma\s+de\s+Obras\s*[-–—]\s*[^|]+?)(?=\s+\d{2}/\d{2}/\d{4}|Últimas\s+Notícias|$)",page_text,re.I)
-            if mt:
-                works_title=re.sub(r"\s+"," ",mt.group(1)).strip()
+            for source_text in (page_text,raw_text):
+                mt=re.search(r"(Cronograma\s+de\s+Obras\s*[-–—]\s*[^<|]{3,80})",source_text,re.I)
+                if mt:
+                    works_title=re.sub(r"\s+"," ",mt.group(1)).strip()
+                    break
 
         return {
             "provider":"Elovias",
