@@ -1070,6 +1070,13 @@ def probe_elovias_assets():
                             print("ELOVIAS_ASSET_CONTEXT",term,re.sub(r"\\s+"," ",js[max(0,pos-900):pos+1800])[:2800])
                 except Exception as exc:
                     print("ELOVIAS_ASSET_ERROR",asset,repr(exc))
+        api_base="https://cliente.api.elovias.com.br/v1/"
+        for endpoint in ("boletim","aviso","noticia/recente","mapa/trecho-principal"):
+            try:
+                ar=requests.get(api_base+endpoint,timeout=15,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"})
+                print("ELOVIAS_API",endpoint,ar.status_code,ar.headers.get("content-type"),ar.text[:5000])
+            except Exception as exc:
+                print("ELOVIAS_API_ERROR",endpoint,repr(exc))
         for s in soup.find_all("script"):
             txt=s.get_text(" ",strip=True)
             if txt and any(k in txt.lower() for k in ("boletim","trafego","tráfego","noticia","api")):
