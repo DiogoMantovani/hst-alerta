@@ -11,3 +11,13 @@ for(const [i,m] of matches.entries()){
   }
 }
 console.log(`FRONTEND_JS_OK scripts=${matches.length}`);
+
+
+const requiredFunctions=["setConnection","loadOfficialData","loadHistory","renderHistory"];
+for(const fn of requiredFunctions){
+  const re=new RegExp("function\\s+"+fn+"\\s*\\(");
+  if(!re.test(html)){
+    throw new Error("Função obrigatória ausente no frontend: "+fn);
+  }
+}
+console.log("FRONTEND_RUNTIME_HELPERS_OK "+requiredFunctions.join(","));
