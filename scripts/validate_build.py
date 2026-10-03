@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 REQUIRED_IDS = {
     "hero","levelNum","levelLabel","levelReason","updatedAt","nextAt",
     "geoCard","hidroCard","inmetCard","cemadenHealth","inmetHealth",
-    "pluvioBody","historyBody","historyCount",
+    "pluvioBody","historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
     "climateCurrentCard","climateCurrentIcon","climateCurrentTemp","climateHistoryGrid",
     "weatherMap","mapLegend","mapUpdated","mapRadarStatus","mapNearestStation","mapNearestRain","mapCurrentWeather",
