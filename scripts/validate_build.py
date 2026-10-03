@@ -63,7 +63,7 @@ climate=load_json("data/climate_history.json")
 periods=climate.get("periods",[])
 if not isinstance(periods,list):
     raise SystemExit("Histórico climático inválido")
-valid_periods={"manha","tarde","noite"}
+valid_periods={"madrugada","manha","tarde","noite"}
 for item in periods:
     if item.get("period") not in valid_periods:
         raise SystemExit(f"Período climático inválido: {item.get('period')}")
