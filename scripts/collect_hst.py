@@ -770,6 +770,8 @@ def persist_history(payload):
 
 def climate_period(dt):
     hour=dt.hour
+    if 0 <= hour < 6:
+        return "madrugada", "Madrugada"
     if 6 <= hour < 12:
         return "manha", "Manhã"
     if 12 <= hour < 18:
@@ -815,10 +817,7 @@ def persist_climate_history(weather, weather_reference):
     except Exception:
         periods=[]
 
-    # The night period spans midnight: 18:00–05:59.
-    # Readings after midnight belong to the night that started the previous day.
-    period_date=now if now.hour>=6 else now-timedelta(days=1)
-    date_key=period_date.strftime("%Y-%m-%d")
+    date_key=now.strftime("%Y-%m-%d")
     existing=None
     for item in periods:
         if isinstance(item,dict) and item.get("date")==date_key and item.get("period")==period_key:
@@ -889,7 +888,7 @@ def persist_climate_history(weather, weather_reference):
         except Exception:
             continue
 
-    order={"manha":0,"tarde":1,"noite":2}
+    order={"madrugada":0,"manha":1,"tarde":2,"noite":3}
     kept.sort(key=lambda x:(x.get("date",""),order.get(x.get("period"),9)))
     with open(CLIMATE_HISTORY_OUT,"w",encoding="utf-8") as f:
         json.dump({
@@ -897,9 +896,10 @@ def persist_climate_history(weather, weather_reference):
             "generated_at":now.isoformat(),
             "retention_days":90,
             "period_definition":{
+                "madrugada":"00:00–05:59",
                 "manha":"06:00–11:59",
                 "tarde":"12:00–17:59",
-                "noite":"18:00–05:59"
+                "noite":"18:00–23:59"
             },
             "periods":kept,
         },f,ensure_ascii=False,separators=(",",":"))
