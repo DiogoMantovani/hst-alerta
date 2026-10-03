@@ -39,6 +39,7 @@ jobs:
       - name: Collect HST sources
         env:
           HST_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HST_EMAIL_GRUPO_OPERACIONAL }}
+          HST_EMAIL_GRUPO_GERENTES: ${{ secrets.HST_EMAIL_GRUPO_GERENTES }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           HST_SMTP_USER: ${{ secrets.HST_SMTP_USER }}
           HST_SMTP_APP_PASSWORD: ${{ secrets.HST_SMTP_APP_PASSWORD }}
@@ -54,6 +55,7 @@ jobs:
         continue-on-error: true
         env:
           HST_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HST_EMAIL_GRUPO_OPERACIONAL }}
+          HST_EMAIL_GRUPO_GERENTES: ${{ secrets.HST_EMAIL_GRUPO_GERENTES }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           HST_EMAIL_FROM: ${{ secrets.HST_EMAIL_FROM }}
           HST_EMAIL_REPLY_TO: ${{ secrets.HST_EMAIL_REPLY_TO }}
