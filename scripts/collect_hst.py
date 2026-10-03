@@ -611,7 +611,7 @@ def persist_history(payload):
 
     months=[]
     for name in sorted(os.listdir(ARCHIVE_DIR),reverse=True):
-        if not re.fullmatch(r"\\d{4}-\\d{2}\\.json",name):
+        if not re.fullmatch(r"\d{4}-\d{2}\.json",name):
             continue
         path=os.path.join(ARCHIVE_DIR,name)
         count=None
@@ -746,7 +746,7 @@ def main():
     if escalated: reason += ". Escalada por duas fontes independentes em nível 3 ou superior."
     unavailable=[s["name"] for s in (geo,hydro,inmet,defesa) if s.get("status")=="unavailable"]
     stale=[s["name"] for s in (geo,hydro) if s.get("status")=="stale"]
-    if unavailable: reason += ". Fonte(s) indisponível(is): "+", ".join(unavailable)+"; último valor válido preservado quando disponível."
+    if unavailable: reason += ". Fonte(s) indisponível(is): "+", ".join(unavailable)+"; último valor válido preservado quando disponível"
     if stale: reason += ". Atenção: atualização oficial antiga em "+", ".join(stale)+"."
 
     now=datetime.now(TZ)
