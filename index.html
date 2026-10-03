@@ -34,7 +34,7 @@
 .weather-theme-storm{background:linear-gradient(145deg,#f4f2f9,#eceaf4)}
 .weather-theme-storm .weather-iconbox{background:#e4e0f0;border-color:#d4cdea}
 .weather-theme-fog{background:linear-gradient(145deg,#f7f8f8,#eef1f1)}
-.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.weather-theme-fog .weather-iconbox{background:#e9eeee;border-color:#d9e0e0}.riskgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
 .risk{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:215px;display:flex;flex-direction:column}
 .risk-title{font-size:16px;font-weight:900;color:#173038;letter-spacing:.01em;margin-bottom:14px}
 .risk-state-label{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:850;color:#7a8b91;margin-bottom:3px}
@@ -58,7 +58,18 @@
 .history-controls{display:flex;gap:8px;flex-wrap:wrap}
 .btn.active-filter{background:var(--brand);color:#fff;border-color:var(--brand)}
 .history-period{font-weight:750}
-.history-samples{display:block;font-size:11px;color:var(--muted);margin-top:3px}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
+.history-samples{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.nearest-pluvio{display:grid;grid-template-columns:1.15fr 2fr;gap:18px;align-items:center;margin-bottom:18px;background:linear-gradient(135deg,#f8fbfb,#eef7f6)}
+.nearest-pluvio-head{display:flex;align-items:flex-start;gap:12px}
+.nearest-pluvio-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;background:#dff1ef;color:var(--brand);font-size:26px;flex:0 0 auto}
+.nearest-pluvio-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:850;color:var(--muted)}
+.nearest-pluvio-name{font-size:22px;font-weight:900;margin:4px 0;color:#12363e}
+.nearest-pluvio-sub{font-size:12px;color:var(--muted);line-height:1.45}
+.nearest-pluvio-values{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.rain-metric{background:#fff;border:1px solid #d9e7e6;border-radius:12px;padding:11px}
+.rain-metric span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.rain-metric strong{display:block;margin-top:5px;font-size:18px;color:#0d6264}
+@media(max-width:900px){.nearest-pluvio{grid-template-columns:1fr}.nearest-pluvio-values{grid-template-columns:repeat(2,1fr)}}.small{font-size:12px;color:var(--muted)}.section{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:4px 0 16px}.section h2,.section h3{margin:0}.btn{border:1px solid #afc5c6;background:white;color:var(--brand);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}.btn.primary{background:var(--brand);color:white;border-color:var(--brand)}.actions{display:grid;gap:8px}.action{padding:10px 0;border-bottom:1px solid #edf2f2}.forecast{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.forecast .card h4{margin:0 0 10px}.forecast strong{font-size:22px;color:var(--brand)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
 <body>
@@ -143,16 +154,24 @@
   <div class="risk-source"><span id="inmetBadge" class="badge">INMET</span></div>
   <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="inmetMeta" class="risk-observation-text">Carregando informação…</div></div>
 </article>
-<article class="risk">
-  <div class="risk-title">Estágio da Defesa Civil</div>
-  <div class="risk-state-label">Estado atual</div>
-  <div id="dcCard" class="value">Carregando…</div>
-  <div class="risk-source-label">Fonte</div>
-  <div class="risk-source"><span id="dcBadge" class="badge">Defesa Civil de Petrópolis</span></div>
-  <div class="risk-observation"><div class="risk-observation-label">Observação</div><div id="dcMeta" class="risk-observation-text">Carregando informação…</div></div>
-</article>
 </div>
-<div class="callout"><strong>Padrão HST de atualidade:</strong> informações de risco com mais de 24 horas deixam o painel atual e permanecem no histórico. “Sem atualização oficial recente” significa apenas que não há informação oficial nova confirmada na janela definida — <strong>não significa ausência de risco</strong>.</div>
+<article class="card nearest-pluvio">
+  <div class="nearest-pluvio-head">
+    <div class="nearest-pluvio-icon">◉</div>
+    <div>
+      <div class="nearest-pluvio-title">Pluviômetro CEMADEN de referência mais próximo do HST</div>
+      <div id="nearestPluvioName" class="nearest-pluvio-name">Carregando…</div>
+      <div class="nearest-pluvio-sub"><span id="nearestPluvioDistance">—</span> · <span id="nearestPluvioStatus">Verificando leitura</span><br><span id="nearestPluvioUpdated">—</span></div>
+    </div>
+  </div>
+  <div class="nearest-pluvio-values">
+    <div class="rain-metric"><span>Chuva 1 h</span><strong id="nearestPluvio1h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 6 h</span><strong id="nearestPluvio6h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 12 h</span><strong id="nearestPluvio12h">—</strong></div>
+    <div class="rain-metric"><span>Chuva 24 h</span><strong id="nearestPluvio24h">—</strong></div>
+  </div>
+</article>
+<div class="callout"><strong>Padrão HST de atualidade:</strong> informações de risco com mais de 24 horas saem do estado atual e permanecem no histórico. Quando não houver atualização recente, o painel informa isso sem interpretar como ausência de risco.</div>
 
 <div class="grid2">
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
@@ -160,8 +179,9 @@
 <div class="section"><div><h3>Conectividade das fontes</h3><div class="small">Mostra se o HST Alerta conseguiu acessar cada canal. Conectividade ativa não significa ausência de risco.</div></div></div>
 <div class="source-health-list">
   <div class="source-health-row"><div class="source-health-name">CEMADEN-RJ</div><span id="cemadenConnection" class="connection-pill connection-na">Verificando</span><div id="cemadenHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">CEMADEN · Pluviômetros</div><span id="pluvioConnection" class="connection-pill connection-na">Verificando</span><div id="pluvioHealth" class="source-health-note">Carregando status…</div></div>
   <div class="source-health-row"><div class="source-health-name">INMET</div><span id="inmetConnection" class="connection-pill connection-na">Verificando</span><div id="inmetHealth" class="source-health-note">Carregando status…</div></div>
-  <div class="source-health-row"><div class="source-health-name">Defesa Civil de Petrópolis</div><span id="dcConnection" class="connection-pill connection-na">Verificando</span><div id="dcHealth" class="source-health-note">Carregando status…</div></div>
+  <div class="source-health-row"><div class="source-health-name">Clima atual complementar</div><span id="weatherRefConnection" class="connection-pill connection-na">Verificando</span><div id="weatherRefHealth" class="source-health-note">Referência meteorológica próxima ao HST.</div></div>
   <div class="source-health-row"><div class="source-health-name">Elovias / BR-040/495</div><span id="roadsConnection" class="connection-pill connection-na">Verificando</span><div id="roadsHealth" class="source-health-note">Carregando status…</div></div>
   <div class="source-health-row"><div class="source-health-name">Enel Rio / Águas do Imperador</div><span class="connection-pill connection-na">Canal cadastrado</span><div class="source-health-note">Ainda sem monitoramento automático de conectividade.</div></div>
 </div>
@@ -200,7 +220,7 @@
 <article class="card"><span class="small">Com leitura recente</span><strong id="pluvioRecent">—</strong></article>
 </div>
 <div class="card table"><table><thead><tr><th>Estação</th><th>Última leitura</th><th>1 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
-<tbody id="pluvioBody"><tr><td colspan="9">Carregando pluviômetros CEMADEN…</td></tr></tbody></table></div>
+<tbody id="pluvioBody"><tr><td colspan="8">Carregando pluviômetros CEMADEN…</td></tr></tbody></table></div>
 </section>
 
 <section id="servicos" class="panel">
@@ -209,7 +229,6 @@
 <article class="card service"><div class="eyebrow">Rodovias</div><div class="status">BR-040/495 · Serra</div><p id="roadsServiceText">O HST Alerta verifica a disponibilidade do canal oficial, mas não presume trânsito livre sem dado operacional automatizável.</p><a target="_blank" href="https://elovias.com.br/mapa">Mapa Elovias</a><br><span class="small">Emergências: 0800-040-0495</span></article>
 <article class="card service"><div class="eyebrow">Energia</div><div class="status">Enel Rio</div><p>Canal oficial para fornecimento e ocorrências.</p><a target="_blank" href="https://www.enel.com.br/">Enel</a></article>
 <article class="card service"><div class="eyebrow">Água</div><div class="status">Águas do Imperador</div><p>Canal oficial de abastecimento.</p><a target="_blank" href="https://www.grupoaguasdobrasil.com.br/aguas-imperador/">Águas do Imperador</a></article>
-<article class="card service"><div class="eyebrow">Alertas municipais</div><div class="status">Defesa Civil de Petrópolis</div><p>Emergência 199 · SMS 40199 · boletim municipal e canal oficial de WhatsApp.</p><a target="_blank" href="https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil">Portal oficial</a><br><a target="_blank" href="https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i">Canal WhatsApp</a></article>
 </div>
 </section>
 
@@ -239,7 +258,7 @@
 <article class="card"><span class="small">Arquivos mensais</span><strong id="historyMonths">—</strong></article>
 </div>
 <div id="historyArchiveLinks" class="maplinks" style="justify-content:flex-start;margin-bottom:14px"></div>
-<div class="card table"><table><thead><tr><th>Data/hora</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Defesa Civil</th><th>Máx. 1 h</th><th>Máx. 24 h</th><th>Observação</th></tr></thead><tbody id="historyBody"><tr><td colspan="9">Carregando histórico…</td></tr></tbody></table></div>
+<div class="card table"><table><thead><tr><th>Data/hora</th><th>Nível HST</th><th>Geológico</th><th>Hidrológico</th><th>INMET</th><th>Máx. 1 h</th><th>Máx. 24 h</th><th>Observação</th></tr></thead><tbody id="historyBody"><tr><td colspan="9">Carregando histórico…</td></tr></tbody></table></div>
 </section>
 
 <section id="plano" class="panel plan">
@@ -247,14 +266,14 @@
 <article class="card">
 <h3>1. Objetivo</h3><p>Estabelecer critérios para monitorar, interpretar, classificar e comunicar riscos externos que possam afetar a continuidade das operações do Hospital Santa Teresa, antecipando ações de preparação e contingência.</p>
 <h3>2. Abrangência</h3><p>Manutenção, Segurança, Suprimentos, Assistência, Tecnologia da Informação, lideranças e demais áreas envolvidas na continuidade operacional.</p>
-<h3>3. Fontes</h3><ul><li>CEMADEN-RJ e CEMADEN Nacional.</li><li>INMET.</li><li>Defesa Civil de Petrópolis, RJ e Nacional.</li><li>Elovias / BR-040/495.</li><li>Enel Rio e Águas do Imperador.</li></ul>
+<h3>3. Fontes</h3><ul><li>CEMADEN-RJ e CEMADEN Nacional.</li><li>INMET.</li><li>Elovias / BR-040/495.</li><li>Enel Rio e Águas do Imperador.</li></ul>
 <h3>4. Níveis HST</h3><p>1 Vigilância · 2 Observação · 3 Atenção · 4 Alerta · 5 Alerta Máximo.</p>
 <h3>5. Regra básica</h3><p>O nível geral considera o maior risco oficial aplicável. A regra de escalada por duas fontes independentes em nível 3 ou superior é configurável e deve ser homologada institucionalmente.</p>
 <h3>6. Indisponibilidade de fonte</h3><p>Ausência de dados não significa ausência de risco. Fontes indisponíveis devem ser sinalizadas e não provocar rebaixamento automático indevido.</p>
 <h3>7. Comitê de Crise</h3><p>Níveis elevados devem seguir o regimento institucional vigente do Comitê de Crise, sem duplicação de nomes ou contatos neste sistema.</p>
 <h3>8. Registros</h3><p>Eventos, snapshots, reconhecimentos, checklists e decisões devem ser registrados para auditoria.</p>
 <h3>9. Revisão</h3><p>Revisão anual ou sempre que houver alteração relevante em fontes, processos, responsabilidades, infraestrutura ou documentos institucionais.</p>
-<h3>10. Redundância</h3><p>O HST Alerta é apoio à decisão e não substitui Cell Broadcast, SMS, sirenes, Defesa Civil, CEMADEN, INMET ou julgamento humano.</p>
+<h3>10. Redundância</h3><p>O HST Alerta é apoio à decisão e não substitui alertas oficiais de emergência, CEMADEN, INMET ou julgamento humano.</p>
 </article>
 </section>
 
@@ -340,28 +359,17 @@ function applyLevel(l,reason,generatedAt){
   document.getElementById('nextAt').textContent=fmtDate(new Date(base.getTime()+15*60000));
 }
 function sourceBadge(source){
-  if(!source) return 'SEM DADO';
-  if(source.status==='ok') return 'CEMADEN-RJ · ATUAL';
-  if(source.status==='no_recent_update') return 'CEMADEN-RJ · SEM ATUALIZAÇÃO < 24 H';
-  if(source.status==='source_unconfirmed') return 'CEMADEN-RJ · SEM INFORMAÇÃO RECENTE CONFIRMADA';
-  if(source.status==='stale') return 'CEMADEN-RJ · FORA DA JANELA ATUAL';
-  return 'CEMADEN-RJ · '+String(source.status||'SEM CONFIRMAÇÃO').toUpperCase();
+  return 'CEMADEN-RJ';
 }
 function sourceMeta(source){
-  if(!source) return 'Sem informação da fonte.';
-  const parts=[];
-  if(source.status==='ok' && source.official_updated_at) parts.push('Oficial: '+fmtDate(source.official_updated_at));
-  if(source.status==='ok' && source.age_hours!=null) parts.push('idade '+source.age_hours+' h');
-  if(source.status==='no_recent_update') parts.push('Sem atualização oficial relevante nas últimas 24 h');
-  if(source.status==='source_unconfirmed') parts.push('Sem informação oficial recente confirmada nesta coleta');
-  if(source.message) parts.push(source.message);
-  return [...new Set(parts)].join(' · ');
-}
-function setConnection(id,state,label){
-  const el=document.getElementById(id);
-  if(!el) return;
-  el.className='connection-pill '+(state==='ok'?'connection-ok':state==='warn'?'connection-warn':state==='off'?'connection-off':'connection-na');
-  el.textContent=label;
+  if(!source) return 'Sem informação recente confirmada.';
+  if(source.status==='ok'){
+    const age=source.age_hours!=null?' · '+numBR(source.age_hours,1)+' h atrás':'';
+    return 'Atualização oficial: '+fmtDate(source.official_updated_at)+age+'.';
+  }
+  if(source.status==='no_recent_update') return 'Sem atualização oficial nas últimas 24 h. O último registro permanece disponível no Histórico.';
+  if(source.status==='source_unconfirmed') return 'Não foi possível confirmar nova informação nesta coleta.';
+  return source.message||'Sem informação recente confirmada.';
 }
 async function loadOfficialData(){
   try{
@@ -371,24 +379,33 @@ async function loadOfficialData(){
     const g=data.sources?.cemaden_geological;
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
-    const dc=data.sources?.defesa_civil;
     const roads=data.roads||{};
     const w=data.weather||{};
     const wr=data.weather_reference||{};
     const fc=data.forecast||{};
     const pv=data.pluviometers||{};
+    const nearest=pv.nearest_to_hst||null;
+    if(nearest){
+      document.getElementById('nearestPluvioName').textContent=nearest.name||'Estação CEMADEN';
+      document.getElementById('nearestPluvioDistance').textContent=nearest.distance_to_hst_km!=null?'aprox. '+numBR(nearest.distance_to_hst_km,1)+' km do HST':'distância não calculada';
+      document.getElementById('nearestPluvioStatus').textContent=nearest.status==='ok'?'leitura recente':nearest.status==='time_anomaly'?'horário inconsistente na fonte':'sem comunicação recente';
+      document.getElementById('nearestPluvioUpdated').textContent='Última leitura: '+fmtDate(nearest.observed_at);
+      const rainVal=v=>v==null?'—':numBR(v,1)+' mm';
+      document.getElementById('nearestPluvio1h').textContent=rainVal(nearest.acc1h_mm);
+      document.getElementById('nearestPluvio6h').textContent=rainVal(nearest.acc6h_mm);
+      document.getElementById('nearestPluvio12h').textContent=rainVal(nearest.acc12h_mm);
+      document.getElementById('nearestPluvio24h').textContent=rainVal(nearest.acc24h_mm);
+    }else{
+      document.getElementById('nearestPluvioName').textContent='Sem estação de referência confirmada';
+      document.getElementById('nearestPluvioDistance').textContent='—';
+      document.getElementById('nearestPluvioStatus').textContent='aguardando dados';
+      document.getElementById('nearestPluvioUpdated').textContent='—';
+    }
     document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
     document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
-    document.getElementById('inmetBadge').textContent=imet?.status==='ok'?'INMET · ATUAL':(imet?.status==='unavailable'?'INMET · INDISPONÍVEL':'INMET · '+String(imet?.status||'PENDENTE').toUpperCase());
-    document.getElementById('inmetMeta').textContent=(imet?.title||'')+(imet?.active_count!=null?' · avisos ativos: '+imet.active_count:'');
-    document.getElementById('dcCard').textContent=dc?.stage||(dc?.status==='no_recent_update'?'Sem atualização oficial recente':'Sem informação recente confirmada');
-    document.getElementById('dcBadge').textContent=dc?.status==='ok'?'DEFESA CIVIL · ATUAL':(dc?.status==='no_recent_update'?'DEFESA CIVIL · SEM ATUALIZAÇÃO < 48 H':'DEFESA CIVIL · SEM CONFIRMAÇÃO RECENTE');
-    const dcParts=[];
-    if(dc?.status==='ok' && dc?.official_updated_at) dcParts.push('Boletim: '+fmtDate(dc.official_updated_at));
-    if(dc?.status==='ok' && dc?.latest_bulletin?.title) dcParts.push(dc.latest_bulletin.title);
-    if(dc?.status!=='ok') dcParts.push('Não há informação municipal recente confirmada no painel. Isso não significa ausência de risco.');
-    document.getElementById('dcMeta').textContent=dcParts.join(' · ');
+    document.getElementById('inmetBadge').textContent='INMET';
+    document.getElementById('inmetMeta').textContent=imet?.status==='ok'?(imet?.active_count?((imet?.title||'Aviso meteorológico')+' · '+imet.active_count+' aviso(s) ativo(s).'):'Nenhum aviso meteorológico ativo identificado para Petrópolis/RJ.'):'Sem informação meteorológica recente confirmada nesta coleta.';
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
@@ -415,7 +432,7 @@ async function loadOfficialData(){
       document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HST';
       document.getElementById('weatherTitle').textContent='Hospital Santa Teresa · Centro';
       document.getElementById('weatherSourceBadge').textContent='Fonte complementar';
-      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
+      document.getElementById('weatherNote').textContent='Condição meteorológica complementar próxima ao HST. Não substitui INMET ou CEMADEN para definição de alertas.';
     }
     const chips=[];
     if(chosen?.humidity_pct!=null) chips.push(weatherChip('◉','Umidade',numBR(chosen.humidity_pct,0)+'%'));
@@ -475,17 +492,23 @@ async function loadOfficialData(){
       states.some(x=>x==='no_recent_update')?'Conexão ativa; uma categoria não possui atualização oficial dentro das últimas 24 h.':
       'Conexão ativa e dados consultados com sucesso.';
 
+    const pluvioConnected=pv?.status==='ok' || pv?.status==='stale';
+    setConnection('pluvioConnection',pluvioConnected?'ok':'off',pluvioConnected?'Conectividade ativa':'Sem confirmação');
+    document.getElementById('pluvioHealth').textContent=pluvioConnected
+      ?'Rede de pluviômetros consultada; '+String(pv.recent_stations??0)+' de '+String(pv.total_stations??0)+' estações com leitura recente.'
+      :'Não foi possível confirmar acesso à rede de pluviômetros nesta coleta.';
+
     const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
     setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
     document.getElementById('inmetHealth').textContent=inmetConnected
       ?'Avisos/previsão INMET acessíveis. Observação A610 '+(w.status==='ok'?'também está atualizada.':'não retornou dado recente; o clima atual usa referência complementar.')
       :'Não foi possível confirmar acesso aos serviços INMET nesta coleta.';
 
-    const dcConnected=dc?.status!=='source_unconfirmed' && dc?.status!=='unavailable';
-    setConnection('dcConnection',dcConnected?'ok':'off',dcConnected?'Conectividade ativa':'Sem confirmação');
-    document.getElementById('dcHealth').textContent=dcConnected
-      ?(dc?.status==='ok'?'Canal municipal acessível e com boletim recente.':'Canal municipal acessível, sem atualização operacional recente confirmada.')
-      :'O portal municipal não respondeu adequadamente nesta coleta; isso não significa ausência de risco.';
+    const weatherRefConnected=wr?.status==='ok';
+    setConnection('weatherRefConnection',weatherRefConnected?'ok':'off',weatherRefConnected?'Conectividade ativa':'Sem confirmação');
+    document.getElementById('weatherRefHealth').textContent=weatherRefConnected
+      ?'Condição meteorológica atual próxima ao HST disponível.'
+      :'Sem condição meteorológica complementar recente confirmada.';
 
     const roadsConnected=roads?.status==='official_channel_available';
     setConnection('roadsConnection',roadsConnected?'ok':'off',roadsConnected?'Conectividade ativa':'Sem confirmação');
@@ -495,7 +518,7 @@ async function loadOfficialData(){
     document.getElementById('roadsServiceText').textContent=roadsConnected?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial sem confirmação nesta coleta; consultar a concessionária por telefone e canais redundantes.';
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
-    document.getElementById('systemMode').textContent='CEMADEN + INMET + DEFESA CIVIL';
+    document.getElementById('systemMode').textContent='CEMADEN + INMET';
     document.getElementById('climateMode').textContent='INMET AUTOMÁTICO';
     if(!window.currentHistory?.length){
       document.getElementById('historyBody').innerHTML='<tr><td colspan="9">Histórico ainda não carregado.</td></tr>';
@@ -522,7 +545,6 @@ function historySignature(s){
     geo:[s.geological?.risk,s.geological?.status,s.geological?.level],
     hydro:[s.hydrological?.risk,s.hydrological?.status,s.hydrological?.level],
     inmet:[s.inmet?.risk,s.inmet?.status,s.inmet?.level],
-    dc:[s.defesa_civil?.stage,s.defesa_civil?.status,s.defesa_civil?.level]
   });
 }
 function groupHistory(snaps){
@@ -566,7 +588,7 @@ function renderHistory(snaps,label='janela de 90 dias'){
         '<td>'+esc(s.geological?.risk||'—')+'</td>'+
         '<td>'+esc(s.hydrological?.risk||'—')+'</td>'+
         '<td>'+esc(s.inmet?.risk||'—')+'</td>'+
-        '<td>'+esc(s.defesa_civil?.stage||'—')+'</td>'+
+
         '<td>'+esc(historyMm(s.pluviometers?.highest_1h))+'</td>'+
         '<td>'+esc(historyMm(s.pluviometers?.highest_24h))+'</td>'+
         '<td class="small">'+esc(obs)+'</td>'+
@@ -628,9 +650,9 @@ document.getElementById('historyAll').onclick=()=>{
 };
 document.getElementById('exportHistory').onclick=()=>{
   if(!currentHistory.length) return;
-  const cols=['data_hora','nivel_hst','rotulo','geologico','hidrologico','inmet','defesa_civil','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h','observacao'];
+  const cols=['data_hora','nivel_hst','rotulo','geologico','hidrologico','inmet','max_1h_mm','estacao_1h','max_24h_mm','estacao_24h','observacao'];
   const rows=currentHistory.map(s=>[
-    s.ts,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,s.defesa_civil?.stage,
+    s.ts,s.level,s.label,s.geological?.risk,s.hydrological?.risk,s.inmet?.risk,
     s.pluviometers?.highest_1h?.value,s.pluviometers?.highest_1h?.station,
     s.pluviometers?.highest_24h?.value,s.pluviometers?.highest_24h?.station,s.reason
   ]);
