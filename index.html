@@ -1010,14 +1010,14 @@ async function loadOfficialData(){
 
     const alerts=Array.isArray(roads?.active_alerts)?roads.active_alerts:[];
     document.getElementById('roadsAlertState').textContent=alerts.length
-      ?alerts.length+' aviso'+(alerts.length>1?'s':'')+' ativo'+(alerts.length>1?'s':'')
-      :(roads?.no_active_alerts?'Nenhum aviso ativo retornado':'Sem confirmação de avisos');
+      ?alerts.length+' aviso'+(alerts.length>1?'s':'')+' operacional'+(alerts.length>1?'is':'')+' ativo'+(alerts.length>1?'s':'')
+      :(roads?.no_active_alerts?'Sem avisos operacionais ativos':'Avisos indisponíveis no momento');
     document.getElementById('roadsAlertList').innerHTML=alerts.slice(0,4).map(a=>
       '<div class="road-alert-item"><strong>'+esc(a.title||'Aviso Elovias')+'</strong>'+(a.message?'<br>'+esc(a.message):'')+'</div>'
     ).join('');
     document.getElementById('roadsAlertNote').textContent=roads?.no_active_alerts
-      ?'A API oficial não retornou aviso operacional ativo nesta coleta. Isso não equivale a garantia de tráfego livre.'
-      :'Última consulta: '+fmtDate(roads?.collected_at);
+      ?'Nenhum aviso operacional foi publicado pela Elovias na consulta mais recente.'
+      :'Última atualização: '+fmtDate(roads?.collected_at);
 
     const rw=roads?.petropolis_weather||{};
     const roadVisual=weatherIconSvg(null,rw.condition||'');
