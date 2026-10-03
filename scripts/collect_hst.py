@@ -1060,7 +1060,7 @@ def probe_elovias_assets():
                     jr=requests.get(asset,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
                     print("ELOVIAS_ASSET",asset,jr.status_code,"LEN",len(jr.text))
                     js=jr.text
-                    urls=sorted(set(re.findall(r'https?://[^"\\'<> ]+',js)))
+                    urls=sorted(set(re.findall(r"https?://[^\\\"'<> ]+",js)))
                     api_paths=sorted(set(re.findall(r'[/][A-Za-z0-9_.-]*(?:api|noticias|boletim|trafego|tr[aá]fego)[A-Za-z0-9_./?=&%-]*',js,flags=re.I)))
                     print("ELOVIAS_ASSET_URLS",json.dumps(urls[:80],ensure_ascii=False))
                     print("ELOVIAS_ASSET_PATHS",json.dumps(api_paths[:120],ensure_ascii=False))
