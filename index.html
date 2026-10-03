@@ -68,9 +68,9 @@
 <div class="section"><h2>Clima & Previsão</h2><span id="climateMode" class="badge">INMET AUTOMÁTICO</span></div>
 <div id="weatherDetails" class="callout">Carregando dados oficiais do INMET. “Sem dado” nunca é interpretado como “sem risco”.</div>
 <div class="forecast">
-<article class="card"><h4>Próximas 24 h</h4><strong>Integração pendente</strong><p class="small">Temperatura, chuva, vento e avisos INMET.</p></article>
-<article class="card"><h4>Próximas 48 h</h4><strong>Integração pendente</strong><p class="small">Tendência para preparação preventiva.</p></article>
-<article class="card"><h4>Próximas 72 h</h4><strong>Integração pendente</strong><p class="small">Cenário ampliado de continuidade operacional.</p></article>
+<article class="card"><h4 id="forecastTitle0">Próximas 24 h</h4><strong id="forecastTemp0">Carregando…</strong><p id="forecastText0" class="small">Previsão oficial INMET.</p></article>
+<article class="card"><h4 id="forecastTitle1">Próximas 48 h</h4><strong id="forecastTemp1">Carregando…</strong><p id="forecastText1" class="small">Previsão oficial INMET.</p></article>
+<article class="card"><h4 id="forecastTitle2">Próximas 72 h</h4><strong id="forecastTemp2">Carregando…</strong><p id="forecastText2" class="small">Previsão oficial INMET.</p></article>
 </div>
 </section>
 
@@ -215,6 +215,7 @@ async function loadOfficialData(){
     const h=data.sources?.cemaden_hydrological;
     const imet=data.sources?.inmet_alerts;
     const w=data.weather||{};
+    const fc=data.forecast||{};
     document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
     document.getElementById('hidroCard').textContent=h?.risk||'Indisponível';
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
@@ -233,6 +234,28 @@ async function loadOfficialData(){
     if(w.wind_gust_ms!=null) weatherParts.push('Rajada '+(w.wind_gust_ms*3.6).toFixed(0)+' km/h');
     document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem observação válida')+' · '+fmtDate(w.observed_at);
     document.getElementById('weatherDetails').textContent='Estação INMET Pico do Couto (A610), referência regional. '+(weatherParts.join(' · ')||'Dados indisponíveis')+(w.pressure_hpa!=null?' · Pressão '+w.pressure_hpa.toFixed(1)+' hPa':'')+' · Observação: '+fmtDate(w.observed_at)+'.';
+    const days=Array.isArray(fc.days)?fc.days:[];
+    for(let idx=0;idx<3;idx++){
+      const d=days[idx];
+      const t=document.getElementById('forecastTitle'+idx);
+      const v=document.getElementById('forecastTemp'+idx);
+      const p=document.getElementById('forecastText'+idx);
+      if(d){
+        const dateObj=new Date(d.date+'T12:00:00');
+        t.textContent=(idx===0?'24 h':idx===1?'48 h':'72 h')+' · '+(isNaN(dateObj)?d.date:dateObj.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'}));
+        const temps=[];
+        if(d.temperature_min_c!=null) temps.push('mín '+Number(d.temperature_min_c).toFixed(0)+'°C');
+        if(d.temperature_max_c!=null) temps.push('máx '+Number(d.temperature_max_c).toFixed(0)+'°C');
+        v.textContent=temps.join(' · ')||'Previsão disponível';
+        const hum=[];
+        if(d.humidity_min_pct!=null) hum.push('umid. mín '+Number(d.humidity_min_pct).toFixed(0)+'%');
+        if(d.humidity_max_pct!=null) hum.push('máx '+Number(d.humidity_max_pct).toFixed(0)+'%');
+        p.textContent=(d.summary||'')+(hum.length?' · '+hum.join(' / '):'');
+      }else{
+        v.textContent=fc.status==='unavailable'?'Indisponível':'Aguardando';
+        p.textContent=fc.error?'Fonte oficial sem resposta válida.':'Previsão oficial INMET.';
+      }
+    }
     document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos automáticos ativos; clima da A610 '+(w.status==='ok'?'atualizado':'com status '+String(w.status||'indisponível'))+'.':'Fonte de avisos indisponível; último valor válido é preservado quando possível.';
     document.getElementById('cemadenHealth').textContent=
       states.includes('unavailable')?'Fonte oficial com indisponibilidade; último valor válido preservado.':
