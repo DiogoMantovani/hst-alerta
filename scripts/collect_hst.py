@@ -378,7 +378,6 @@ def fetch_inmet_forecast(previous):
                     "wind_direction":p.get("dir_vento"),
                     "wind_intensity":p.get("int_vento"),
                     "weekday":p.get("dia_semana"),
-                    "icon":p.get("icone"),
                 })
 
             days.append({
