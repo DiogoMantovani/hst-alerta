@@ -82,6 +82,17 @@
 .road-alert-list{display:grid;gap:8px;margin-top:12px}
 .road-alert-item{padding:10px 11px;border-radius:11px;border:1px solid #edd5aa;background:#fff8e8;font-size:12px;line-height:1.45}
 @media(max-width:900px){.roads-overview,.road-updates,.road-footer-grid{grid-template-columns:1fr}.road-contact-grid{grid-template-columns:1fr}}
+.pluvio-table-note{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0 12px;font-size:12px;color:var(--muted)}
+.pluvio-filter-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;background:#eef8f2;border:1px solid #cce7d5;color:#27794b;font-size:11px;font-weight:900}
+.pluvio-filter-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.bingen-history{margin-top:22px}
+.bingen-history-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.bingen-history-head h3{margin:0 0 4px}
+.bingen-current-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.bingen-current-strip .card{padding:13px}
+.bingen-current-strip strong{display:block;margin-top:4px;color:#0c6264;font-size:18px}
+@media(max-width:900px){.bingen-current-strip{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.bingen-current-strip{grid-template-columns:1fr}}
 .history-view-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .history-view-btn{border:1px solid #cbdada;background:#fff;color:#526a70;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:900;cursor:pointer}
 .history-view-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
@@ -386,15 +397,46 @@
 </section>
 
 <section id="pluvio" class="panel">
-<div class="section"><h2>Pluviômetros de Petrópolis</h2><span class="badge">CEMADEN AUTOMÁTICO</span></div>
-<div class="summary">
-<article class="card"><span class="small">Estações encontradas</span><strong id="pluvioCount">—</strong></article>
-<article class="card"><span class="small">Maior 1 h</span><strong id="pluvioMax1">— mm</strong><span id="pluvioMax1Station" class="small"></span></article>
-<article class="card"><span class="small">Maior 24 h</span><strong id="pluvioMax24">— mm</strong><span id="pluvioMax24Station" class="small"></span></article>
-<article class="card"><span class="small">Com leitura recente</span><strong id="pluvioRecent">—</strong></article>
+<div class="section">
+  <div><h2>Pluviômetros de Petrópolis</h2><div class="small">Estações CEMADEN com leitura recente, ordenadas pela proximidade do Hospital Santa Teresa.</div></div>
+  <span class="badge">CEMADEN AUTOMÁTICO</span>
 </div>
-<div class="card table"><table><thead><tr><th>Estação</th><th>Última leitura</th><th>1 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
-<tbody id="pluvioBody"><tr><td colspan="8">Carregando pluviômetros CEMADEN…</td></tr></tbody></table></div>
+
+<div class="summary">
+  <article class="card"><span class="small">Estações ativas exibidas</span><strong id="pluvioCount">—</strong></article>
+  <article class="card"><span class="small">Ocultas sem leitura válida recente</span><strong id="pluvioHidden">—</strong></article>
+  <article class="card"><span class="small">Maior 1 h</span><strong id="pluvioMax1">— mm</strong><span id="pluvioMax1Station" class="small"></span></article>
+  <article class="card"><span class="small">Maior 24 h</span><strong id="pluvioMax24">— mm</strong><span id="pluvioMax24Station" class="small"></span></article>
+</div>
+
+<div class="pluvio-table-note">
+  <span>Estações sem comunicação recente ou com horário inconsistente ficam ocultas e reaparecem automaticamente quando voltarem a transmitir dados válidos.</span>
+  <span class="pluvio-filter-pill">Filtro automático ativo</span>
+</div>
+
+<div class="card table"><table>
+  <thead><tr><th>Estação</th><th>Distância do HST</th><th>Última leitura</th><th>1 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
+  <tbody id="pluvioBody"><tr><td colspan="10">Carregando pluviômetros CEMADEN…</td></tr></tbody>
+</table></div>
+
+<div class="bingen-history">
+  <div class="bingen-history-head">
+    <div><h3>Histórico · Bingen - Geo</h3><div class="small">Estação de referência mais próxima do HST · consolidação horária · retenção de 90 dias.</div></div>
+    <span id="bingenHistoryStatus" class="badge">AGUARDANDO DADOS</span>
+  </div>
+
+  <div class="bingen-current-strip">
+    <article class="card"><span class="small">Última leitura</span><strong id="bingenHistoryLast">—</strong></article>
+    <article class="card"><span class="small">1 h</span><strong id="bingenHistory1h">—</strong></article>
+    <article class="card"><span class="small">24 h</span><strong id="bingenHistory24h">—</strong></article>
+    <article class="card"><span class="small">Distância do HST</span><strong id="bingenHistoryDistance">—</strong></article>
+  </div>
+
+  <div class="card table"><table>
+    <thead><tr><th>Data/hora</th><th>1 h</th><th>3 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
+    <tbody id="bingenHistoryBody"><tr><td colspan="9">O histórico começará a ser preenchido a partir da ativação deste recurso.</td></tr></tbody>
+  </table></div>
+</div>
 </section>
 
 <section id="servicos" class="panel">
@@ -973,19 +1015,34 @@ async function loadOfficialData(){
     if(chosen?.wind_gust_kmh!=null) detailParts.push('Rajada '+numBR(chosen.wind_gust_kmh,0)+' km/h');
     document.getElementById('weatherSummary').textContent=detailParts.join(' · ')+' · '+fmtDate(chosen?.observed_at);
 
-    document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
-    document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'')+(pv.time_anomaly_stations?' · '+pv.time_anomaly_stations+' horário(s) inconsistente(s)':'');
-    document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
+    document.getElementById('pluvioCount').textContent=pv.recent_stations??'—';
+    document.getElementById('pluvioHidden').textContent=pv.hidden_stations??(
+      pv.total_stations!=null&&pv.recent_stations!=null?Math.max(0,pv.total_stations-pv.recent_stations):'—'
+    );
+    document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?numBR(pv.highest_1h.value,1)+' mm':'— mm';
     document.getElementById('pluvioMax1Station').textContent=pv.highest_1h?.station||'';
-    document.getElementById('pluvioMax24').textContent=pv.highest_24h?.value!=null?Number(pv.highest_24h.value).toFixed(1)+' mm':'— mm';
+    document.getElementById('pluvioMax24').textContent=pv.highest_24h?.value!=null?numBR(pv.highest_24h.value,1)+' mm':'— mm';
     document.getElementById('pluvioMax24Station').textContent=pv.highest_24h?.station||'';
-    const stations=Array.isArray(pv.stations)?pv.stations:[];
+
+    const stations=(Array.isArray(pv.stations)?pv.stations:[])
+      .filter(s=>s?.status==='ok')
+      .sort((a,b)=>{
+        const da=Number.isFinite(Number(a?.distance_to_hst_km))?Number(a.distance_to_hst_km):99999;
+        const db=Number.isFinite(Number(b?.distance_to_hst_km))?Number(b.distance_to_hst_km):99999;
+        return da-db||String(a?.name||'').localeCompare(String(b?.name||''),'pt-BR');
+      });
+
     document.getElementById('pluvioBody').innerHTML=stations.length?stations.map(s=>{
-      const val=k=>s[k]==null?'—':Number(s[k]).toFixed(1);
-      const state=s.status==='ok'?'ATUAL':(s.status==='time_anomaly'?'HORÁRIO INCONSISTENTE NA FONTE':'SEM COMUNICAÇÃO RECENTE');
-      const ageText=s.status==='time_anomaly'?'dado bruto não usado nos máximos':(s.age_hours!=null?s.age_hours+' h atrás':'');
-      return '<tr><td><strong>'+s.name+'</strong><br><span class="small">'+state+'</span></td><td>'+fmtDate(s.observed_at)+(ageText?'<br><span class="small">'+ageText+'</span>':'')+'</td><td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td></tr>';
-    }).join(''):'<tr><td colspan="9">Dados de pluviômetros indisponíveis.</td></tr>';
+      const val=k=>s[k]==null?'—':numBR(s[k],1);
+      const distance=s.distance_to_hst_km==null?'—':numBR(s.distance_to_hst_km,1)+' km';
+      const ageText=s.age_hours!=null?numBR(Math.max(0,s.age_hours),1)+' h atrás':'';
+      return '<tr>'+
+        '<td><strong>'+esc(s.name)+'</strong><br><span class="small">LEITURA RECENTE</span></td>'+
+        '<td><strong>'+esc(distance)+'</strong></td>'+
+        '<td>'+esc(fmtDate(s.observed_at))+(ageText?'<br><span class="small">'+esc(ageText)+'</span>':'')+'</td>'+
+        '<td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td>'+
+      '</tr>';
+    }).join(''):'<tr><td colspan="10">Nenhuma estação com leitura válida recente nesta coleta.</td></tr>';
     const days=Array.isArray(fc.days)?fc.days:[];
     for(let idx=0;idx<3;idx++){
       const d=days[idx];
@@ -1146,6 +1203,71 @@ async function loadClimateHistory(){
     }).join('');
   }catch(err){
     grid.innerHTML='<div class="card">Histórico climático ainda não disponível: '+esc(err.message)+'</div>';
+  }
+}
+
+let bingenHistorySnapshots=[];
+
+function bingenHourKey(value){
+  const d=new Date(value);
+  if(isNaN(d)) return String(value||'');
+  d.setMinutes(0,0,0);
+  return d.getTime();
+}
+function groupBingenHourly(snaps){
+  const groups=new Map();
+  snaps.forEach(s=>{
+    const b=s?.pluviometers?.bingen;
+    if(!b || b.status!=='ok' || !b.observed_at) return;
+    const key=bingenHourKey(b.observed_at);
+    const old=groups.get(key);
+    if(!old || String(b.observed_at).localeCompare(String(old.observed_at))>0){
+      groups.set(key,{...b,_snapshot_ts:s.ts});
+    }
+  });
+  return [...groups.values()].sort((a,b)=>String(b.observed_at||'').localeCompare(String(a.observed_at||'')));
+}
+function renderBingenHistory(){
+  const rows=groupBingenHourly(bingenHistorySnapshots).slice(0,168);
+  const body=document.getElementById('bingenHistoryBody');
+  const current=rows[0]||null;
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="9">O histórico começará a ser preenchido a partir da primeira coleta após a ativação deste recurso.</td></tr>';
+    document.getElementById('bingenHistoryStatus').textContent='AGUARDANDO DADOS';
+    document.getElementById('bingenHistoryLast').textContent='—';
+    document.getElementById('bingenHistory1h').textContent='—';
+    document.getElementById('bingenHistory24h').textContent='—';
+    document.getElementById('bingenHistoryDistance').textContent='—';
+    return;
+  }
+  const mm=v=>v==null?'—':numBR(v,1)+' mm';
+  document.getElementById('bingenHistoryStatus').textContent='HISTÓRICO ATIVO';
+  document.getElementById('bingenHistoryLast').textContent=fmtDate(current.observed_at);
+  document.getElementById('bingenHistory1h').textContent=mm(current.acc1h_mm);
+  document.getElementById('bingenHistory24h').textContent=mm(current.acc24h_mm);
+  document.getElementById('bingenHistoryDistance').textContent=current.distance_to_hst_km==null?'—':numBR(current.distance_to_hst_km,1)+' km';
+  body.innerHTML=rows.map(b=>'<tr>'+
+    '<td><strong>'+esc(fmtDate(b.observed_at))+'</strong></td>'+
+    '<td>'+esc(mm(b.acc1h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc3h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc6h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc12h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc24h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc48h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc72h_mm))+'</td>'+
+    '<td>'+esc(mm(b.acc96h_mm))+'</td>'+
+  '</tr>').join('');
+}
+async function loadBingenHistory(){
+  try{
+    const r=await fetch('data/history.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    bingenHistorySnapshots=Array.isArray(data.snapshots)?data.snapshots:[];
+    renderBingenHistory();
+  }catch(err){
+    document.getElementById('bingenHistoryStatus').textContent='INDISPONÍVEL';
+    document.getElementById('bingenHistoryBody').innerHTML='<tr><td colspan="9">Histórico Bingen indisponível nesta consulta.</td></tr>';
   }
 }
 
@@ -1401,9 +1523,11 @@ document.getElementById('mapRadiusToggle').onclick=()=>toggleMapSupport('radius'
 renderActions(1);
 loadOfficialData();
 loadClimateHistory();
+loadBingenHistory();
 loadHistory();
 setInterval(loadOfficialData,60000);
 setInterval(loadClimateHistory,15*60000);
+setInterval(loadBingenHistory,15*60000);
 setInterval(loadHistory,15*60000);
 </script>
 </body>
