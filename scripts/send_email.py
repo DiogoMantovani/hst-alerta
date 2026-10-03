@@ -193,7 +193,7 @@ def config():
     return {
         "recipient": os.getenv("HST_EMAIL_GRUPO_OPERACIONAL", "").strip(),
         "api_key": os.getenv("RESEND_API_KEY", "").strip(),
-        "from_email": os.getenv("HST_EMAIL_FROM", "HST Alerta <onboarding@resend.dev>").strip(),
+        "from_email": os.getenv("HST_EMAIL_FROM", "").strip() or "HST Alerta <onboarding@resend.dev>",
         "reply_to": os.getenv("HST_EMAIL_REPLY_TO", "").strip(),
         "public_url": os.getenv("HST_ALERTA_PUBLIC_URL", "https://diogomantovani.github.io/hst-alerta/").strip(),
     }
