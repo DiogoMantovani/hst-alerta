@@ -3,6 +3,9 @@ import html
 import json
 import os
 import re
+import smtplib
+from email.message import EmailMessage
+from email.utils import formataddr
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -193,14 +196,28 @@ def config():
     return {
         "recipient": os.getenv("HST_EMAIL_GRUPO_OPERACIONAL", "").strip(),
         "api_key": os.getenv("RESEND_API_KEY", "").strip(),
-        "from_email": os.getenv("HST_EMAIL_FROM", "").strip() or "HST Alerta <onboarding@resend.dev>",
+        "smtp_user": os.getenv("HST_SMTP_USER", "").strip(),
+        "smtp_app_password": os.getenv("HST_SMTP_APP_PASSWORD", "").strip(),
+        "smtp_host": os.getenv("HST_SMTP_HOST", "smtp.gmail.com").strip() or "smtp.gmail.com",
+        "smtp_port": int(os.getenv("HST_SMTP_PORT", "465").strip() or "465"),
+        "from_email": os.getenv("HST_EMAIL_FROM", "").strip(),
         "reply_to": os.getenv("HST_EMAIL_REPLY_TO", "").strip(),
         "public_url": os.getenv("HST_ALERTA_PUBLIC_URL", "https://diogomantovani.github.io/hst-alerta/").strip(),
     }
 
 
 def configured(cfg):
-    return all(cfg.get(k) for k in ("recipient", "api_key", "from_email"))
+    resend_ready = bool(cfg.get("api_key"))
+    smtp_ready = bool(cfg.get("smtp_user") and cfg.get("smtp_app_password"))
+    return bool(cfg.get("recipient") and (resend_ready or smtp_ready))
+
+
+def provider_name(cfg):
+    if cfg.get("smtp_user") and cfg.get("smtp_app_password"):
+        return "smtp"
+    if cfg.get("api_key"):
+        return "resend"
+    return None
 
 
 def event_label(event):
@@ -275,12 +292,32 @@ Mensagem automática de apoio à decisão. Os documentos institucionais vigentes
 
 
 def send_email(cfg, subject, body_html, body_text):
+    provider = provider_name(cfg)
+
+    if provider == "smtp":
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = cfg.get("from_email") or formataddr(("HST Alerta", cfg["smtp_user"]))
+        msg["To"] = cfg["recipient"]
+        if cfg.get("reply_to"):
+            msg["Reply-To"] = cfg["reply_to"]
+        msg.set_content(body_text)
+        msg.add_alternative(body_html, subtype="html")
+        try:
+            with smtplib.SMTP_SSL(cfg["smtp_host"], cfg["smtp_port"], timeout=30) as server:
+                server.login(cfg["smtp_user"], cfg["smtp_app_password"])
+                server.send_message(msg)
+            return True, None, None
+        except Exception as exc:
+            return False, None, clean_text(f"Falha SMTP: {exc.__class__.__name__}", 500)
+
     headers = {
         "Authorization": f"Bearer {cfg['api_key']}",
         "Content-Type": "application/json",
     }
+    sender = cfg.get("from_email") or "HST Alerta <onboarding@resend.dev>"
     payload = {
-        "from": cfg["from_email"],
+        "from": sender,
         "to": [cfg["recipient"]],
         "subject": subject,
         "html": body_html,
@@ -309,7 +346,6 @@ def send_email(cfg, subject, body_html, body_text):
         pass
     return False, None, error
 
-
 def update_public_status(data, state, cfg, enabled):
     notifications = data.setdefault("notifications", {})
     item = notifications.setdefault("group_operational_email", {})
@@ -317,7 +353,8 @@ def update_public_status(data, state, cfg, enabled):
         "channel": "email",
         "levels": [3, 4, 5],
         "recipient_configured": bool(cfg["recipient"]),
-        "provider_configured": bool(cfg["api_key"]),
+        "provider_configured": bool(provider_name(cfg)),
+        "provider": provider_name(cfg),
         "automatic_sending_enabled": bool(enabled),
         "status": (
             "active" if configured(cfg) and enabled
