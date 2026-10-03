@@ -96,7 +96,7 @@
 .climate-day{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}
 .climate-day-title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
 .climate-day-title strong{font-size:16px}
-.climate-periods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.climate-periods{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .climate-period-card{border:1px solid #dce8e8;border-radius:13px;padding:13px;background:#fbfdfd;min-height:145px}
 .climate-period-card.empty{display:grid;place-items:center;color:#8a999e;background:#fafcfc;border-style:dashed}
 .climate-period-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
@@ -106,6 +106,7 @@
 .climate-period-temp{font-size:21px;font-weight:900;color:#164e54;margin:6px 0}
 .climate-period-condition{font-size:12px;font-weight:750;line-height:1.35}
 .climate-period-detail{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
+@media(max-width:1100px){.climate-periods{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.mapbox{min-height:340px;background:linear-gradient(135deg,#dfeeee,#f6fbfb);border:1px dashed #9bb8b8;border-radius:14px;display:grid;place-items:center;text-align:center;padding:30px}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
 </style>
 </head>
@@ -266,7 +267,7 @@
 
 <div class="climate-history-head">
   <div><h3 style="margin:0 0 4px">Histórico climático</h3><div class="small">Registro resumido por período do dia. O histórico começa a partir da ativação desta função.</div></div>
-  <div class="climate-period-legend"><span>Manhã · 06–11:59</span><span>Tarde · 12–17:59</span><span>Noite · 18–05:59</span></div>
+  <div class="climate-period-legend"><span>Madrugada · 00–05:59</span><span>Manhã · 06–11:59</span><span>Tarde · 12–17:59</span><span>Noite · 18–23:59</span></div>
 </div>
 <div id="climateHistoryGrid" class="climate-history-grid">
   <div class="card">Carregando histórico climático…</div>
@@ -693,6 +694,7 @@ async function loadClimateHistory(){
       return '<article class="climate-day">'+
         '<div class="climate-day-title"><strong>'+esc(title)+'</strong><span class="small">'+Object.keys(row).length+' período(s) registrado(s)</span></div>'+
         '<div class="climate-periods">'+
+          climatePeriodCard(row.madrugada,'Madrugada')+
           climatePeriodCard(row.manha,'Manhã')+
           climatePeriodCard(row.tarde,'Tarde')+
           climatePeriodCard(row.noite,'Noite')+
