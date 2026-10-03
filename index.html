@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#006d6f">
+<meta name="theme-color" content="#006f76">
 <title>HST Alerta | Hospital Santa Teresa</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
@@ -190,14 +190,258 @@
 .map-source-note{margin-top:12px;font-size:11px;line-height:1.5;color:var(--muted)}
 @media(max-width:900px){#weatherMap{height:520px}.map-summary{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){#weatherMap{height:460px}.map-summary{grid-template-columns:1fr}.map-legend{max-width:230px}}footer{text-align:center;background:white;border-top:1px solid var(--line);padding:24px;color:var(--muted);font-size:13px}@media(max-width:1100px){.riskgrid,.services,.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:900px){.grid2{grid-template-columns:1fr}.forecast,.checkgrid{grid-template-columns:1fr}.controls{grid-template-columns:1fr 1fr}.top{flex-direction:column;align-items:flex-start}.divider{display:none}.brand{flex-direction:column;align-items:flex-start;gap:8px}.brand img{max-width:210px}}@media(max-width:560px){.riskgrid,.services,.summary,.controls{grid-template-columns:1fr}.source-health-row{grid-template-columns:1fr;gap:6px}.num{font-size:64px}.top h1{font-size:30px}}
+
+/* Identidade visual institucional inspirada no site oficial do Hospital Santa Teresa */
+:root{
+  --bg:#f5f7f7;
+  --ink:#26383d;
+  --muted:#6c7b80;
+  --line:#dbe4e4;
+  --brand:#006f76;
+  --brand2:#00a69c;
+  --card:#ffffff;
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+}
+.top{
+  position:relative;
+  background:#fff;
+  color:var(--ink);
+  padding:20px clamp(18px,4vw,56px);
+  border-top:5px solid var(--brand2);
+  border-bottom:1px solid #dfe7e7;
+  box-shadow:0 1px 5px rgba(26,66,70,.06);
+}
+.brand{
+  gap:26px;
+  min-width:0;
+}
+.brand-logo-link{
+  display:flex;
+  align-items:center;
+  flex:0 1 auto;
+  text-decoration:none;
+}
+.brand img.brand-logo{
+  width:430px;
+  max-width:44vw;
+  height:auto;
+  display:block;
+  object-fit:contain;
+}
+.divider{
+  width:1px;
+  height:68px;
+  background:#d8e3e3;
+  flex:0 0 auto;
+}
+.system-title{
+  min-width:260px;
+}
+.system-kicker{
+  color:var(--brand2);
+  text-transform:uppercase;
+  letter-spacing:.115em;
+  font-size:10px;
+  line-height:1.3;
+  font-weight:800;
+}
+.top h1{
+  margin:4px 0 3px;
+  color:#075f68;
+  font-size:29px;
+  line-height:1.05;
+  font-weight:700;
+  letter-spacing:-.02em;
+}
+.top p{
+  margin:0;
+  color:#687a7f;
+  opacity:1;
+  font-size:13px;
+}
+.top > .badge{
+  background:#eef8f7;
+  color:#08736f;
+  border:1px solid #c4e3df;
+  border-radius:3px;
+  padding:8px 11px;
+  letter-spacing:.035em;
+}
+.tabs{
+  background:#fff;
+  border-bottom:1px solid #d9e3e3;
+  padding:0 clamp(10px,4vw,56px);
+  box-shadow:0 2px 5px rgba(28,63,68,.035);
+}
+.tab{
+  padding:15px 14px 13px;
+  color:#566a70;
+  font-size:13px;
+  font-weight:650;
+  border-bottom-width:3px;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+.tab:hover{
+  color:var(--brand);
+  background:#f4f9f8;
+}
+.tab.active{
+  color:var(--brand);
+  border-color:var(--brand2);
+  background:#fbfdfd;
+}
+main{
+  max-width:1400px;
+  padding-top:28px;
+}
+.card,.hero,.risk,.climate-day{
+  border-color:#dce5e5;
+  border-radius:7px;
+  box-shadow:0 2px 8px rgba(20,55,60,.045);
+}
+.card,.risk,.climate-day{
+  background:#fff;
+}
+.hero{
+  border-radius:7px;
+}
+.section{
+  margin-top:2px;
+}
+.section h2,.section h3{
+  color:#075f68;
+  font-weight:700;
+  letter-spacing:-.01em;
+}
+.section h2:after,.section h3:after{
+  content:"";
+  display:block;
+  width:38px;
+  height:3px;
+  margin-top:8px;
+  background:var(--brand2);
+}
+.btn{
+  border-radius:4px;
+  border-color:#b7cece;
+  font-weight:700;
+}
+.btn.primary{
+  background:var(--brand);
+  border-color:var(--brand);
+}
+.badge{
+  border-radius:3px;
+}
+.callout{
+  border-radius:5px;
+  background:#edf8f7;
+  border-color:#c8e4e1;
+}
+.weather-card,
+.climate-current,
+.climate-day,
+.climate-period-card,
+.nearest-pluvio,
+.rain-metric,
+.map-shell,
+.map-toolbar,
+.map-layer-btn,
+.road-contact-box,
+.road-alert-item,
+.history-view-btn,
+.weather-iconbox,
+.climate-big-icon,
+.forecast-icon,
+.road-weather-icon{
+  border-radius:6px;
+}
+.weather-card,
+.climate-current,
+.nearest-pluvio{
+  background:linear-gradient(145deg,#fbfdfd,#f1f8f7);
+}
+.weather-source-badge,
+.connection-pill,
+.pluvio-filter-pill,
+.climate-period-legend span{
+  border-radius:3px;
+}
+.risk-title,
+.road-update-title,
+.weather-card-title{
+  color:#15444a;
+}
+.temp,
+.forecast strong,
+.summary .card strong,
+.map-summary .card strong,
+.rain-metric strong,
+.bingen-current-strip strong{
+  color:#087077;
+}
+table th{
+  color:#64787d;
+  background:#f8fafa;
+}
+footer{
+  background:#fff;
+  border-top:3px solid var(--brand2);
+  color:#6c7b80;
+}
+@media(max-width:1050px){
+  .brand img.brand-logo{width:355px;max-width:42vw}
+  .system-title{min-width:220px}
+  .top h1{font-size:26px}
+}
+@media(max-width:900px){
+  .top{
+    padding-top:18px;
+    padding-bottom:18px;
+  }
+  .brand{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:12px;
+    width:100%;
+  }
+  .brand img.brand-logo{
+    width:360px;
+    max-width:min(88vw,360px);
+  }
+  .divider{display:none}
+  .system-title{min-width:0}
+  .top > .badge{margin-top:3px}
+}
+@media(max-width:560px){
+  .brand img.brand-logo{
+    width:310px;
+    max-width:88vw;
+  }
+  .top h1{font-size:25px}
+  .top p{font-size:12px;line-height:1.4}
+  .tabs{padding-left:6px;padding-right:6px}
+  .tab{padding-left:11px;padding-right:11px}
+}
+
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">
-    <img src="https://redesantacatarina.org.br/Style%20Library/ResponsiveServer/Bootstrap3/assets/images/logo-rede.png" alt="Rede Santa Catarina">
+    <a class="brand-logo-link" href="https://redesantacatarina.org.br/hospital/santateresa/SitePages/Default.aspx" target="_blank" rel="noopener" aria-label="Abrir site oficial do Hospital Santa Teresa">
+      <img class="brand-logo" src="https://redesantacatarina.org.br/Style%20Library/ResponsiveServer/Bootstrap3/assets/images/LogoSantaTeresa.png" alt="Hospital Santa Teresa - Rede Santa Catarina">
+    </a>
     <div class="divider"></div>
-    <div><div class="hospital">Hospital Santa Teresa</div><h1>HST Alerta</h1><p>Monitoramento preditivo de riscos externos e continuidade hospitalar · Petrópolis/RJ</p></div>
+    <div class="system-title">
+      <div class="system-kicker">Monitoramento preditivo hospitalar</div>
+      <h1>HST Alerta</h1>
+      <p>Riscos externos e continuidade hospitalar · Petrópolis/RJ</p>
+    </div>
   </div>
   <span id="systemMode" class="badge">CEMADEN-RJ AUTOMÁTICO</span>
 </header>
