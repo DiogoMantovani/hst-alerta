@@ -1,0 +1,13 @@
+import fs from "node:fs";
+
+const html=fs.readFileSync("index.html","utf8");
+const matches=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)];
+if(!matches.length) throw new Error("Nenhum script inline encontrado");
+for(const [i,m] of matches.entries()){
+  try{
+    new Function(m[1]);
+  }catch(err){
+    throw new Error(`Erro de sintaxe no script inline ${i+1}: ${err.message}`);
+  }
+}
+console.log(`FRONTEND_JS_OK scripts=${matches.length}`);
