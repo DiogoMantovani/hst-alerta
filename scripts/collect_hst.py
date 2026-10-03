@@ -748,7 +748,7 @@ def fetch_roads(previous):
                     bulletin_time=m.group(1).strip()
                     bulletin=re.sub(r"<[^>]+>"," ",m.group(2))
                     bulletin=bulletin.replace("\\n"," ").replace("\\r"," ").replace("\\t"," ")
-                    bulletin=re.sub(r"\\+["/]", " ", bulletin)
+                    bulletin=re.sub(r'\\\\+["/]', " ", bulletin)
                     bulletin=re.sub(r"\s+"," ",bulletin).strip()
                     bulletin=re.sub(r"\s*(Desacelere\..*)$","",bulletin,flags=re.I).strip()
                     break
