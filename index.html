@@ -816,18 +816,46 @@ footer{
 </section>
 
 <section id="plano" class="panel plan">
-<div class="section"><h2>Plano de Monitoramento Preditivo e Alertas Externos</h2></div>
+<div class="section"><div><h2>Plano de Monitoramento Preditivo e Alertas Externos</h2><div class="small">Síntese operacional do HST Alerta. Os documentos oficiais e suas versões vigentes permanecem no Docnix.</div></div></div>
+
 <article class="card">
-<h3>1. Objetivo</h3><p>Estabelecer critérios para monitorar, interpretar, classificar e comunicar riscos externos que possam afetar a continuidade das operações do Hospital Santa Teresa, antecipando ações de preparação e contingência.</p>
-<h3>2. Abrangência</h3><p>Manutenção, Segurança, Suprimentos, Assistência, Tecnologia da Informação, lideranças e demais áreas envolvidas na continuidade operacional.</p>
-<h3>3. Fontes</h3><ul><li>CEMADEN-RJ e CEMADEN Nacional.</li><li>INMET.</li><li>Elovias / BR-040/495.</li><li>Enel Rio e Águas do Imperador.</li></ul>
-<h3>4. Níveis HST</h3><p>1 Vigilância · 2 Observação · 3 Atenção · 4 Alerta · 5 Alerta Máximo.</p>
-<h3>5. Regra básica</h3><p>O nível geral considera o maior risco oficial aplicável. A regra de escalada por duas fontes independentes em nível 3 ou superior é configurável e deve ser homologada institucionalmente.</p>
-<h3>6. Indisponibilidade de fonte</h3><p>Ausência de dados não significa ausência de risco. Fontes indisponíveis devem ser sinalizadas e não provocar rebaixamento automático indevido.</p>
-<h3>7. Comitê de Crise</h3><p>Níveis elevados devem seguir o regimento institucional vigente do Comitê de Crise, sem duplicação de nomes ou contatos neste sistema.</p>
-<h3>8. Registros</h3><p>Eventos, snapshots, reconhecimentos, checklists e decisões devem ser registrados para auditoria.</p>
-<h3>9. Revisão</h3><p>Revisão anual ou sempre que houver alteração relevante em fontes, processos, responsabilidades, infraestrutura ou documentos institucionais.</p>
-<h3>10. Redundância</h3><p>O HST Alerta é apoio à decisão e não substitui alertas oficiais de emergência, CEMADEN, INMET ou julgamento humano.</p>
+<h3>1. Finalidade do HST Alerta</h3>
+<p>Antecipar condições externas que possam comprometer o Hospital Santa Teresa e transformar os sinais monitorados em orientações de prontidão. O sistema não substitui os planos institucionais nem declara, sozinho, uma contingência interna de água, energia ou assistência.</p>
+
+<h3>2. Como o nível é calculado</h3>
+<ul>
+  <li>O ponto de partida é o maior nível oficial válido entre os riscos geológico e hidrológico do CEMADEN-RJ e os avisos meteorológicos do INMET.</li>
+  <li>Quando CEMADEN-RJ e INMET, como fontes independentes, estiverem simultaneamente em nível 3 ou superior, o HST Alerta pode elevar o nível geral em uma faixa, limitado ao nível 5.</li>
+  <li>Previsão de chuva forte/intensa ou tempestade e pluviometria elevada são sinais complementares de antecipação e podem elevar somente para <strong>2 · Observação</strong>, caso as fontes oficiais ainda estejam em Vigilância.</li>
+  <li>Como referência operacional de Observação pluviométrica, o sistema considera acumulado recente igual ou superior a <strong>20 mm em 1 hora</strong> ou <strong>50 mm em 24 horas</strong> em estação CEMADEN com leitura recente.</li>
+</ul>
+
+<h3>3. Subida e descida do nível</h3>
+<p><strong>Subida:</strong> ocorre imediatamente quando surge evidência válida de maior risco. <strong>Descida:</strong> é deliberadamente mais lenta: ocorre no máximo um nível por vez e somente após 3 coletas consecutivas válidas indicando melhora. Se houver indisponibilidade ou defasagem de uma fonte oficial crítica, o sistema não reduz automaticamente o nível.</p>
+
+<h3>4. Significado operacional dos níveis</h3>
+<div class="table"><table>
+<thead><tr><th>Nível</th><th>Interpretação</th><th>Postura esperada</th></tr></thead>
+<tbody>
+<tr><td><strong>1 · Vigilância</strong></td><td>Condição normal.</td><td>Monitoramento de rotina e integridade das fontes.</td></tr>
+<tr><td><strong>2 · Observação</strong></td><td>Sinal oficial leve ou evidência complementar acima do normal.</td><td>Acompanhar tendência, previsão e pluviometria com maior atenção.</td></tr>
+<tr><td><strong>3 · Atenção</strong></td><td>Possibilidade concreta de impacto.</td><td>Pré-alertar áreas operacionais e verificar recursos de continuidade.</td></tr>
+<tr><td><strong>4 · Alerta</strong></td><td>Risco elevado e possibilidade relevante de repercussão no HST.</td><td>Formalizar quadro de situação, verificar gatilhos dos planos institucionais e avaliar Comitê de Crise.</td></tr>
+<tr><td><strong>5 · Alerta Máximo</strong></td><td>Condição externa extrema ou múltiplas evidências de agravamento.</td><td>Direção deve avaliar imediatamente impactos reais e critérios institucionais para acionamento do Comitê de Crise.</td></tr>
+</tbody>
+</table></div>
+
+<h3>5. Relação com os planos institucionais</h3>
+<p>O nível HST é <strong>preditivo</strong>. Os níveis internos de contingência de água e energia dependem de medições e condições reais do Hospital, como volume dos reservatórios, autonomia, geração, redundância e impacto assistencial. Quando houver indício de impacto, consultar no Docnix os documentos vigentes, incluindo HST.PLAN.0034, HST.PLAN.0035, HST.PLAN.0036, HST.PLAN.0037 e o Regimento do Comitê de Crise.</p>
+
+<h3>6. Comitê de Crise</h3>
+<p>O HST Alerta não aciona automaticamente o Comitê apenas pela cor do nível. Nos níveis elevados, deve orientar a avaliação dos critérios institucionais. O acionamento ocorre conforme o Regimento vigente quando houver impacto relevante, necessidade de decisões extraordinárias, recursos adicionais, comprometimento de serviço crítico ou demais critérios aplicáveis.</p>
+
+<h3>7. Indisponibilidade de fonte</h3>
+<p>Ausência de dados não significa ausência de risco. A indisponibilidade é sinalizada, impede rebaixamento automático indevido e deve ser considerada na avaliação humana.</p>
+
+<h3>8. Registros, revisão e governança</h3>
+<p>Históricos, alterações de nível, checklists e decisões relevantes devem permanecer rastreáveis. Esta lógica deve ser revisada anualmente ou sempre que houver mudança relevante em fontes, critérios, infraestrutura ou documentos institucionais. O Docnix permanece como repositório oficial dos documentos controlados.</p>
 </article>
 </section>
 
@@ -840,11 +868,34 @@ footer{
 <script>
 const labels={1:'Vigilância',2:'Observação',3:'Atenção',4:'Alerta',5:'Alerta Máximo'};
 const acts={
-1:['Manter monitoramento de rotina','Verificar integridade das fontes oficiais'],
-2:['Aumentar frequência de acompanhamento','Conferir disponibilidade de equipes e recursos'],
-3:['Executar verificações preventivas de energia, água e acessos','Colocar lideranças em pré-alerta','Revisar suprimentos críticos'],
-4:['Elevar prontidão operacional','Avaliar ativação do Comitê de Crise','Posicionar equipes e recursos críticos'],
-5:['Ativar gestão de crise conforme documentos vigentes','Executar planos de contingência aplicáveis','Manter comunicação e registro contínuos']
+1:[
+  'Manter monitoramento de rotina',
+  'Verificar integridade e atualização das fontes oficiais'
+],
+2:[
+  'Acompanhar com maior atenção a tendência de chuva, previsão e pluviômetros',
+  'Verificar acessos e possíveis impactos externos em evolução',
+  'Conferir disponibilidade básica dos recursos de contingência e canais críticos'
+],
+3:[
+  'Colocar Infraestrutura e Operações em pré-alerta',
+  'Verificar níveis de água, geradores, nobreaks e disponibilidade de diesel',
+  'Revisar acessos, suprimentos críticos e disponibilidade de fornecedores de contingência',
+  'Antecipar necessidades das áreas assistenciais caso o cenário evolua'
+],
+4:[
+  'Comunicar a gestão operacional e formalizar um quadro de situação',
+  'Verificar se foram atingidos gatilhos dos planos institucionais de água, energia ou acessos',
+  'Preparar recursos e alternativas de contingência sem antecipar medidas não justificadas',
+  'Avaliar impacto em atividades eletivas e áreas críticas',
+  'Avaliar critérios institucionais para acionamento do Comitê de Crise'
+],
+5:[
+  'Direção deve avaliar imediatamente os impactos reais sobre assistência, água, energia e acessos',
+  'Executar os planos de contingência aplicáveis quando seus gatilhos internos forem atingidos',
+  'Avaliar e, quando houver critério institucional, acionar o Comitê de Crise conforme regimento vigente',
+  'Manter comunicação, registro de decisões e reavaliação contínua do cenário'
+]
 };
 
 function fmtDate(value){
