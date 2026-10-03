@@ -231,7 +231,7 @@ async function loadOfficialData(){
     document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem observação válida')+' · '+fmtDate(w.observed_at);
     document.getElementById('weatherDetails').textContent='Estação INMET Pico do Couto (A610), referência regional. '+(weatherParts.join(' · ')||'Dados indisponíveis')+(w.pressure_hpa!=null?' · Pressão '+w.pressure_hpa.toFixed(1)+' hPa':'')+' · Observação: '+fmtDate(w.observed_at)+'.';
     document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
-    document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'');
+    document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'')+(pv.time_anomaly_stations?' · '+pv.time_anomaly_stations+' horário(s) inconsistente(s)':'');
     document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
     document.getElementById('pluvioMax1Station').textContent=pv.highest_1h?.station||'';
     document.getElementById('pluvioMax24').textContent=pv.highest_24h?.value!=null?Number(pv.highest_24h.value).toFixed(1)+' mm':'— mm';
@@ -239,8 +239,9 @@ async function loadOfficialData(){
     const stations=Array.isArray(pv.stations)?pv.stations:[];
     document.getElementById('pluvioBody').innerHTML=stations.length?stations.map(s=>{
       const val=k=>s[k]==null?'—':Number(s[k]).toFixed(1);
-      const state=s.status==='ok'?'ATUAL':'SEM COMUNICAÇÃO RECENTE';
-      return '<tr><td><strong>'+s.name+'</strong><br><span class="small">'+state+'</span></td><td>'+fmtDate(s.observed_at)+(s.age_hours!=null?'<br><span class="small">'+s.age_hours+' h atrás</span>':'')+'</td><td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td></tr>';
+      const state=s.status==='ok'?'ATUAL':(s.status==='time_anomaly'?'HORÁRIO INCONSISTENTE NA FONTE':'SEM COMUNICAÇÃO RECENTE');
+      const ageText=s.status==='time_anomaly'?'dado bruto não usado nos máximos':(s.age_hours!=null?s.age_hours+' h atrás':'');
+      return '<tr><td><strong>'+s.name+'</strong><br><span class="small">'+state+'</span></td><td>'+fmtDate(s.observed_at)+(ageText?'<br><span class="small">'+ageText+'</span>':'')+'</td><td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td></tr>';
     }).join(''):'<tr><td colspan="9">Dados de pluviômetros indisponíveis.</td></tr>';
     const days=Array.isArray(fc.days)?fc.days:[];
     for(let idx=0;idx<3;idx++){
