@@ -6,13 +6,13 @@ from bs4 import BeautifulSoup
 
 REQUIRED_IDS = {
     "hero","levelNum","levelLabel","levelReason","updatedAt","nextAt",
-    "geoCard","hidroCard","inmetCard","cemadenHealth","inmetHealth",
+    "geoCard","hidroCard","inmetCard",
     "pluvioBody","pluvioHidden","bingenHistoryBody","bingenHistoryStatus","bingenHistoryLast","bingenHistory1h","bingenHistory24h","bingenHistoryDistance",
     "historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
     "climateCurrentCard","climateCurrentIcon","climateCurrentTemp","climateHistoryGrid",
     "weatherMap","mapLegend","mapUpdated","mapRadarStatus","mapNearestStation","mapNearestRain","mapCurrentWeather",
-    "roadsConnection","roadsHealth","roadsAlertState","roadsWeatherTemp","roadsWeatherCondition",
+    "roadsConnection","roadsAlertState","roadsWeatherTemp","roadsWeatherCondition",
     "roadsSerraTitle","roadsScheduleTitle","roadsBulletinTitle",
     "historyOldest","historyNewest","historyMonths","exportHistory"
 }
