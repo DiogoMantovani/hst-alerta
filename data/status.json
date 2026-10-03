@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-03T17:25:39.194953-03:00",
+  "generated_at": "2026-10-03T17:27:03.791983-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -26,7 +26,7 @@
       "last_known_updated_at": "2026-09-30T18:30:13-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-03T17:25:28.064155-03:00",
+      "collected_at": "2026-10-03T17:26:46.825263-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -43,7 +43,7 @@
       "last_known_updated_at": "2026-10-03T05:38:50-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-03T17:25:29.165085-03:00",
+      "collected_at": "2026-10-03T17:26:48.084980-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -57,7 +57,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-03T17:25:36.946950-03:00",
+      "collected_at": "2026-10-03T17:27:01.382780-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     }
@@ -70,7 +70,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-03T17:25:30.209114-03:00",
+    "collected_at": "2026-10-03T17:26:49.301452-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-02"
   },
@@ -95,7 +95,7 @@
     "wind_gust_kmh": 10.4,
     "weather_code": 3,
     "condition": "Nublado",
-    "collected_at": "2026-10-03T17:25:32.884969-03:00",
+    "collected_at": "2026-10-03T17:26:52.173273-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -111,7 +111,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-03T17:25:33.056649-03:00",
+    "grid_updated_at": "2026-10-03T17:26:52.753457-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -764,14 +764,14 @@
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-03T17:25:33.056649-03:00",
+    "collected_at": "2026-10-03T17:26:52.753457-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
-    "source_note": "Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
-    "collected_at": "2026-10-03T17:25:33.689616-03:00",
+    "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas cadastrais complementadas por camada geoespacial pública da rede CEMADEN.",
+    "collected_at": "2026-10-03T17:26:54.015484-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 16,
@@ -1341,7 +1341,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-03T17:25:35.055518-03:00",
+    "collected_at": "2026-10-03T17:26:59.633341-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -1934,7 +1934,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-03T17:25:38.815416-03:00",
+    "collected_at": "2026-10-03T17:27:03.243100-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
