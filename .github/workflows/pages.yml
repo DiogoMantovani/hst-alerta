@@ -40,6 +40,8 @@ jobs:
         env:
           HST_EMAIL_GRUPO_OPERACIONAL: ${{ secrets.HST_EMAIL_GRUPO_OPERACIONAL }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          HST_SMTP_USER: ${{ secrets.HST_SMTP_USER }}
+          HST_SMTP_APP_PASSWORD: ${{ secrets.HST_SMTP_APP_PASSWORD }}
           HST_EMAIL_ENABLED: ${{ secrets.HST_EMAIL_ENABLED }}
         run: python scripts/collect_hst.py
 
@@ -55,6 +57,10 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           HST_EMAIL_FROM: ${{ secrets.HST_EMAIL_FROM }}
           HST_EMAIL_REPLY_TO: ${{ secrets.HST_EMAIL_REPLY_TO }}
+          HST_SMTP_USER: ${{ secrets.HST_SMTP_USER }}
+          HST_SMTP_APP_PASSWORD: ${{ secrets.HST_SMTP_APP_PASSWORD }}
+          HST_SMTP_HOST: ${{ secrets.HST_SMTP_HOST }}
+          HST_SMTP_PORT: ${{ secrets.HST_SMTP_PORT }}
           HST_EMAIL_ENABLED: ${{ secrets.HST_EMAIL_ENABLED }}
         run: python scripts/send_email.py
 
