@@ -40,9 +40,9 @@
 <div class="timestamps"><span>Última atualização: <strong id="updatedAt">—</strong></span><span>Próxima coleta planejada: <strong id="nextAt">—</strong></span></div>
 </article>
 <article class="card">
-<div class="eyebrow">Clima oficial · INMET</div>
-<div class="weather"><div id="weatherTemp" class="temp">—</div><div><h3>Pico do Couto (A610)</h3><p id="weatherSummary">Carregando observação oficial do INMET…</p></div></div>
-<div class="small">A estação de referência regional não representa exatamente a temperatura no terreno do hospital.</div>
+<div id="weatherEyebrow" class="eyebrow">Condição meteorológica atual</div>
+<div class="weather"><div id="weatherTemp" class="temp">—</div><div><h3 id="weatherTitle">Próximo ao Hospital Santa Teresa</h3><p id="weatherSummary">Carregando condição meteorológica recente…</p></div></div>
+<div id="weatherNote" class="small">Referência complementar para situação atual. Alertas oficiais continuam sendo definidos por INMET, CEMADEN e Defesa Civil.</div>
 </article>
 </div>
 
@@ -52,6 +52,7 @@
 <article class="risk"><div class="small">Meteorológico</div><div id="inmetCard" class="value">Carregando…</div><span id="inmetBadge" class="badge">INMET</span><div id="inmetMeta" class="small" style="margin-top:8px"></div></article>
 <article class="risk"><div class="small">Defesa Civil</div><div id="dcCard" class="value">Carregando…</div><span id="dcBadge" class="badge">Petrópolis</span><div id="dcMeta" class="small" style="margin-top:8px"></div></article>
 </div>
+<div class="callout"><strong>Padrão HST de atualidade:</strong> informações de risco com mais de 24 horas deixam o painel atual e permanecem no histórico. “Sem atualização oficial recente” significa apenas que não há informação oficial nova confirmada na janela definida — <strong>não significa ausência de risco</strong>.</div>
 
 <div class="grid2">
 <article class="card"><div class="section"><h3>Ações prioritárias</h3><span class="badge">Nível atual</span></div><div id="actions" class="actions"></div></article>
@@ -197,17 +198,20 @@ function applyLevel(l,reason,generatedAt){
 function sourceBadge(source){
   if(!source) return 'SEM DADO';
   if(source.status==='ok') return 'CEMADEN-RJ · ATUAL';
-  if(source.status==='stale') return 'CEMADEN-RJ · DADO ANTIGO';
-  if(source.status==='unavailable') return 'CEMADEN-RJ · INDISPONÍVEL';
-  return 'CEMADEN-RJ · '+String(source.status||'PENDENTE').toUpperCase();
+  if(source.status==='no_recent_update') return 'CEMADEN-RJ · SEM ATUALIZAÇÃO < 24 H';
+  if(source.status==='source_unconfirmed') return 'CEMADEN-RJ · SEM INFORMAÇÃO RECENTE CONFIRMADA';
+  if(source.status==='stale') return 'CEMADEN-RJ · FORA DA JANELA ATUAL';
+  return 'CEMADEN-RJ · '+String(source.status||'SEM CONFIRMAÇÃO').toUpperCase();
 }
 function sourceMeta(source){
   if(!source) return 'Sem informação da fonte.';
   const parts=[];
-  if(source.official_updated_at) parts.push('Oficial: '+fmtDate(source.official_updated_at));
-  if(source.age_hours!=null) parts.push('idade '+source.age_hours+' h');
-  if(source.status==='unavailable') parts.push('último valor válido mantido');
-  return parts.join(' · ');
+  if(source.status==='ok' && source.official_updated_at) parts.push('Oficial: '+fmtDate(source.official_updated_at));
+  if(source.status==='ok' && source.age_hours!=null) parts.push('idade '+source.age_hours+' h');
+  if(source.status==='no_recent_update') parts.push('Sem atualização oficial relevante nas últimas 24 h');
+  if(source.status==='source_unconfirmed') parts.push('Sem informação oficial recente confirmada nesta coleta');
+  if(source.message) parts.push(source.message);
+  return [...new Set(parts)].join(' · ');
 }
 async function loadOfficialData(){
   try{
@@ -220,6 +224,7 @@ async function loadOfficialData(){
     const dc=data.sources?.defesa_civil;
     const roads=data.roads||{};
     const w=data.weather||{};
+    const wr=data.weather_reference||{};
     const fc=data.forecast||{};
     const pv=data.pluviometers||{};
     document.getElementById('geoCard').textContent=g?.risk||'Indisponível';
@@ -227,25 +232,41 @@ async function loadOfficialData(){
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
     document.getElementById('inmetBadge').textContent=imet?.status==='ok'?'INMET · ATUAL':(imet?.status==='unavailable'?'INMET · INDISPONÍVEL':'INMET · '+String(imet?.status||'PENDENTE').toUpperCase());
     document.getElementById('inmetMeta').textContent=(imet?.title||'')+(imet?.active_count!=null?' · avisos ativos: '+imet.active_count:'');
-    document.getElementById('dcCard').textContent=dc?.stage||(dc?.status==='no_recent_bulletin'?'Sem estágio recente':'Indisponível');
-    document.getElementById('dcBadge').textContent=dc?.status==='ok'?'DEFESA CIVIL · ATUAL':(dc?.status==='no_recent_bulletin'?'DEFESA CIVIL · SEM BOLETIM RECENTE':'DEFESA CIVIL · INDISPONÍVEL');
+    document.getElementById('dcCard').textContent=dc?.stage||(dc?.status==='no_recent_update'?'Sem atualização oficial recente':'Sem informação recente confirmada');
+    document.getElementById('dcBadge').textContent=dc?.status==='ok'?'DEFESA CIVIL · ATUAL':(dc?.status==='no_recent_update'?'DEFESA CIVIL · SEM ATUALIZAÇÃO < 48 H':'DEFESA CIVIL · SEM CONFIRMAÇÃO RECENTE');
     const dcParts=[];
-    if(dc?.official_updated_at) dcParts.push('Boletim: '+fmtDate(dc.official_updated_at));
-    if(dc?.latest_bulletin?.title) dcParts.push(dc.latest_bulletin.title);
-    document.getElementById('dcMeta').textContent=dcParts.join(' · ')||'Estágio municipal não automatizável nesta coleta.';
+    if(dc?.status==='ok' && dc?.official_updated_at) dcParts.push('Boletim: '+fmtDate(dc.official_updated_at));
+    if(dc?.status==='ok' && dc?.latest_bulletin?.title) dcParts.push(dc.latest_bulletin.title);
+    if(dc?.status!=='ok') dcParts.push('Não há informação municipal recente confirmada no painel. Isso não significa ausência de risco.');
+    document.getElementById('dcMeta').textContent=dcParts.join(' · ');
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
     document.getElementById('hidroMeta').textContent=sourceMeta(h);
     const states=[g?.status,h?.status];
-    const temp=w.temperature_c;
-    document.getElementById('weatherTemp').textContent=(temp==null?'—':temp.toFixed(1)+'°');
+    const officialWeatherOk=w.status==='ok' && w.temperature_c!=null;
+    const chosen=officialWeatherOk?w:wr;
+    const temp=chosen?.temperature_c;
+    document.getElementById('weatherTemp').textContent=(temp==null?'—':Number(temp).toFixed(1)+'°');
     const weatherParts=[];
-    if(w.humidity_pct!=null) weatherParts.push('Umidade '+w.humidity_pct.toFixed(0)+'%');
-    if(w.rain_1h_mm!=null) weatherParts.push('Chuva 1h '+w.rain_1h_mm.toFixed(1)+' mm');
-    if(w.wind_gust_ms!=null) weatherParts.push('Rajada '+(w.wind_gust_ms*3.6).toFixed(0)+' km/h');
-    document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem observação válida')+' · '+fmtDate(w.observed_at);
-    document.getElementById('weatherDetails').textContent='Estação INMET Pico do Couto (A610), referência regional. '+(weatherParts.join(' · ')||'Dados indisponíveis')+(w.pressure_hpa!=null?' · Pressão '+w.pressure_hpa.toFixed(1)+' hPa':'')+' · Observação: '+fmtDate(w.observed_at)+'.';
+    if(chosen?.condition) weatherParts.push(chosen.condition);
+    if(chosen?.humidity_pct!=null) weatherParts.push('Umidade '+Number(chosen.humidity_pct).toFixed(0)+'%');
+    if(chosen?.apparent_temperature_c!=null) weatherParts.push('Sensação '+Number(chosen.apparent_temperature_c).toFixed(1)+'°C');
+    if(chosen?.precipitation_mm!=null) weatherParts.push('Precipitação '+Number(chosen.precipitation_mm).toFixed(1)+' mm');
+    if(chosen?.wind_speed_kmh!=null) weatherParts.push('Vento '+Number(chosen.wind_speed_kmh).toFixed(0)+' km/h');
+    if(chosen?.wind_gust_kmh!=null) weatherParts.push('Rajada '+Number(chosen.wind_gust_kmh).toFixed(0)+' km/h');
+    if(officialWeatherOk){
+      if(w.rain_1h_mm!=null) weatherParts.push('Chuva 1h '+Number(w.rain_1h_mm).toFixed(1)+' mm');
+      document.getElementById('weatherEyebrow').textContent='Observação oficial · INMET';
+      document.getElementById('weatherTitle').textContent='Pico do Couto (A610)';
+      document.getElementById('weatherNote').textContent='Observação oficial regional. Pode diferir do microclima no terreno do hospital.';
+    }else{
+      document.getElementById('weatherEyebrow').textContent='Referência atual próxima ao HST · complementar';
+      document.getElementById('weatherTitle').textContent='Hospital Santa Teresa · Centro';
+      document.getElementById('weatherNote').textContent='Fonte complementar de condição atual próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para definição de alertas.';
+    }
+    document.getElementById('weatherSummary').textContent=(weatherParts.join(' · ')||'Sem condição recente confirmada')+' · '+fmtDate(chosen?.observed_at);
+    document.getElementById('weatherDetails').textContent=(officialWeatherOk?'INMET Pico do Couto (A610). ':'Referência meteorológica complementar próxima ao Hospital Santa Teresa. ')+(weatherParts.join(' · ')||'Sem condição recente confirmada')+' · horário: '+fmtDate(chosen?.observed_at)+'. Alertas e níveis HST continuam baseados nas fontes oficiais.';
     document.getElementById('pluvioCount').textContent=pv.total_stations??'—';
     document.getElementById('pluvioRecent').textContent=(pv.recent_stations??'—')+(pv.total_stations!=null?' / '+pv.total_stations:'')+(pv.time_anomaly_stations?' · '+pv.time_anomaly_stations+' horário(s) inconsistente(s)':'');
     document.getElementById('pluvioMax1').textContent=pv.highest_1h?.value!=null?Number(pv.highest_1h.value).toFixed(1)+' mm':'— mm';
@@ -281,14 +302,14 @@ async function loadOfficialData(){
         p.textContent=fc.error?'Fonte oficial sem resposta válida.':'Previsão oficial INMET.';
       }
     }
-    document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos automáticos ativos; clima da A610 '+(w.status==='ok'?'atualizado':'com status '+String(w.status||'indisponível'))+'.':'Fonte de avisos indisponível; último valor válido é preservado quando possível.';
-    document.getElementById('dcHealth').textContent=dc?.status==='ok'?'Boletim recente com estágio operacional reconhecido automaticamente.':(dc?.status==='no_recent_bulletin'?'Canal oficial acessível, porém sem estágio recente que possa ser usado no cálculo.':'Canal municipal indisponível nesta coleta; usar 199/SMS/WhatsApp como redundância.');
+    document.getElementById('inmetHealth').textContent=imet?.status==='ok'?'Avisos meteorológicos ativos consultados automaticamente. Observação A610: '+(w.status==='ok'?'atualizada':'sem dado recente; referência complementar exibida no Dashboard')+'.':'Sem informação meteorológica oficial recente confirmada nesta coleta. Isso não significa ausência de risco.';
+    document.getElementById('dcHealth').textContent=dc?.status==='ok'?'Boletim municipal recente reconhecido automaticamente.':'Sem informação municipal recente confirmada nesta coleta. Isso não significa ausência de risco; manter 199, SMS e WhatsApp como redundância.';
     document.getElementById('roadsHealth').textContent=roads?.status==='official_channel_available'?'Canal oficial Elovias acessível; condição de tráfego exige consulta ao mapa/app/0800.':'Canal Elovias indisponível nesta coleta; nenhuma condição de tráfego é inferida.';
     document.getElementById('roadsServiceText').textContent=roads?.status==='official_channel_available'?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial indisponível; consultar a concessionária por telefone e canais redundantes.';
     document.getElementById('cemadenHealth').textContent=
-      states.includes('unavailable')?'Fonte oficial com indisponibilidade; último valor válido preservado.':
-      states.includes('stale')?'Fonte acessível, porém há leitura oficial desatualizada.':
-      states.every(x=>x==='ok')?'Coleta automática ativa e fontes com atualização recente.':
+      states.every(x=>x==='ok')?'Coleta automática ativa e informações dentro da janela de 24 h.':
+      states.some(x=>x==='no_recent_update')?'Há categoria sem atualização oficial nas últimas 24 h; dado anterior permanece somente no histórico. Isso não significa ausência de risco.':
+      states.some(x=>x==='source_unconfirmed')?'Sem informação oficial recente confirmada em uma ou mais categorias nesta coleta. Isso não significa ausência de risco.':
       'Coleta automática ativa; aguardando consolidação do status.';
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
