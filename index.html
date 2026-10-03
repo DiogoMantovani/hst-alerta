@@ -108,7 +108,22 @@
 .climate-period-condition{font-size:12px;font-weight:750;line-height:1.35}
 .climate-period-detail{font-size:11px;color:var(--muted);line-height:1.45;margin-top:7px}
 @media(max-width:1100px){.climate-periods{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+@media(max-width:900px){.climate-hero{grid-template-columns:1fr}.climate-periods{grid-template-columns:1fr}.climate-current-main{grid-template-columns:86px 1fr}.climate-big-icon{width:86px;height:86px}.climate-big-temp{font-size:52px}}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.summary .card strong{display:block;font-size:24px;color:var(--brand);margin-top:6px}.table{overflow:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;vertical-align:top}th{font-size:11px;text-transform:uppercase;color:var(--muted)}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.service .status{font-size:20px;font-weight:900;margin:8px 0}.service a{color:var(--brand);font-weight:800}
+.roads-hero{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.road-status-card{background:linear-gradient(145deg,#f8fbfb,#edf6f5);border-color:#cfe2e1}
+.road-status-main{font-size:26px;font-weight:900;line-height:1.25;color:#123b43;margin:8px 0}
+.road-status-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.road-status-meta span{font-size:11px;padding:6px 9px;border-radius:999px;background:#fff;border:1px solid #d8e5e5;color:#536b72;font-weight:800}
+.road-bulletin{font-size:14px;line-height:1.6;color:#344f57;margin:10px 0 0}
+.road-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:16px}
+.road-card-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.road-card-title h3{margin:0}
+.road-contact-list{display:grid;gap:10px;margin-top:12px}
+.road-contact{padding:10px 0;border-bottom:1px solid #edf2f2}
+.road-contact:last-child{border-bottom:0}
+.road-contact strong{display:block;color:#183b43}
+.road-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+@media(max-width:900px){.roads-hero,.road-grid{grid-template-columns:1fr}}.checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.checkgrid ul{padding-left:18px;line-height:1.55}.callout{background:#e5f3f2;border:1px solid #b9dcd9;padding:14px 16px;border-radius:12px;line-height:1.5;margin-bottom:16px}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:end}.controls label{display:grid;gap:6px;font-size:12px;font-weight:800;color:var(--muted)}select{padding:10px;border:1px solid #bdcdd0;border-radius:9px;background:white}.plan h3{margin-top:26px}.plan p,.plan li{line-height:1.6}.maplinks{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
 .map-shell{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(20,40,60,.04)}
 .map-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:#fbfdfd;flex-wrap:wrap}
 .map-layer-group{display:flex;gap:7px;flex-wrap:wrap}
@@ -162,7 +177,7 @@
 <button class="tab" data-target="clima">Clima & Previsão</button>
 <button class="tab" data-target="mapa">Mapa</button>
 <button class="tab" data-target="pluvio">Pluviômetros</button>
-<button class="tab" data-target="servicos">Rodovias & Concessionárias</button>
+<button class="tab" data-target="servicos">Rodovias</button>
 <button class="tab" data-target="checklists">Checklists</button>
 <button class="tab" data-target="historico">Histórico</button>
 <button class="tab" data-target="plano">Plano</button>
@@ -364,11 +379,52 @@
 </section>
 
 <section id="servicos" class="panel">
-<div class="section"><h2>Rodovias & Concessionárias</h2></div>
-<div class="services">
-<article class="card service"><div class="eyebrow">Rodovias</div><div class="status">BR-040/495 · Serra</div><p id="roadsServiceText">O HST Alerta verifica a disponibilidade do canal oficial, mas não presume trânsito livre sem dado operacional automatizável.</p><a target="_blank" href="https://elovias.com.br/mapa">Mapa Elovias</a><br><span class="small">Emergências: 0800-040-0495</span></article>
-<article class="card service"><div class="eyebrow">Energia</div><div class="status">Enel Rio</div><p>Canal oficial para fornecimento e ocorrências.</p><a target="_blank" href="https://www.enel.com.br/">Enel</a></article>
-<article class="card service"><div class="eyebrow">Água</div><div class="status">Águas do Imperador</div><p>Canal oficial de abastecimento.</p><a target="_blank" href="https://www.grupoaguasdobrasil.com.br/aguas-imperador/">Águas do Imperador</a></article>
+<div class="section">
+  <div><h2>Rodovias</h2><div class="small">BR‑040/495 · Serra de Petrópolis · informações publicadas pela concessionária Elovias.</div></div>
+  <span id="roadsModeBadge" class="badge">ELOVIAS</span>
+</div>
+
+<div class="roads-hero">
+  <article class="card road-status-card">
+    <div class="eyebrow">Serra de Petrópolis</div>
+    <div id="roadsSerraStatus" class="road-status-main">Carregando situação operacional…</div>
+    <div class="road-status-meta">
+      <span id="roadsBulletinTime">Boletim: —</span>
+      <span id="roadsCollectedAt">Coleta: —</span>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Atenção operacional</div>
+    <div class="status">Acesso ao HST</div>
+    <p class="small" style="line-height:1.55">A situação rodoviária pode mudar rapidamente. O painel reproduz o que foi publicado pela Elovias e não presume via livre quando não houver boletim operacional identificável.</p>
+  </article>
+</div>
+
+<div class="road-grid">
+  <article class="card">
+    <div class="road-card-title"><div><div class="eyebrow">Boletim oficial</div><h3>Condições da BR‑040/495</h3></div><span id="roadsBulletinBadge" class="badge">Carregando</span></div>
+    <p id="roadsBulletinText" class="road-bulletin">Carregando boletim operacional da Elovias…</p>
+    <div id="roadsWorksBox" style="margin-top:18px;padding-top:14px;border-top:1px solid #edf2f2">
+      <div class="eyebrow">Obras programadas</div>
+      <strong id="roadsWorksTitle" style="display:block;margin-top:6px">Carregando cronograma…</strong>
+    </div>
+    <div class="road-links">
+      <a class="btn" target="_blank" href="https://elovias.com.br/home">Portal Elovias</a>
+      <a class="btn" target="_blank" href="https://elovias.com.br/mapa">Mapa da rodovia</a>
+      <a id="roadsWorksLink" class="btn" target="_blank" href="https://elovias.com.br/home" style="display:none">Ver cronograma</a>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="eyebrow">Canais operacionais</div>
+    <h3 style="margin:5px 0 0">Elovias</h3>
+    <div class="road-contact-list">
+      <div class="road-contact"><span class="small">Emergências e atendimento</span><strong>0800 040 0495</strong></div>
+      <div class="road-contact"><span class="small">WhatsApp</span><strong>(21) 98040-0113</strong></div>
+      <div class="road-contact"><span class="small">Acessibilidade</span><strong>0800 040 1495</strong></div>
+    </div>
+  </article>
 </div>
 </section>
 
@@ -909,12 +965,25 @@ async function loadOfficialData(){
       ?'Condição meteorológica atual próxima ao HST disponível.'
       :'Sem condição meteorológica complementar recente confirmada.';
 
-    const roadsConnected=roads?.status==='official_channel_available';
+    const roadsConnected=roads?.status==='ok';
     setConnection('roadsConnection',roadsConnected?'ok':'off',roadsConnected?'Conectividade ativa':'Sem confirmação');
     document.getElementById('roadsHealth').textContent=roadsConnected
-      ?'Canal oficial Elovias acessível. A condição do tráfego continua exigindo consulta ao mapa/app/0800.'
-      :'Não foi possível confirmar acesso ao canal Elovias nesta coleta.';
-    document.getElementById('roadsServiceText').textContent=roadsConnected?'Canal oficial disponível. Situação do tráfego não é inferida sem telemetria pública confiável.':'Canal oficial sem confirmação nesta coleta; consultar a concessionária por telefone e canais redundantes.';
+      ?(roads.automated_traffic?'Portal acessível e boletim operacional identificado automaticamente.':'Portal acessível; nenhum boletim operacional foi identificado nesta coleta.')
+      :'Não foi possível confirmar acesso ao portal Elovias nesta coleta.';
+
+    document.getElementById('roadsSerraStatus').textContent=roads?.serra_status||roads?.traffic_status||'Sem informação operacional confirmada';
+    document.getElementById('roadsBulletinTime').textContent=roads?.bulletin_time?'Boletim: '+roads.bulletin_time:'Boletim: horário não identificado';
+    document.getElementById('roadsCollectedAt').textContent='Coleta: '+fmtDate(roads?.collected_at);
+    document.getElementById('roadsBulletinBadge').textContent=roads?.bulletin?'Publicado pela Elovias':'Sem boletim identificado';
+    document.getElementById('roadsBulletinText').textContent=roads?.bulletin||'O portal está acessível, mas não foi identificado um boletim operacional estruturado nesta coleta. Consulte os canais oficiais para condição em tempo real.';
+    document.getElementById('roadsWorksTitle').textContent=roads?.works_title||'Nenhum cronograma de obras identificado nesta coleta.';
+    const worksLink=document.getElementById('roadsWorksLink');
+    if(roads?.works_url){
+      worksLink.href=roads.works_url;
+      worksLink.style.display='inline-block';
+    }else{
+      worksLink.style.display='none';
+    }
     const level=Math.max(1,Math.min(5,Number(data.overall?.level)||1));
     applyLevel(level,data.overall?.reason||'Monitoramento CEMADEN-RJ ativo.',data.generated_at);
     document.getElementById('systemMode').textContent='CEMADEN + INMET';
