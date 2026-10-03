@@ -14,6 +14,7 @@ CITY = "PETRÓPOLIS"
 OUT = os.path.join("data", "status.json")
 HISTORY_OUT = os.path.join("data", "history.json")
 HISTORY_INDEX_OUT = os.path.join("data", "history_index.json")
+CLIMATE_HISTORY_OUT = os.path.join("data", "climate_history.json")
 ARCHIVE_DIR = os.path.join("data", "archive")
 PREVIOUS_URL = "https://diogomantovani.github.io/hst-alerta/data/status.json"
 HISTORY_URL = "https://diogomantovani.github.io/hst-alerta/data/history.json"
@@ -767,6 +768,141 @@ def persist_history(payload):
     with open(HISTORY_INDEX_OUT,"w",encoding="utf-8") as f:
         json.dump({"schema_version":1,"generated_at":now.isoformat(),"months":months},f,ensure_ascii=False,separators=(",",":"))
 
+def climate_period(dt):
+    hour=dt.hour
+    if 6 <= hour < 12:
+        return "manha", "Manhã"
+    if 12 <= hour < 18:
+        return "tarde", "Tarde"
+    if 18 <= hour < 24:
+        return "noite", "Noite"
+    return None, None
+
+def climate_sample(weather, weather_reference, now):
+    official_ok=(weather or {}).get("status")=="ok" and (weather or {}).get("temperature_c") is not None
+    source=weather if official_ok else weather_reference
+    if not isinstance(source,dict) or source.get("status")!="ok":
+        return None
+    temp=safe_float(source.get("temperature_c"))
+    if temp is None:
+        return None
+    return {
+        "observed_at":source.get("observed_at") or now.isoformat(),
+        "provider":source.get("provider"),
+        "source_type":"oficial" if official_ok else "complementar",
+        "condition":source.get("condition") or ("Observação meteorológica" if official_ok else "Condição atual"),
+        "weather_code":source.get("weather_code"),
+        "temperature_c":temp,
+        "apparent_temperature_c":safe_float(source.get("apparent_temperature_c")),
+        "humidity_pct":safe_float(source.get("humidity_pct")),
+        "precipitation_mm":safe_float(source.get("precipitation_mm") if source.get("precipitation_mm") is not None else source.get("rain_1h_mm")),
+        "wind_speed_kmh":safe_float(source.get("wind_speed_kmh")),
+        "wind_gust_kmh":safe_float(source.get("wind_gust_kmh")),
+    }
+
+def persist_climate_history(weather, weather_reference):
+    now=datetime.now(TZ)
+    period_key,period_label=climate_period(now)
+    if not period_key:
+        return
+
+    sample=climate_sample(weather,weather_reference,now)
+    if not sample:
+        return
+
+    try:
+        with open(CLIMATE_HISTORY_OUT,"r",encoding="utf-8") as f:
+            raw=json.load(f)
+            periods=raw.get("periods",[]) if isinstance(raw,dict) else raw
+    except Exception:
+        periods=[]
+
+    date_key=now.strftime("%Y-%m-%d")
+    existing=None
+    for item in periods:
+        if isinstance(item,dict) and item.get("date")==date_key and item.get("period")==period_key:
+            existing=item
+            break
+
+    if existing is None:
+        existing={
+            "date":date_key,
+            "period":period_key,
+            "period_label":period_label,
+            "first_observed_at":sample["observed_at"],
+            "last_observed_at":sample["observed_at"],
+            "samples":0,
+            "provider":sample.get("provider"),
+            "source_type":sample.get("source_type"),
+            "condition":sample.get("condition"),
+            "weather_code":sample.get("weather_code"),
+            "temperature_min_c":sample.get("temperature_c"),
+            "temperature_max_c":sample.get("temperature_c"),
+            "temperature_last_c":sample.get("temperature_c"),
+            "apparent_temperature_c":sample.get("apparent_temperature_c"),
+            "humidity_min_pct":sample.get("humidity_pct"),
+            "humidity_max_pct":sample.get("humidity_pct"),
+            "humidity_last_pct":sample.get("humidity_pct"),
+            "precipitation_last_mm":sample.get("precipitation_mm"),
+            "wind_speed_last_kmh":sample.get("wind_speed_kmh"),
+            "wind_gust_max_kmh":sample.get("wind_gust_kmh"),
+        }
+        periods.append(existing)
+
+    existing["samples"]=int(existing.get("samples") or 0)+1
+    existing["last_observed_at"]=sample["observed_at"]
+    existing["provider"]=sample.get("provider")
+    existing["source_type"]=sample.get("source_type")
+    existing["condition"]=sample.get("condition")
+    existing["weather_code"]=sample.get("weather_code")
+    existing["temperature_last_c"]=sample.get("temperature_c")
+    existing["apparent_temperature_c"]=sample.get("apparent_temperature_c")
+    existing["humidity_last_pct"]=sample.get("humidity_pct")
+    existing["precipitation_last_mm"]=sample.get("precipitation_mm")
+    existing["wind_speed_last_kmh"]=sample.get("wind_speed_kmh")
+
+    for key,value,mode in (
+        ("temperature_min_c",sample.get("temperature_c"),"min"),
+        ("temperature_max_c",sample.get("temperature_c"),"max"),
+        ("humidity_min_pct",sample.get("humidity_pct"),"min"),
+        ("humidity_max_pct",sample.get("humidity_pct"),"max"),
+        ("wind_gust_max_kmh",sample.get("wind_gust_kmh"),"max"),
+    ):
+        if value is None:
+            continue
+        old=existing.get(key)
+        if old is None:
+            existing[key]=value
+        elif mode=="min":
+            existing[key]=min(old,value)
+        else:
+            existing[key]=max(old,value)
+
+    cutoff=(now-timedelta(days=90)).date()
+    kept=[]
+    for item in periods:
+        try:
+            d=datetime.strptime(item.get("date",""),"%Y-%m-%d").date()
+            if d>=cutoff:
+                kept.append(item)
+        except Exception:
+            continue
+
+    order={"manha":0,"tarde":1,"noite":2}
+    kept.sort(key=lambda x:(x.get("date",""),order.get(x.get("period"),9)))
+    with open(CLIMATE_HISTORY_OUT,"w",encoding="utf-8") as f:
+        json.dump({
+            "schema_version":1,
+            "generated_at":now.isoformat(),
+            "retention_days":90,
+            "period_definition":{
+                "manha":"06:00–11:59",
+                "tarde":"12:00–17:59",
+                "noite":"18:00–23:59"
+            },
+            "periods":kept,
+        },f,ensure_ascii=False,separators=(",",":"))
+
 def fetch_inmet_forecast(previous):
     prev=previous.get("forecast") or {}
     now=datetime.now(TZ)
@@ -906,6 +1042,7 @@ def main():
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
+    persist_climate_history(weather,weather_reference)
     print(json.dumps(payload,ensure_ascii=False,indent=2))
 
 if __name__=="__main__":
