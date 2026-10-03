@@ -1377,12 +1377,30 @@ def main():
     inmet=fetch_inmet_alerts(previous)
     roads=fetch_roads(previous)
 
-    usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
+    # Only fresh/confirmed official sources may create a new escalation.
+    # Stale or unavailable sources can hold a previous level through hysteresis,
+    # but their preserved numeric level must not drive a new increase.
+    usable=[
+        s for s in (geo,hydro,inmet)
+        if s.get("status")=="ok" and isinstance(s.get("level"),int)
+    ]
     official_candidate=max([s["level"] for s in usable], default=1)
 
-    # Corroboration between independent official providers can escalate one level.
-    cemaden_level=max([s.get("level") or 0 for s in (geo,hydro)])
-    inmet_level=inmet.get("level") if isinstance(inmet.get("level"),int) else 0
+    # Corroboration between independent official providers can escalate one level
+    # only when both providers involved have a current confirmed status.
+    cemaden_level=max(
+        [
+            s.get("level") or 0
+            for s in (geo,hydro)
+            if s.get("status")=="ok" and isinstance(s.get("level"),int)
+        ],
+        default=0,
+    )
+    inmet_level=(
+        inmet.get("level")
+        if inmet.get("status")=="ok" and isinstance(inmet.get("level"),int)
+        else 0
+    )
     escalated=False
     candidate=official_candidate
     if cemaden_level>=3 and inmet_level>=3:
@@ -1402,7 +1420,12 @@ def main():
     driver_floor=max(1,candidate-(1 if escalated else 0))
     top=[]
     for s in (geo,hydro,inmet):
-        if isinstance(s.get("level"),int) and s["level"]>=driver_floor and s["level"]>1:
+        if (
+            s.get("status")=="ok"
+            and isinstance(s.get("level"),int)
+            and s["level"]>=driver_floor
+            and s["level"]>1
+        ):
             top.append(f'{s["name"]}: {s.get("risk")}')
 
     reason_parts=[]
@@ -1447,7 +1470,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata pelo maior nível oficial válido; CEMADEN-RJ + INMET em nível >=3 podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna de fonte oficial."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Valores preservados de fontes sem atualização recente, não confirmadas ou indisponíveis não provocam nova subida; nesses casos, o nível anterior pode ser mantido pela histerese. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna de fonte oficial."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
