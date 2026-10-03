@@ -33,6 +33,7 @@ ELOVIAS_MAP = "https://elovias.com.br/mapa"
 HST_LAT = -22.50825
 HST_LON = -43.19345
 OPEN_METEO_CURRENT = "https://api.open-meteo.com/v1/forecast"
+RAINVIEWER_MAPS = "https://api.rainviewer.com/public/weather-maps.json"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
 LEVEL_LABELS = {1:"Vigilância",2:"Observação",3:"Atenção",4:"Alerta",5:"Alerta Máximo"}
@@ -312,6 +313,97 @@ def fetch_open_meteo_current(previous):
             "error":str(exc)[:500],
         })
         return fallback
+
+def fetch_weather_map(previous):
+    prev=previous.get("weather_map") or {}
+    now=datetime.now(TZ)
+
+    # Operational grid centered on HST, covering central Petrópolis.
+    lat_offsets=(-0.09,-0.06,-0.03,0.0,0.03,0.06,0.09)
+    lon_offsets=(-0.12,-0.08,-0.04,0.0,0.04,0.08,0.12)
+    coords=[(round(HST_LAT+a,5),round(HST_LON+b,5)) for a in lat_offsets for b in lon_offsets]
+
+    grid=[]
+    grid_error=None
+    try:
+        params={
+            "latitude":",".join(str(x[0]) for x in coords),
+            "longitude":",".join(str(x[1]) for x in coords),
+            "current":"temperature_2m,cloud_cover,precipitation,wind_speed_10m,wind_direction_10m,weather_code",
+            "timezone":"America/Sao_Paulo",
+        }
+        r=requests.get(OPEN_METEO_CURRENT,params=params,timeout=25,headers={"User-Agent":"HST-Alerta/1.0"})
+        r.raise_for_status()
+        data=r.json()
+        items=data if isinstance(data,list) else [data]
+        for requested,item in zip(coords,items):
+            if not isinstance(item,dict):
+                continue
+            cur=item.get("current") or {}
+            grid.append({
+                "latitude":safe_float(item.get("latitude")) if item.get("latitude") is not None else requested[0],
+                "longitude":safe_float(item.get("longitude")) if item.get("longitude") is not None else requested[1],
+                "requested_latitude":requested[0],
+                "requested_longitude":requested[1],
+                "observed_at":cur.get("time"),
+                "temperature_c":safe_float(cur.get("temperature_2m")),
+                "cloud_cover_pct":safe_float(cur.get("cloud_cover")),
+                "precipitation_mm":safe_float(cur.get("precipitation")),
+                "wind_speed_kmh":safe_float(cur.get("wind_speed_10m")),
+                "wind_direction_deg":safe_float(cur.get("wind_direction_10m")),
+                "weather_code":cur.get("weather_code"),
+            })
+    except Exception as exc:
+        grid_error=str(exc)[:500]
+        grid=(prev.get("grid") or []) if isinstance(prev,dict) else []
+
+    radar={"status":"unavailable","provider":"RainViewer","error":None}
+    try:
+        r=requests.get(RAINVIEWER_MAPS,timeout=15,headers={"User-Agent":"HST-Alerta/1.0"})
+        r.raise_for_status()
+        data=r.json()
+        frames=((data.get("radar") or {}).get("past") or [])
+        if not frames:
+            raise RuntimeError("RainViewer sem quadros de radar")
+        frame=frames[-1]
+        frame_time=datetime.fromtimestamp(int(frame.get("time")),tz=ZoneInfo("UTC")).astimezone(TZ)
+        radar={
+            "status":"ok",
+            "provider":"RainViewer",
+            "host":data.get("host"),
+            "path":frame.get("path"),
+            "frame_time":frame_time.isoformat(),
+            "generated_unix":data.get("generated"),
+            "tile_color_scheme":2,
+            "url":RAINVIEWER_MAPS,
+            "error":None,
+        }
+    except Exception as exc:
+        prior=(prev.get("radar") or {}) if isinstance(prev,dict) else {}
+        radar={
+            "status":"unavailable",
+            "provider":"RainViewer",
+            "last_known_frame_time":prior.get("frame_time") or prior.get("last_known_frame_time"),
+            "url":RAINVIEWER_MAPS,
+            "error":str(exc)[:500],
+        }
+
+    grid_ok=bool(grid)
+    return {
+        "status":"ok" if grid_ok else "source_unconfirmed",
+        "provider":"Open-Meteo + RainViewer",
+        "source_type":"mapa meteorológico complementar",
+        "official":False,
+        "center":{"name":"Hospital Santa Teresa","latitude":HST_LAT,"longitude":HST_LON},
+        "operational_radius_km":5,
+        "grid_updated_at":now.isoformat() if grid_ok else prev.get("grid_updated_at"),
+        "grid":grid,
+        "grid_points":len(grid),
+        "grid_error":grid_error,
+        "radar":radar,
+        "collected_at":now.isoformat(),
+        "message":"Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas.",
+    }
 
 def severity_from_alert(item):
     blob=norm(json.dumps(item,ensure_ascii=False))
@@ -1001,6 +1093,7 @@ def main():
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
     weather=fetch_inmet_weather(previous)
     weather_reference=fetch_open_meteo_current(previous)
+    weather_map=fetch_weather_map(previous)
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
@@ -1036,10 +1129,11 @@ def main():
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet},
       "weather":weather,
       "weather_reference":weather_reference,
+      "weather_map":weather_map,
       "pluviometers":pluviometers,
       "forecast":forecast,
       "roads":roads,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
