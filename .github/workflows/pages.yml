@@ -39,6 +39,11 @@ jobs:
       - name: Collect HST sources
         run: python scripts/collect_hst.py
 
+      - name: Validate generated data
+        run: |
+          python scripts/validate_build.py
+          node scripts/validate_frontend.mjs
+
       - name: Persist monitoring history
         run: |
           git config user.name "hst-alerta-bot"
