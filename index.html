@@ -421,7 +421,7 @@
 
 <div class="bingen-history">
   <div class="bingen-history-head">
-    <div><h3>Histórico · Bingen - Geo</h3><div class="small">Estação de referência mais próxima do HST · consolidação horária · retenção de 90 dias.</div></div>
+    <div><h3>Histórico · Bingen - Geo</h3><div class="small">Estação de referência mais próxima do HST · 1 registro por dia · retenção de 90 dias.</div></div>
     <span id="bingenHistoryStatus" class="badge">AGUARDANDO DADOS</span>
   </div>
 
@@ -433,8 +433,8 @@
   </div>
 
   <div class="card table"><table>
-    <thead><tr><th>Data/hora</th><th>1 h</th><th>3 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
-    <tbody id="bingenHistoryBody"><tr><td colspan="9">O histórico começará a ser preenchido a partir da ativação deste recurso.</td></tr></tbody>
+    <thead><tr><th>Data</th><th>Última leitura do dia</th><th>1 h</th><th>3 h</th><th>6 h</th><th>12 h</th><th>24 h</th><th>48 h</th><th>72 h</th><th>96 h</th></tr></thead>
+    <tbody id="bingenHistoryBody"><tr><td colspan="10">O histórico começará a ser preenchido a partir da ativação deste recurso.</td></tr></tbody>
   </table></div>
 </div>
 </section>
@@ -1037,7 +1037,7 @@ async function loadOfficialData(){
       const distance=s.distance_to_hst_km==null?'—':numBR(s.distance_to_hst_km,1)+' km';
       const ageText=s.age_hours!=null?numBR(Math.max(0,s.age_hours),1)+' h atrás':'';
       return '<tr>'+
-        '<td><strong>'+esc(s.name)+'</strong><br><span class="small">LEITURA RECENTE</span></td>'+
+        '<td><strong>'+esc(s.name)+'</strong></td>'+
         '<td><strong>'+esc(distance)+'</strong></td>'+
         '<td>'+esc(fmtDate(s.observed_at))+(ageText?'<br><span class="small">'+esc(ageText)+'</span>':'')+'</td>'+
         '<td>'+val('acc1h_mm')+'</td><td>'+val('acc6h_mm')+'</td><td>'+val('acc12h_mm')+'</td><td>'+val('acc24h_mm')+'</td><td>'+val('acc48h_mm')+'</td><td>'+val('acc72h_mm')+'</td><td>'+val('acc96h_mm')+'</td>'+
@@ -1208,31 +1208,33 @@ async function loadClimateHistory(){
 
 let bingenHistorySnapshots=[];
 
-function bingenHourKey(value){
+function bingenDayKey(value){
+  const raw=String(value||'');
+  const m=raw.match(/^(\d{4}-\d{2}-\d{2})/);
+  if(m) return m[1];
   const d=new Date(value);
-  if(isNaN(d)) return String(value||'');
-  d.setMinutes(0,0,0);
-  return d.getTime();
+  if(isNaN(d)) return raw;
+  return d.toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
 }
-function groupBingenHourly(snaps){
+function groupBingenDaily(snaps){
   const groups=new Map();
   snaps.forEach(s=>{
     const b=s?.pluviometers?.bingen;
     if(!b || b.status!=='ok' || !b.observed_at) return;
-    const key=bingenHourKey(b.observed_at);
+    const key=bingenDayKey(b.observed_at);
     const old=groups.get(key);
     if(!old || String(b.observed_at).localeCompare(String(old.observed_at))>0){
-      groups.set(key,{...b,_snapshot_ts:s.ts});
+      groups.set(key,{...b,_snapshot_ts:s.ts,_day:key});
     }
   });
-  return [...groups.values()].sort((a,b)=>String(b.observed_at||'').localeCompare(String(a.observed_at||'')));
+  return [...groups.values()].sort((a,b)=>String(b._day||'').localeCompare(String(a._day||'')));
 }
 function renderBingenHistory(){
-  const rows=groupBingenHourly(bingenHistorySnapshots).slice(0,168);
+  const rows=groupBingenDaily(bingenHistorySnapshots).slice(0,90);
   const body=document.getElementById('bingenHistoryBody');
   const current=rows[0]||null;
   if(!rows.length){
-    body.innerHTML='<tr><td colspan="9">O histórico começará a ser preenchido a partir da primeira coleta após a ativação deste recurso.</td></tr>';
+    body.innerHTML='<tr><td colspan="10">O histórico começará a ser preenchido a partir da primeira coleta válida do Bingen - Geo.</td></tr>';
     document.getElementById('bingenHistoryStatus').textContent='AGUARDANDO DADOS';
     document.getElementById('bingenHistoryLast').textContent='—';
     document.getElementById('bingenHistory1h').textContent='—';
@@ -1246,17 +1248,22 @@ function renderBingenHistory(){
   document.getElementById('bingenHistory1h').textContent=mm(current.acc1h_mm);
   document.getElementById('bingenHistory24h').textContent=mm(current.acc24h_mm);
   document.getElementById('bingenHistoryDistance').textContent=current.distance_to_hst_km==null?'—':numBR(current.distance_to_hst_km,1)+' km';
-  body.innerHTML=rows.map(b=>'<tr>'+
-    '<td><strong>'+esc(fmtDate(b.observed_at))+'</strong></td>'+
-    '<td>'+esc(mm(b.acc1h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc3h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc6h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc12h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc24h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc48h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc72h_mm))+'</td>'+
-    '<td>'+esc(mm(b.acc96h_mm))+'</td>'+
-  '</tr>').join('');
+  body.innerHTML=rows.map(b=>{
+    const d=new Date((b._day||'')+'T12:00:00-03:00');
+    const dayLabel=isNaN(d)?b._day:d.toLocaleDateString('pt-BR');
+    return '<tr>'+
+      '<td><strong>'+esc(dayLabel)+'</strong></td>'+
+      '<td>'+esc(fmtDate(b.observed_at))+'</td>'+
+      '<td>'+esc(mm(b.acc1h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc3h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc6h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc12h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc24h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc48h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc72h_mm))+'</td>'+
+      '<td>'+esc(mm(b.acc96h_mm))+'</td>'+
+    '</tr>';
+  }).join('');
 }
 async function loadBingenHistory(){
   try{
