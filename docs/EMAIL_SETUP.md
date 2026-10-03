@@ -1,7 +1,7 @@
 # E-mail de alertas — HST Alerta
 
 ## Canal principal
-O HST Alerta utiliza e-mail via Resend para notificações automáticas do Grupo Operacional.
+O HST Alerta utiliza Gmail SMTP como canal de produção para notificações automáticas.
 
 ## Política inicial
 - Nível 1 — sem envio.
@@ -17,18 +17,16 @@ O HST Alerta utiliza e-mail via Resend para notificações automáticas do Grupo
 ## Secrets necessários no GitHub
 Cadastrar em Settings > Secrets and variables > Actions:
 
-- `RESEND_API_KEY` — chave nova do Resend, preferencialmente com permissão Sending access.
 - `HST_EMAIL_GRUPO_OPERACIONAL` — um ou mais e-mails do Grupo Operacional, separados por vírgula; recebe níveis 3, 4 e 5.
 - `HST_EMAIL_GRUPO_GERENTES` — um ou mais e-mails do Grupo de Gerentes, separados por vírgula; recebe somente níveis 4 e 5.
 - `HST_EMAIL_ENABLED` — usar `true` somente depois do teste.
-- `HST_EMAIL_FROM` — opcional. Se não informado, o teste usa `HST Alerta <onboarding@resend.dev>`.
+- `HST_EMAIL_FROM` — opcional; se não informado, o remetente será identificado como HST Alerta usando a conta Gmail SMTP.
 - `HST_EMAIL_REPLY_TO` — opcional.
 
 ## Segurança
-- Não gravar a chave do Resend em HTML, JavaScript, Python ou arquivos públicos.
+- Não gravar senha de app, credenciais SMTP ou outros segredos em HTML, JavaScript, Python ou arquivos públicos.
 - Não gravar os e-mails dos destinatários em arquivos públicos; as listas ficam em GitHub Secrets.
-- Se uma chave tiver sido compartilhada por chat, mensagem ou outro canal, revogá-la e criar outra.
-- Para o HST Alerta, uma chave com acesso apenas a envio é suficiente.
+- Se uma credencial tiver sido compartilhada por chat, mensagem ou outro canal, revogá-la e criar outra.
 
 ## Funcionamento técnico
 O workflow principal:
@@ -54,8 +52,8 @@ Cada alerta contém:
 Enquanto `HST_EMAIL_ENABLED` não estiver como `true`, o sistema permanece preparado, porém sem envio automático.
 
 
-## Alternativa gratuita sem domínio verificado — Gmail SMTP
-Quando o Resend estiver limitado ao e-mail da própria conta de teste, o HST Alerta pode usar Gmail SMTP.
+## Gmail SMTP — produção
+O HST Alerta usa Gmail SMTP para o envio automático.
 
 Secrets:
 - `HST_SMTP_USER` — conta Gmail remetente.
@@ -63,11 +61,9 @@ Secrets:
 - `HST_SMTP_HOST` — opcional; padrão `smtp.gmail.com`.
 - `HST_SMTP_PORT` — opcional; padrão `465`.
 - `HST_EMAIL_FROM` — opcional; pode ser omitido para usar o Gmail como remetente.
+- `HST_EMAIL_REPLY_TO` — opcional.
 
 A senha normal da conta Google não deve ser usada. A senha de app exige verificação em duas etapas na Conta Google.
-
-Se Gmail SMTP e Resend estiverem configurados ao mesmo tempo, o HST Alerta prioriza Gmail SMTP.
-
 
 ## Estado de produção
 Após a validação do envio por Gmail SMTP, o canal pode ser habilitado com `HST_EMAIL_ENABLED=true`. Antes da primeira ativação real, o estado de teste deve ser limpo para que um nível 3, 4 ou 5 vigente gere o primeiro aviso operacional normalmente.
