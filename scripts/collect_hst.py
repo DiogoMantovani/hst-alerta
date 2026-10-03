@@ -32,6 +32,7 @@ HST_LAT = -22.50825
 HST_LON = -43.19345
 OPEN_METEO_CURRENT = "https://api.open-meteo.com/v1/forecast"
 RAINVIEWER_MAPS = "https://api.rainviewer.com/public/weather-maps.json"
+ELOVIAS_API = "https://cliente.api.elovias.com.br/v1/"
 
 RISK_TO_LEVEL = {"MUITO BAIXO":1,"BAIXO":2,"MODERADO":3,"ALTO":4,"MUITO ALTO":5}
 LEVEL_LABELS = {1:"Vigilância",2:"Observação",3:"Atenção",4:"Alerta",5:"Alerta Máximo"}
@@ -718,6 +719,177 @@ def fetch_defesa_civil(previous):
             "error":str(exc)[:500],
         }
 
+def _elovias_get(endpoint, timeout=15):
+    r=requests.get(
+        ELOVIAS_API+endpoint,
+        timeout=timeout,
+        headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"},
+    )
+    r.raise_for_status()
+    return r.json()
+
+def _iso_sort_value(item):
+    return str((item or {}).get("data") or (item or {}).get("dataTempo") or "")
+
+def _plain_excerpt(text, limit=460):
+    text=re.sub(r"<[^>]+>"," ",str(text or ""))
+    text=re.sub(r"\s+"," ",text).strip()
+    if len(text)<=limit:
+        return text
+    return text[:limit].rsplit(" ",1)[0]+"…"
+
+def _serra_excerpt(item):
+    text=str((item or {}).get("texto") or (item or {}).get("chamada") or "")
+    clean=re.sub(r"\s+"," ",text).strip()
+    m=re.search(
+        r"(Na\s+Serra\s+de\s+Petrópolis[,\s:;-]+.*?)(?=(?:\s+No\s+trecho|\s+Na\s+Baixada|\s+Em\s+Minas|\s+A\s+Elovias|$))",
+        clean,
+        flags=re.I,
+    )
+    return _plain_excerpt(m.group(1) if m else clean,520)
+
+def fetch_roads(previous):
+    prev=previous.get("roads") or {}
+    now=datetime.now(TZ)
+    endpoint_status={}
+    alerts=[]
+    weather_points=[]
+    recent_news=[]
+    bulletins=[]
+
+    for key,endpoint in (
+        ("alerts","aviso"),
+        ("weather","mapa/trecho-principal"),
+        ("news","noticia/recente"),
+        ("bulletins","boletim"),
+    ):
+        try:
+            data=_elovias_get(endpoint)
+            endpoint_status[key]="ok"
+            if key=="alerts":
+                alerts=data if isinstance(data,list) else []
+            elif key=="weather":
+                weather_points=data if isinstance(data,list) else []
+            elif key=="news":
+                recent_news=data if isinstance(data,list) else []
+            elif key=="bulletins":
+                bulletins=data if isinstance(data,list) else []
+        except Exception as exc:
+            endpoint_status[key]="unavailable"
+            prior=prev.get(key)
+            if key=="alerts" and isinstance(prior,list): alerts=prior
+            if key=="weather" and isinstance(prior,list): weather_points=prior
+            if key=="news" and isinstance(prior,list): recent_news=prior
+            if key=="bulletins" and isinstance(prior,list): bulletins=prior
+
+    petropolis=None
+    for item in weather_points:
+        if norm(item.get("nome"))=="PETROPOLIS":
+            petropolis={
+                "name":"Petrópolis",
+                "condition":item.get("condicaoTempoDescription"),
+                "weather_icon":item.get("condicaoTempoIcon"),
+                "temperature_c":safe_float(item.get("temperatura")),
+                "wind_speed_kmh":safe_float(item.get("vento")),
+                "wind_direction_deg":safe_float(item.get("ventoDirecao")),
+                "wind_direction":item.get("ventoDirecaoDescription"),
+                "updated_at":item.get("dataTempo"),
+            }
+            break
+
+    recent_news=sorted(
+        [x for x in recent_news if isinstance(x,dict)],
+        key=_iso_sort_value,
+        reverse=True,
+    )
+    bulletins=sorted(
+        [x for x in bulletins if isinstance(x,dict)],
+        key=_iso_sort_value,
+        reverse=True,
+    )
+
+    latest_news=recent_news[0] if recent_news else None
+    latest_serra=None
+    latest_schedule=None
+    for item in recent_news:
+        hay=norm(" ".join([
+            str(item.get("titulo") or ""),
+            str(item.get("chamada") or ""),
+            str(item.get("texto") or ""),
+        ]))
+        if latest_serra is None and "SERRA DE PETROPOLIS" in hay:
+            latest_serra=item
+        if latest_schedule is None and "CRONOGRAMA DE OBRAS" in norm(item.get("titulo")):
+            latest_schedule=item
+        if latest_serra is not None and latest_schedule is not None:
+            break
+
+    def news_payload(item):
+        if not item:
+            return None
+        slug=item.get("slug")
+        return {
+            "title":item.get("titulo"),
+            "summary":_plain_excerpt(item.get("chamada") or item.get("texto"),520),
+            "serra_summary":_serra_excerpt(item) if "SERRA DE PETROPOLIS" in norm(str(item.get("texto") or "")+" "+str(item.get("chamada") or "")) else None,
+            "published_at":item.get("data"),
+            "slug":slug,
+            "url":("https://elovias.com.br/noticias/"+slug) if slug else None,
+            "image_url":item.get("imagemUrl"),
+        }
+
+    latest_bulletin=None
+    if bulletins:
+        item=bulletins[0]
+        latest_bulletin={
+            "title":item.get("titulo"),
+            "published_at":item.get("data"),
+            "pdf_url":item.get("arquivoUrl"),
+            "image_url":item.get("imagemUrl"),
+            "pages":len(item.get("paginas") or []),
+        }
+
+    active_alerts=[]
+    for a in alerts[:10]:
+        if not isinstance(a,dict):
+            continue
+        active_alerts.append({
+            "title":a.get("titulo") or a.get("nome") or a.get("assunto") or "Aviso Elovias",
+            "message":_plain_excerpt(a.get("texto") or a.get("mensagem") or a.get("descricao") or a.get("chamada"),500),
+            "start_at":a.get("dataInicio") or a.get("inicio") or a.get("data"),
+            "end_at":a.get("dataFim") or a.get("fim"),
+            "raw_type":a.get("tipo"),
+        })
+
+    connected=sum(1 for v in endpoint_status.values() if v=="ok")
+    return {
+        "provider":"Elovias",
+        "scope":"BR-040/495 MG/RJ · Serra de Petrópolis",
+        "status":"ok" if connected>=2 else ("degraded" if connected else "unavailable"),
+        "api_base":ELOVIAS_API,
+        "endpoint_status":endpoint_status,
+        "active_alerts":active_alerts,
+        "active_alert_count":len(active_alerts),
+        "no_active_alerts":endpoint_status.get("alerts")=="ok" and not active_alerts,
+        "petropolis_weather":petropolis,
+        "latest_news":news_payload(latest_news),
+        "latest_serra_update":news_payload(latest_serra),
+        "latest_schedule":news_payload(latest_schedule),
+        "latest_bulletin":latest_bulletin,
+        "alerts":alerts,
+        "weather":weather_points,
+        "news":recent_news[:8],
+        "bulletins":bulletins[:4],
+        "emergency_phone":"0800-040-0495",
+        "accessibility_phone":"0800-040-1495",
+        "whatsapp":"(21) 98040-0113",
+        "home_url":"https://elovias.com.br/home",
+        "map_url":"https://elovias.com.br/mapa",
+        "collected_at":now.isoformat(),
+        "message":"Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
+        "error":None if connected else "Nenhum endpoint da API Elovias respondeu nesta coleta.",
+    }
+
 def history_snapshot(payload):
     sources=payload.get("sources") or {}
     pv=payload.get("pluviometers") or {}
@@ -1045,48 +1217,8 @@ def fetch_inmet_forecast(previous):
         })
         return fallback
 
-def probe_elovias_assets():
-    try:
-        url="https://elovias.com.br/home"
-        r=requests.get(url,timeout=15,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
-        print("ELOVIAS_PROBE_STATUS",r.status_code,"LEN",len(r.text))
-        soup=BeautifulSoup(r.text,"html.parser")
-        scripts=[s.get("src") for s in soup.find_all("script") if s.get("src")]
-        print("ELOVIAS_PROBE_SCRIPTS",json.dumps(scripts,ensure_ascii=False))
-        for src in scripts:
-            if "elovias.com.br" in src or src.startswith("/"):
-                asset=src if src.startswith("http") else "https://elovias.com.br"+("/" if not src.startswith("/") else "")+src
-                try:
-                    jr=requests.get(asset,timeout=20,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
-                    print("ELOVIAS_ASSET",asset,jr.status_code,"LEN",len(jr.text))
-                    js=jr.text
-                    urls=sorted(set(re.findall(r"https?://[^\\\"'<> ]+",js)))
-                    api_paths=sorted(set(re.findall(r'[/][A-Za-z0-9_.-]*(?:api|noticias|boletim|trafego|tr[aá]fego)[A-Za-z0-9_./?=&%-]*',js,flags=re.I)))
-                    print("ELOVIAS_ASSET_URLS",json.dumps(urls[:80],ensure_ascii=False))
-                    print("ELOVIAS_ASSET_PATHS",json.dumps(api_paths[:120],ensure_ascii=False))
-                    for term in ("boletim","trafego","tráfego","noticias","cronograma"):
-                        pos=js.lower().find(term.lower())
-                        if pos>=0:
-                            print("ELOVIAS_ASSET_CONTEXT",term,re.sub(r"\\s+"," ",js[max(0,pos-900):pos+1800])[:2800])
-                except Exception as exc:
-                    print("ELOVIAS_ASSET_ERROR",asset,repr(exc))
-        api_base="https://cliente.api.elovias.com.br/v1/"
-        for endpoint in ("boletim","aviso","noticia/recente","mapa/trecho-principal"):
-            try:
-                ar=requests.get(api_base+endpoint,timeout=15,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0","Accept":"application/json"})
-                print("ELOVIAS_API",endpoint,ar.status_code,ar.headers.get("content-type"),ar.text[:5000])
-            except Exception as exc:
-                print("ELOVIAS_API_ERROR",endpoint,repr(exc))
-        for s in soup.find_all("script"):
-            txt=s.get_text(" ",strip=True)
-            if txt and any(k in txt.lower() for k in ("boletim","trafego","tráfego","noticia","api")):
-                print("ELOVIAS_PROBE_INLINE",re.sub(r"\\s+"," ",txt)[:2500])
-    except Exception as exc:
-        print("ELOVIAS_PROBE_ERROR",repr(exc))
-
 def main():
     os.makedirs("data",exist_ok=True)
-    probe_elovias_assets()
     previous=load_previous()
     geo=fetch_cemaden(1,"cemaden_geological","Deslizamento",previous)
     hydro=fetch_cemaden(2,"cemaden_hydrological","Hidrológico",previous)
@@ -1096,6 +1228,7 @@ def main():
     pluviometers=fetch_cemaden_pluviometers(previous)
     forecast=fetch_inmet_forecast(previous)
     inmet=fetch_inmet_alerts(previous)
+    roads=fetch_roads(previous)
 
     usable=[s for s in (geo,hydro,inmet) if isinstance(s.get("level"),int)]
     overall=max([s["level"] for s in usable], default=int((previous.get("overall") or {}).get("level") or 1))
@@ -1130,7 +1263,8 @@ def main():
       "weather_map":weather_map,
       "pluviometers":pluviometers,
       "forecast":forecast,
-      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"utilities":"pending"}
+      "roads":roads,
+      "integrations":{"cemaden_rj":"active","inmet_alerts":"active","inmet_forecast":forecast.get("status","unavailable"),"inmet_weather":weather.get("status","unavailable"),"weather_reference":weather_reference.get("status","source_unconfirmed"),"weather_map":weather_map.get("status","source_unconfirmed"),"radar":(weather_map.get("radar") or {}).get("status","unavailable"),"pluviometers":pluviometers.get("status","unavailable"),"roads":roads.get("status","unavailable"),"utilities":"pending"}
     }
     with open(OUT,"w",encoding="utf-8") as f: json.dump(payload,f,ensure_ascii=False,indent=2)
     persist_history(payload)
