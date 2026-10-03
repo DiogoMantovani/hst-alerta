@@ -32,3 +32,5 @@ jobs:
           HST_EMAIL_REPLY_TO: ${{ secrets.HST_EMAIL_REPLY_TO }}
           HST_EMAIL_FORCE_TEST: "true"
         run: python scripts/send_email.py
+
+# trigger
