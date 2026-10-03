@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-10-03T16:40:41.826035-03:00",
+  "generated_at": "2026-10-03T16:42:31.423252-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -26,7 +26,7 @@
       "last_known_updated_at": "2026-09-30T18:30:13-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-03T16:40:31.590947-03:00",
+      "collected_at": "2026-10-03T16:42:17.193383-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -37,13 +37,13 @@
       "risk": "Moderado",
       "level": 3,
       "official_updated_at": "2026-10-03T05:38:50-03:00",
-      "age_hours": 11.0,
+      "age_hours": 11.1,
       "last_known_risk": "Moderado",
       "last_known_level": 3,
       "last_known_updated_at": "2026-10-03T05:38:50-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-03T16:40:32.947764-03:00",
+      "collected_at": "2026-10-03T16:42:18.501793-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -57,7 +57,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-03T16:40:39.972548-03:00",
+      "collected_at": "2026-10-03T16:42:27.755594-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     }
@@ -70,7 +70,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-03T16:40:33.880720-03:00",
+    "collected_at": "2026-10-03T16:42:19.716461-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-02/2026-10-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-02"
   },
@@ -95,7 +95,7 @@
     "wind_gust_kmh": 11.2,
     "weather_code": 51,
     "condition": "Garoa fraca",
-    "collected_at": "2026-10-03T16:40:36.004960-03:00",
+    "collected_at": "2026-10-03T16:42:22.478845-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -111,7 +111,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-03T16:40:36.399824-03:00",
+    "grid_updated_at": "2026-10-03T16:42:23.067562-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -764,14 +764,14 @@
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-03T16:40:36.399824-03:00",
+    "collected_at": "2026-10-03T16:42:23.067562-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Dados brutos do Mapa Interativo do CEMADEN; horários de origem em UTC convertidos para Brasília.",
-    "collected_at": "2026-10-03T16:40:37.193969-03:00",
+    "collected_at": "2026-10-03T16:42:24.189238-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 15,
@@ -942,7 +942,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.4,
         "last_mm": 0.2,
         "acc1h_mm": 1.19,
         "acc3h_mm": 4.56,
@@ -963,7 +963,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:50",
         "observed_at": "2026-10-03T16:50:00-03:00",
-        "age_hours": -0.2,
+        "age_hours": -0.1,
         "last_mm": 0.2,
         "acc1h_mm": 1.2,
         "acc3h_mm": 3.4,
@@ -984,7 +984,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.4,
         "last_mm": 0.2,
         "acc1h_mm": 0.2,
         "acc3h_mm": 0.8,
@@ -1026,7 +1026,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:50",
         "observed_at": "2026-10-03T16:50:00-03:00",
-        "age_hours": -0.2,
+        "age_hours": -0.1,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1047,7 +1047,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.4,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1068,7 +1068,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:20",
         "observed_at": "2026-10-03T16:20:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.4,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1110,7 +1110,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 19:50",
         "observed_at": "2026-10-03T16:50:00-03:00",
-        "age_hours": -0.2,
+        "age_hours": -0.1,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1131,7 +1131,7 @@
         "distance_to_hst_km": 4.7,
         "raw_timestamp": "03/10/26 20:20",
         "observed_at": "2026-10-03T17:20:00-03:00",
-        "age_hours": -0.7,
+        "age_hours": -0.6,
         "last_mm": 0.0,
         "acc1h_mm": 0.2,
         "acc3h_mm": 2.19,
@@ -1152,7 +1152,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "03/10/26 20:20",
         "observed_at": "2026-10-03T17:20:00-03:00",
-        "age_hours": -0.7,
+        "age_hours": -0.6,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1299,7 +1299,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "27/04/25 12:50",
         "observed_at": "2025-04-27T09:50:00-03:00",
-        "age_hours": 12582.8,
+        "age_hours": 12582.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1340,7 +1340,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-03T16:40:38.365254-03:00",
+    "collected_at": "2026-10-03T16:42:25.955338-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -1453,6 +1453,490 @@
     ],
     "error": null
   },
+  "roads": {
+    "provider": "Elovias",
+    "scope": "BR-040/495 MG/RJ · Serra de Petrópolis",
+    "status": "ok",
+    "api_base": "https://cliente.api.elovias.com.br/v1/",
+    "endpoint_status": {
+      "alerts": "ok",
+      "weather": "ok",
+      "news": "ok",
+      "bulletins": "ok"
+    },
+    "active_alerts": [],
+    "active_alert_count": 0,
+    "no_active_alerts": true,
+    "petropolis_weather": {
+      "name": "Petrópolis",
+      "condition": "Pancadas de chuva",
+      "weather_icon": "showers",
+      "temperature_c": 16.8,
+      "wind_speed_kmh": 2.9,
+      "wind_direction_deg": 356.0,
+      "wind_direction": "N",
+      "updated_at": "2026-10-03T19:01:37.016253Z"
+    },
+    "latest_news": {
+      "title": "Elovias em Ação: Registro de Obras – 02 de Outubro/26",
+      "summary": "Entre os dias 28 de setembro e 2 de outubro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária. Como destaque da semana, avançaram os serviços da Ponte do Arranha-Céu, com execução de formas e concretagem das estruturas. Também seguiram as obras de implantação das novas Bases de Serviços Operacionais em diferentes pontos da rodovia...",
+      "serra_summary": "Na Serra de Petrópolis, foram realizadas manutenções e melhorias nos túneis Quitandinha, Papagaio, Washington Luiz e Ouriço, além de serviços nos sistemas elétricos, pavimentação, pavimentação rígida, instalação e manutenção de barreiras viárias, manutenção de defensas metálicas, execução de cercas, limpeza de drenagem e monitoramento de encostas e da sinalização.",
+      "published_at": "2026-10-02T00:00:00",
+      "slug": "elovias-em-acao-registro-de-obras-02-de-outubro-26",
+      "url": "https://elovias.com.br/noticias/elovias-em-acao-registro-de-obras-02-de-outubro-26",
+      "image_url": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/FySUaab14d6nxjAqw01iw3fBTXQLPPcs.webp"
+    },
+    "latest_serra_update": {
+      "title": "Elovias em Ação: Registro de Obras – 02 de Outubro/26",
+      "summary": "Entre os dias 28 de setembro e 2 de outubro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária. Como destaque da semana, avançaram os serviços da Ponte do Arranha-Céu, com execução de formas e concretagem das estruturas. Também seguiram as obras de implantação das novas Bases de Serviços Operacionais em diferentes pontos da rodovia...",
+      "serra_summary": "Na Serra de Petrópolis, foram realizadas manutenções e melhorias nos túneis Quitandinha, Papagaio, Washington Luiz e Ouriço, além de serviços nos sistemas elétricos, pavimentação, pavimentação rígida, instalação e manutenção de barreiras viárias, manutenção de defensas metálicas, execução de cercas, limpeza de drenagem e monitoramento de encostas e da sinalização.",
+      "published_at": "2026-10-02T00:00:00",
+      "slug": "elovias-em-acao-registro-de-obras-02-de-outubro-26",
+      "url": "https://elovias.com.br/noticias/elovias-em-acao-registro-de-obras-02-de-outubro-26",
+      "image_url": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/FySUaab14d6nxjAqw01iw3fBTXQLPPcs.webp"
+    },
+    "latest_schedule": {
+      "title": "Cronograma de Obras - 28 de Setembro/26",
+      "summary": "Entre os dias 28 de setembro e 04 de outubro, a Elovias dará continuidade ao cronograma de melhorias e manutenção na BR-040. As equipes estarão mobilizadas ao longo de todo o trecho sob concessão, cobrindo a Baixada Fluminense, a Serra de Petrópolis e o Planalto Fluminense e Mineiro, com foco contínuo em garantir segurança, fluidez e conforto para todos os motoristas. As intervenções abrangem serviços fundamentais de pavimentação, com frentes diurnas na Serra e no Baixada Fluminense com...",
+      "serra_summary": "na Serra de Petrópolis e atividades noturnas",
+      "published_at": "2026-09-28T00:00:00",
+      "slug": "cronograma-de-obras-28-de-setembro-26",
+      "url": "https://elovias.com.br/noticias/cronograma-de-obras-28-de-setembro-26",
+      "image_url": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/VMgrppPOVTYOqpPu61zeeyHWEYlB4Lye.webp"
+    },
+    "latest_bulletin": {
+      "title": "Setembro - 2026",
+      "published_at": "2026-09-10T00:00:00",
+      "pdf_url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ.pdf",
+      "image_url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p1.webp",
+      "pages": 11
+    },
+    "alerts": [],
+    "weather": [
+      {
+        "id": "355b2cf7-3b30-449a-9b16-96c219284865",
+        "kmIniId": "4de58aa9-2049-4186-b33b-d612fab431e6",
+        "nome": "Três Rios",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 20.6,
+        "vento": 4.2,
+        "ventoDirecao": 324,
+        "ventoDirecaoDescription": "NO",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:37.042148Z"
+      },
+      {
+        "id": "78db17ea-3bcf-4ea3-8650-a8a4e4fef25e",
+        "kmIniId": "8315c0bd-bf08-47bc-b86f-2f3e60d58a1e",
+        "nome": "Areal",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 19.5,
+        "vento": 4.2,
+        "ventoDirecao": 317,
+        "ventoDirecaoDescription": "NO",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:37.004723Z"
+      },
+      {
+        "id": "7d5aa930-e120-4e4b-8d13-b1452f5a5fb7",
+        "kmIniId": "851c6f85-847b-4390-99c8-b8328780be93",
+        "nome": "Simão Pereira",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 19.3,
+        "vento": 5.2,
+        "ventoDirecao": 102,
+        "ventoDirecaoDescription": "L",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:36.993912Z"
+      },
+      {
+        "id": "7fcaca47-0426-4ad9-837c-b75987fb6409",
+        "kmIniId": "6dbeeb96-b747-4119-b104-8e572c33bf94",
+        "nome": "Petrópolis",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 16.8,
+        "vento": 2.9,
+        "ventoDirecao": 356,
+        "ventoDirecaoDescription": "N",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:37.016253Z"
+      },
+      {
+        "id": "a05e4748-d6a3-4bc7-8f77-9f7c376c6306",
+        "kmIniId": "92d2f2dc-c462-4da1-8be0-773cc9f83187",
+        "nome": "Juiz de Fora",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 18.4,
+        "vento": 12.2,
+        "ventoDirecao": 73,
+        "ventoDirecaoDescription": "L",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:36.98185Z"
+      },
+      {
+        "id": "b6b18e95-80c4-4d75-9c26-97d348590abd",
+        "kmIniId": "3f168d0a-e562-4900-b02a-48fdd229a63d",
+        "nome": "Duque de Caxias",
+        "condicaoTempo": 55,
+        "condicaoTempoIcon": "drizzle",
+        "condicaoTempoDescription": "Garoa",
+        "temperatura": 21.0,
+        "vento": 11.2,
+        "ventoDirecao": 105,
+        "ventoDirecaoDescription": "L",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:37.052785Z"
+      },
+      {
+        "id": "d017c33a-331b-4a07-93fe-891088b63a4a",
+        "kmIniId": "5eb9e297-4933-41f5-853b-338456243616",
+        "nome": "Matias Barbosa",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 19.2,
+        "vento": 7.5,
+        "ventoDirecao": 98,
+        "ventoDirecaoDescription": "L",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:37.031471Z"
+      },
+      {
+        "id": "db65e116-5c95-4484-ae1b-b822df7029df",
+        "kmIniId": "1a384028-c3c9-4968-89fa-83e59490e733",
+        "nome": "Levy Gasparian",
+        "condicaoTempo": 80,
+        "condicaoTempoIcon": "showers",
+        "condicaoTempoDescription": "Pancadas de chuva",
+        "temperatura": 20.4,
+        "vento": 4.2,
+        "ventoDirecao": 353,
+        "ventoDirecaoDescription": "N",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-10-03T19:01:36.646689Z"
+      }
+    ],
+    "news": [
+      {
+        "id": "8814746e-f229-4adf-8386-f71756bd5ad2",
+        "tipo": 0,
+        "titulo": "Elovias em Ação: Registro de Obras – 02 de Outubro/26",
+        "chamada": "Entre os dias 28 de setembro e 2 de outubro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária. Como destaque da semana, avançaram os serviços da Ponte do Arranha-Céu, com execução de formas e concretagem das estruturas. Também seguiram as obras de implantação das novas Bases de Serviços Operacionais em diferentes pontos da rodovia...",
+        "texto": "Entre os dias 28 de setembro e 2 de outubro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária.\n\nComo destaque da semana, avançaram os serviços da Ponte do Arranha-Céu, com execução de formas e concretagem das estruturas. Também seguiram as obras de implantação das novas Bases de Serviços Operacionais em diferentes pontos da rodovia, ampliando a estrutura de atendimento aos usuários.Na Serra de Petrópolis, foram realizadas manutenções e melhorias nos túneis Quitandinha, Papagaio, Washington Luiz e Ouriço, além de serviços nos sistemas elétricos, pavimentação, pavimentação rígida, instalação e manutenção de barreiras viárias, manutenção de defensas metálicas, execução de cercas, limpeza de drenagem e monitoramento de encostas e da sinalização.\n\nNo trecho do Rio de Janeiro, as equipes executaram serviços de pintura e implantação de sinalização viária, instalação e limpeza de placas, concretagem de barreiras New Jersey, limpeza de acostamentos e obras de pavimentação. Na Baixada Fluminense, houve frentes de pavimentação e sinalização no período noturno, recuperação de juntas, contenção de encostas, manutenção de defensas metálicas, implantação de cercas e monitoramento contínuo do pavimento, da sinalização e dos sistemas elétricos. Em Minas Gerais, foram executadas ações de pintura e instalação de sinalização viária, contenção de encostas e ampliação da infraestrutura operacional, além do monitoramento de acessos, ocupações lindeiras, obras de arte especiais e cercas.\n\nA Elovias segue trabalhando para oferecer uma rodovia cada vez mais segura e moderna. Ao trafegar pelos trechos em obras, redobre a atenção, respeite a sinalização e os limites de velocidade e acompanhe as condições da via pelos canais oficiais da concessionária.",
+        "textoHtml": "<p>Entre os dias 28 de setembro e 2 de outubro, a Elovias manteve seu cronograma de intervenções na BR-040/495, com frentes de trabalho distribuídas entre Minas Gerais e Rio de Janeiro, voltadas à infraestrutura, conservação, pavimentação e segurança viária.</p>\n<p>Como destaque da semana, avançaram os serviços da Ponte do Arranha-Céu, com execução de formas e concretagem das estruturas. Também seguiram as obras de implantação das novas Bases de Serviços Operacionais em diferentes pontos da rodovia, ampliando a estrutura de atendimento aos usuários.Na Serra de Petrópolis, foram realizadas manutenções e melhorias nos túneis Quitandinha, Papagaio, Washington Luiz e Ouriço, além de serviços nos sistemas elétricos, pavimentação, pavimentação rígida, instalação e manutenção de barreiras viárias, manutenção de defensas metálicas, execução de cercas, limpeza de drenagem e monitoramento de encostas e da sinalização.</p>\n<p>No trecho do Rio de Janeiro, as equipes executaram serviços de pintura e implantação de sinalização viária, instalação e limpeza de placas, concretagem de barreiras New Jersey, limpeza de acostamentos e obras de pavimentação. Na Baixada Fluminense, houve frentes de pavimentação e sinalização no período noturno, recuperação de juntas, contenção de encostas, manutenção de defensas metálicas, implantação de cercas e monitoramento contínuo do pavimento, da sinalização e dos sistemas elétricos. Em Minas Gerais, foram executadas ações de pintura e instalação de sinalização viária, contenção de encostas e ampliação da infraestrutura operacional, além do monitoramento de acessos, ocupações lindeiras, obras de arte especiais e cercas.</p>\n<p>A Elovias segue trabalhando para oferecer uma rodovia cada vez mais segura e moderna. Ao trafegar pelos trechos em obras, redobre a atenção, respeite a sinalização e os limites de velocidade e acompanhe as condições da via pelos canais oficiais da concessionária.</p>\n",
+        "fonte": "Elovias",
+        "imagem": "Noticia/FySUaab14d6nxjAqw01iw3fBTXQLPPcs.webp",
+        "legenda": "Pavimento rígido da Serra da Elovias",
+        "data": "2026-10-02T00:00:00",
+        "slug": "elovias-em-acao-registro-de-obras-02-de-outubro-26",
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/FySUaab14d6nxjAqw01iw3fBTXQLPPcs.webp",
+        "imagens": [
+          {
+            "id": "57dcd9ef-6ea7-412f-ba27-66a745100f37",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/aOZr4W3ywtDYsYOy5eWBTM3yicfhAaX0.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/aOZr4W3ywtDYsYOy5eWBTM3yicfhAaX0.webp"
+          },
+          {
+            "id": "cd43bc17-3563-49a8-ac7e-83b41968bdab",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/9QUzlq8opub92nuCkbvjOh3OqONcAsH2.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/9QUzlq8opub92nuCkbvjOh3OqONcAsH2.webp"
+          },
+          {
+            "id": "00d770c9-c953-4764-98f3-677c9c7c7bf5",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/sR5ngJ5Hke8pVuupUiIOlZFEWpCUWFIJ.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/sR5ngJ5Hke8pVuupUiIOlZFEWpCUWFIJ.webp"
+          },
+          {
+            "id": "278def3f-2192-44dc-a38f-4a0834144c9d",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/0PX9lIEaLkrJ6myCeEf0eHr5FdN9yKAt.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/0PX9lIEaLkrJ6myCeEf0eHr5FdN9yKAt.webp"
+          },
+          {
+            "id": "c4a3c864-9b86-4871-a4f7-a2261cae3b58",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/YBHEHBlgTn5y2oulbhG4joUIomyv1yVf.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/YBHEHBlgTn5y2oulbhG4joUIomyv1yVf.webp"
+          },
+          {
+            "id": "9b8f5db5-e8fe-4d33-b1a2-ce9948c40054",
+            "noticiaId": "8814746e-f229-4adf-8386-f71756bd5ad2",
+            "arquivo": "NoticiaImagem/6slbXlQxC5ufh7zIHJICXFQRM5tf1ETV.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/6slbXlQxC5ufh7zIHJICXFQRM5tf1ETV.webp"
+          }
+        ]
+      },
+      {
+        "id": "1628ee96-e065-4d91-af41-e186a569cac2",
+        "tipo": 0,
+        "titulo": "Cronograma de Obras - 28 de Setembro/26",
+        "chamada": "Entre os dias 28 de setembro e 04 de outubro, a Elovias dará continuidade ao cronograma de melhorias e manutenção na BR-040. As equipes estarão mobilizadas ao longo de todo o trecho sob concessão, cobrindo a Baixada Fluminense, a Serra de Petrópolis e o Planalto Fluminense e Mineiro, com foco contínuo em garantir segurança, fluidez e conforto para todos os motoristas. As intervenções abrangem serviços fundamentais de pavimentação, com frentes diurnas na Serra e no Baixada Fluminense com...",
+        "texto": "A Elovias segue avançando com obras, manutenção e conservação ao longo dos trechos sob nossa concessão, da Baixada Fluminense à Serra de Petrópolis, passando pelos Planaltos Fluminense e Mineiro. Confira as principais frentes de trabalho da semana: Pavimentação e sinalização: Serviços de pavimentação e revitalização da sinalização horizontal e vertical, com intervenções diurnas na Serra de Petrópolis e atividades noturnas na Baixada Fluminense. Infraestrutura e encostas: Continuidade das obras na Ponte do Arranha-Céu, além de serviços de contenção de encostas, manutenção de barreiras e intervenções nos túneis.\n\n\n| KM | Sentido | Região | Serviço | Período |\n|----|----------|----------|----------|----------|\n| 0.0 | Norte/Sul | BR-040 RJ | Pintura e Instalação de Sinalização Viária | DIURNO |\n| 4.5 | Sul/Norte | BR-040 RJ | Avanço na Infraestrutura (Bases de Serviços Operacionais) | DIURNO |\n| 5.0 | Norte/Sul | BR-040 Serra | Manutenção no Sistema Elétrico | DIURNO |\n| 6.3 | Norte/Sul | BR-040 RJ | Instalação de Placas | DIURNO |\n| 34.447 | Norte/Sul | BR-040 RJ | Execução de Forma e Concretagem (Ponte de Arranha-Céu) | DIURNO |\n| 40.0 | Sul/Norte | BR-040 RJ | Pavimentação | DIURNO |\n| 50.0 | Norte/Sul | BR-040 RJ | Limpeza de Placas | DIURNO |\n| 56.0 | Norte/JF | BR-040 RJ | Avanço na Infraestrutura (Bases de Serviços Operacionais) | DIURNO |\n| 60.0 | Norte/Sul | BR-040 RJ | Concretagem de Barreiras Viárias (New Jersey) | DIURNO |\n| 65.0 | Sul/Norte | BR-040 SERRA | Pavimentação | DIURNO |\n| 70.0 | Norte/Sul | BR-040 SERRA | Pintura e Instalação de Sinalização Viária | DIURNO |\n| 80.0 | SUL/NORTE | BR-040 SERRA | Manutenção de Barreiras Viárias | DIURNO |\n| 80.0 | SUL/NORTE | BR-040 SERRA | Instalação de Barreiras Viárias | DIURNO |\n| 80.0 | Norte/Sul | BR-040 SERRA | Monitoramento de Sinalização Viária | DIURNO |\n| 81.0 | Norte/Sul | BR-040 SERRA | Monitoramento de Encostas | DIURNO |\n| 81.32 | Norte/Sul | BR-040 SERRA | Manutenções e Melhorias (Túnel Quitandinha) | DIURNO |\n| 83.0 | Sul/Norte | BR-040 SERRA | Execução de Cerca | DIURNO |\n| 84.1 | Norte/Sul | BR-040 SERRA | Manutenções e Melhorias (Túnel do Papagaio) | DIURNO |\n| 85.32 | Norte/Sul | BR-040 SERRA | Manutenções e Melhorias (Túnel do Washington Luiz) | DIURNO |\n| 85.34 | Norte/Sul | BR-040 SERRA | Manutenções e Melhorias (Túnel do Ouriço) | DIURNO |\n| 87.0 | NORTE/JF | BR-040 SERRA | Pavimentação | DIURNO |\n| 87.0 | Norte/Sul | BR-040 RJ | Limpeza de Acostamento | DIURNO |\n| 91.5 | Sul/Norte | BR-040 SERRA | Execução de Cerca | DIURNO |\n| 91.8 | NORTE/JF | BR-040 SERRA | Manutenção de Defesas Metálicas | DIURNO |\n| 92.0 | SUL/RJ | BR-040 SERRA | Pavimentação Rígida | DIURNO |\n| 96.0 | SUL/RJ | BR-040 SERRA | Pavimentação Rígida | DIURNO |\n| 97.4 | Norte/Sul | BR-040 RMRJ | Monitoramento do Pavimento | DIURNO |\n| 101.0 | SUL/NORTE | BR-040 SERRA | Limpeza de Drenagem | DIURNO |\n| 101.0 | Norte/Sul | BR-040 RMRJ | Monitoramento de Sistemas Elétricos | DIURNO |\n| 101.0 | Norte/Sul | BR-040 RMRJ | Monitoramento de Sistemas Elétricos | Noturno |\n| 102.0 | SUL/NORTE | BR-040 RMRJ | Recuperação de Juntas | NOTURNO |\n| 102.0 | NORTE/JF | BR-040 RMRJ | Contenção de Encosta | DIURNO |\n| 102.0 | NORTE/JF | BR-040 RMRJ | Contenção de Encosta | DIURNO |\n| 102.0 | Norte/Sul | BR-040 RMRJ | Monitoramento de Sinalização Viária | DIURNO |\n| 102.0 | Norte/Sul | BR-040 RMRJ | Monitoramento de Pavimento | DIURNO |\n| 102.6 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 102.6 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 104.0 | NORTE/JF | BR-040 RMRJ | Avanço na Infraestrutura (Bases de Serviços Operacionais) | DIURNO |\n| 104.6 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 104.6 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 108.6 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 112.1 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 112.1 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 113.0 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 114.0 | Sul/Norte | BR-040 RMRJ | Execução de Cerca | DIURNO |\n| 117.0 | NORTE/JF | BR-040 RMRJ | Pintura e Instalação de Sinalização Viária | NOTURNO |\n| 117.0 | NORTE/JF | BR-040 RMRJ | Pintura e Instalação de Sinalização Viária | NOTURNO |\n| 117.0 | Sul/Norte | BR-040 RMRJ | Execução de Cerca | DIURNO |\n| 123.0 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 123.7 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 123.7 | NORTE/JF | BR-040 RMRJ | Pavimentação | NOTURNO |\n| 124.0 | Norte/Sul | BR-040 RMRJ | Manutenção de Defensas Metálicas | DIURNO |\n| 776.0 | Norte/Sul | BR-040 MG | Pintura e Instalação de Sinalização Viária | DIURNO |\n| 776.1 | Norte/Sul | BR-040 MG | Monitoramento de Acessos | DIURNO |\n| 776.1 | Norte/Sul | BR-040 MG | Monitoramento de Ocupação | DIURNO |\n| 776.1 | Norte/Sul | BR-040 MG | Monitoramento de Obras de Artes Especiais | DIURNO |\n| 776.1 | Norte/Sul | BR-040 MG | Monitoramento de Cercas | DIURNO |\n| 779.0 | Sul/Norte | BR-040 MG | Contenção de Encostas | DIURNO |\n| 799.0 | Sul/Norte | BR-040 MG | Avanço na Infraestrutura (Bases de Serviços Operacionais) | DIURNO |\n| 806.0 | Norte/Sul | BR-040 MG | Pintura e Instalação de Sinalização Viária | DIURNO |\n\nConservação e limpeza: Roçada, limpeza, manutenção da drenagem, tapa-buracos e catação ao longo da rodovia.\n\n\n| KM | Sentido | Região | Serviço | Período |\n|------|----------|-------------|----------|----------|\n| Km 98+000 ao 101+000 | Sul | BR-040 SERRA | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 98+000 ao 101+500 | Sul | BR-040 SERRA | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 101+500 ao 99+000 | Norte | BR-040 SERRA | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 101+000 ao 98+000 | Norte | BR-040 SERRA | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 98+000 ao 101+000 | Sul | BR-040 SERRA | Roçada Mecanizada com Trator | DIURNO |\n| Km 124+000 | Norte | BR-040 RJ | Roçada Mecanizada com Trator | DIURNO |\n| Km 109+000 | Norte | BR-040 RJ | Roçada Mecanizada com Trator | DIURNO |\n| Km 124+900 ao 124+000 | Norte | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 125+200 ao 124+000 | Norte | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 124+000 ao 123+000 | Norte | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 123+000 ao 119+000 | Norte | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 119+000 ao 123+000 | Sul | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 121+000 | Norte/Sul | BR-040 RJ | Roçada Mecanizada com Roçadeira | NOTURNO |\n| Km 121+000 | Norte/Sul | BR-040 RJ | Roçada Mecanizada com Trator | NOTURNO |\n| Km 123+000 | Norte | BR-040 RJ | Roçada Mecanizada com Trator | NOTURNO |\n| Km 119+000 | Norte/Sul | BR-040 RJ | Roçada Mecanizada com Trator | NOTURNO |\n| Km 117+000 ao 114+000 | Norte | BR-040 RJ | Roçada Mecanizada com Trator | NOTURNO |\n| Km 124+000 | Norte | BR-040 RJ | Roçada Mecanizada com Trator | NOTURNO |\n| Km 85+700 | Sul | BR-040 SERRA | Limpeza de Sistema de Drenagem | DIURNO |\n| Km 102+000 ao 125+200 | Norte/Sul | BR-040 RJ | Catação Manual de Objetos | DIURNO |\n| Km 89+000 | Norte | BR-040 SERRA | Limpeza de Sistema de Drenagem | DIURNO |\n| Km 81+000 ao 80+500 | Norte | BR-040 SERRA | Limpeza de Sistema de Drenagem | DIURNO |\n| Km 81+000 ao 80+500 | Norte | BR-040 SERRA | Limpeza de Sistema de Drenagem | DIURNO |\n| Km 71+000 ao 73+000 | Norte | BR-040 RJ | Poda de Árvore | DIURNO |\n| Km 99+000 | Sul | BR-040 SERRA | Instalação de Poste de Câmera | DIURNO |\n| Km 84+000 ao 77+500 | Norte | BR-040 SERRA | Recomposição de Placa de Sinalização Vertical | DIURNO |\n| Km 93+200 | Sul | BR-040 SERRA | Recomposição de Placa de Sinalização Vertical | DIURNO |\n| Km 105+000 | Norte/Sul | BR-040 RJ | Recomposição de Placa de Sinalização Vertical | DIURNO |\n| Km 89+000 | Sul | BR-040 SERRA | Limpeza de Sistema de Drenagem | NOTURNO |\n| Km 109+000 ao 112+000 | Sul | BR-040 RJ | Limpeza de Caixa Coletora | NOTURNO |\n| Km 112+000 ao 115+000 | Sul | BR-040 RJ | Limpeza de Caixa Coletora | NOTURNO |\n| Km 115+000 ao 118+000 | Sul | BR-040 RJ | Limpeza de Caixa Coletora | NOTURNO |\n| Km 118+000 ao 121+000 | Sul | BR-040 RJ | Limpeza de Caixa Coletora | NOTURNO |\n| Km 124+000 | Norte | BR-040 RJ | Rastelagem e Recolhimento de Vegetação | NOTURNO |\n| Km 123+000 | Norte | BR-040 RJ | Rastelagem e Recolhimento de Vegetação | NOTURNO |\n| Km 121+000 | Norte/Sul | BR-040 RJ | Rastelagem e Recolhimento de Vegetação | NOTURNO |\n| Km 119+000 | Norte/Sul | BR-040 RJ | Rastelagem e Recolhimento de Vegetação | NOTURNO |\n| Km 117+000 ao 114+000 | Norte | BR-040 RJ | Rastelagem e Recolhimento de Vegetação | NOTURNO |\n| Km 92+900 | Norte | BR-040 SERRA | Limpeza de Sistema de Drenagem | NOTURNO |\n| Km 96+000 | Norte | BR-040 SERRA | Recomposição de Meio-Fio | NOTURNO |\n| Km 89+000 | Norte | BR-040 SERRA | Recomposição de Meio-Fio | NOTURNO |\n| Km 102+000 ao 125+200 | Norte/Sul | BR-040 RJ | Operação Tapa-Buraco | NOTURNO |\n| Km 101+000 ao 80+000 | Norte/Sul | BR-040 SERRA | Operação Tapa-Buraco | NOTURNO |\n| Km 102+000 ao 125+200 | Norte/Sul | BR-040 RJ | Operação Tapa-Buraco | NOTURNO |\n| Km 101+000 ao 80+000 | Norte/Sul | BR-040 SERRA | Operação Tapa-Buraco | NOTURNO |\n| Km 102+000 ao 125+200 | Norte/Sul | BR-040 RJ | Operação Tapa-Buraco | NOTURNO |\n| Km 94+000 ao 89+000 | Norte | BR-040 SERRA | Varrição Mecanizada | DIURNO |\n| Km 101+000 ao 98+000 | Sul | BR-040 SERRA | Varrição Mecanizada | DIURNO |\n| Km 112+000 ao 114+000 | Sul | BR-040 RJ | Varrição Mecanizada | NOTURNO |\n| Km 109+000 ao 112+000 | Sul | BR-040 RJ | Varrição Mecanizada | NOTURNO |\n| Km 112+000 ao 115+000 | Sul | BR-040 RJ | Varrição Mecanizada | NOTURNO |\n| Km 115+000 ao 118+000 | Sul | BR-040 RJ | Varrição Mecanizada | NOTURNO |\n| Km 118+000 ao 121+000 | Sul | BR-040 RJ | Varrição Mecanizada | NOTURNO |\n| Km 827+000 | Norte/Sul | BR-040 MG | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 831+400 ao 828+000 | Norte | BR-040 MG | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 828+000 ao 825+000 | Norte | BR-040 MG | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 825+000 ao 828+000 | Sul | BR-040 MG | Roçada Mecanizada com Roçadeira | DIURNO |\n| Km 828+000 ao 831+400 | Sul | BR-040 MG | Roçada Mecanizada com Roçadeira | DIURNO |\n\nAtenção, motorista: Durante a execução dos serviços, podem ocorrer retenções pontuais. Reduza a velocidade, mantenha distância segura do veículo à frente e acompanhe as condições da rodovia em tempo real pelos canais oficiais da Elovias. Mais cuidado, mais segurança e uma BR-040 cada vez melhor para todos. \n",
+        "textoHtml": "<p>A Elovias segue avançando com obras, manutenção e conservação ao longo dos trechos sob nossa concessão, da Baixada Fluminense à Serra de Petrópolis, passando pelos Planaltos Fluminense e Mineiro. Confira as principais frentes de trabalho da semana: Pavimentação e sinalização: Serviços de pavimentação e revitalização da sinalização horizontal e vertical, com intervenções diurnas na Serra de Petrópolis e atividades noturnas na Baixada Fluminense. Infraestrutura e encostas: Continuidade das obras na Ponte do Arranha-Céu, além de serviços de contenção de encostas, manutenção de barreiras e intervenções nos túneis.</p>\n<div class=\"table-responsive\"><table>\n<thead>\n<tr>\n<th>KM</th>\n<th>Sentido</th>\n<th>Região</th>\n<th>Serviço</th>\n<th>Período</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>0.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>4.5</td>\n<td>Sul/Norte</td>\n<td>BR-040 RJ</td>\n<td>Avanço na Infraestrutura (Bases de Serviços Operacionais)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>5.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 Serra</td>\n<td>Manutenção no Sistema Elétrico</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>6.3</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Instalação de Placas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>34.447</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Execução de Forma e Concretagem (Ponte de Arranha-Céu)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>40.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 RJ</td>\n<td>Pavimentação</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>50.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Placas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>56.0</td>\n<td>Norte/JF</td>\n<td>BR-040 RJ</td>\n<td>Avanço na Infraestrutura (Bases de Serviços Operacionais)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>60.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Concretagem de Barreiras Viárias (New Jersey)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>65.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 SERRA</td>\n<td>Pavimentação</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>70.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>80.0</td>\n<td>SUL/NORTE</td>\n<td>BR-040 SERRA</td>\n<td>Manutenção de Barreiras Viárias</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>80.0</td>\n<td>SUL/NORTE</td>\n<td>BR-040 SERRA</td>\n<td>Instalação de Barreiras Viárias</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>80.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Monitoramento de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>81.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Monitoramento de Encostas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>81.32</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Manutenções e Melhorias (Túnel Quitandinha)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>83.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 SERRA</td>\n<td>Execução de Cerca</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>84.1</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Manutenções e Melhorias (Túnel do Papagaio)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>85.32</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Manutenções e Melhorias (Túnel do Washington Luiz)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>85.34</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Manutenções e Melhorias (Túnel do Ouriço)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>87.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 SERRA</td>\n<td>Pavimentação</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>87.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Acostamento</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>91.5</td>\n<td>Sul/Norte</td>\n<td>BR-040 SERRA</td>\n<td>Execução de Cerca</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>91.8</td>\n<td>NORTE/JF</td>\n<td>BR-040 SERRA</td>\n<td>Manutenção de Defesas Metálicas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>92.0</td>\n<td>SUL/RJ</td>\n<td>BR-040 SERRA</td>\n<td>Pavimentação Rígida</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>96.0</td>\n<td>SUL/RJ</td>\n<td>BR-040 SERRA</td>\n<td>Pavimentação Rígida</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>97.4</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Monitoramento do Pavimento</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>101.0</td>\n<td>SUL/NORTE</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Drenagem</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>101.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Monitoramento de Sistemas Elétricos</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>101.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Monitoramento de Sistemas Elétricos</td>\n<td>Noturno</td>\n</tr>\n<tr>\n<td>102.0</td>\n<td>SUL/NORTE</td>\n<td>BR-040 RMRJ</td>\n<td>Recuperação de Juntas</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>102.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Contenção de Encosta</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>102.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Contenção de Encosta</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>102.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Monitoramento de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>102.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Monitoramento de Pavimento</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>102.6</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>102.6</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>104.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Avanço na Infraestrutura (Bases de Serviços Operacionais)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>104.6</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>104.6</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>108.6</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>112.1</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>112.1</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>113.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>114.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 RMRJ</td>\n<td>Execução de Cerca</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>117.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>117.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>117.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 RMRJ</td>\n<td>Execução de Cerca</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>123.0</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>123.7</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>123.7</td>\n<td>NORTE/JF</td>\n<td>BR-040 RMRJ</td>\n<td>Pavimentação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>124.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 RMRJ</td>\n<td>Manutenção de Defensas Metálicas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>776.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>776.1</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Monitoramento de Acessos</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>776.1</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Monitoramento de Ocupação</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>776.1</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Monitoramento de Obras de Artes Especiais</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>776.1</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Monitoramento de Cercas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>779.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 MG</td>\n<td>Contenção de Encostas</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>799.0</td>\n<td>Sul/Norte</td>\n<td>BR-040 MG</td>\n<td>Avanço na Infraestrutura (Bases de Serviços Operacionais)</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>806.0</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Pintura e Instalação de Sinalização Viária</td>\n<td>DIURNO</td>\n</tr>\n</tbody>\n</table></div>\n<p>Conservação e limpeza: Roçada, limpeza, manutenção da drenagem, tapa-buracos e catação ao longo da rodovia.</p>\n<div class=\"table-responsive\"><table>\n<thead>\n<tr>\n<th>KM</th>\n<th>Sentido</th>\n<th>Região</th>\n<th>Serviço</th>\n<th>Período</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>Km 98+000 ao 101+000</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 98+000 ao 101+500</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 101+500 ao 99+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 101+000 ao 98+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 98+000 ao 101+000</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 124+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 109+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 124+900 ao 124+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 125+200 ao 124+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 124+000 ao 123+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 123+000 ao 119+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 119+000 ao 123+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 121+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 121+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 123+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 119+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 117+000 ao 114+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 124+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Roçada Mecanizada com Trator</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 85+700</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 102+000 ao 125+200</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Catação Manual de Objetos</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 89+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 81+000 ao 80+500</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 81+000 ao 80+500</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 71+000 ao 73+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Poda de Árvore</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 99+000</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Instalação de Poste de Câmera</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 84+000 ao 77+500</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Recomposição de Placa de Sinalização Vertical</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 93+200</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Recomposição de Placa de Sinalização Vertical</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 105+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Recomposição de Placa de Sinalização Vertical</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 89+000</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 109+000 ao 112+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Caixa Coletora</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 112+000 ao 115+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Caixa Coletora</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 115+000 ao 118+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Caixa Coletora</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 118+000 ao 121+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Limpeza de Caixa Coletora</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 124+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Rastelagem e Recolhimento de Vegetação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 123+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Rastelagem e Recolhimento de Vegetação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 121+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Rastelagem e Recolhimento de Vegetação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 119+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Rastelagem e Recolhimento de Vegetação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 117+000 ao 114+000</td>\n<td>Norte</td>\n<td>BR-040 RJ</td>\n<td>Rastelagem e Recolhimento de Vegetação</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 92+900</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Limpeza de Sistema de Drenagem</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 96+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Recomposição de Meio-Fio</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 89+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Recomposição de Meio-Fio</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 102+000 ao 125+200</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Operação Tapa-Buraco</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 101+000 ao 80+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Operação Tapa-Buraco</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 102+000 ao 125+200</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Operação Tapa-Buraco</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 101+000 ao 80+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 SERRA</td>\n<td>Operação Tapa-Buraco</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 102+000 ao 125+200</td>\n<td>Norte/Sul</td>\n<td>BR-040 RJ</td>\n<td>Operação Tapa-Buraco</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 94+000 ao 89+000</td>\n<td>Norte</td>\n<td>BR-040 SERRA</td>\n<td>Varrição Mecanizada</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 101+000 ao 98+000</td>\n<td>Sul</td>\n<td>BR-040 SERRA</td>\n<td>Varrição Mecanizada</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 112+000 ao 114+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Varrição Mecanizada</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 109+000 ao 112+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Varrição Mecanizada</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 112+000 ao 115+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Varrição Mecanizada</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 115+000 ao 118+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Varrição Mecanizada</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 118+000 ao 121+000</td>\n<td>Sul</td>\n<td>BR-040 RJ</td>\n<td>Varrição Mecanizada</td>\n<td>NOTURNO</td>\n</tr>\n<tr>\n<td>Km 827+000</td>\n<td>Norte/Sul</td>\n<td>BR-040 MG</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 831+400 ao 828+000</td>\n<td>Norte</td>\n<td>BR-040 MG</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 828+000 ao 825+000</td>\n<td>Norte</td>\n<td>BR-040 MG</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 825+000 ao 828+000</td>\n<td>Sul</td>\n<td>BR-040 MG</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n<tr>\n<td>Km 828+000 ao 831+400</td>\n<td>Sul</td>\n<td>BR-040 MG</td>\n<td>Roçada Mecanizada com Roçadeira</td>\n<td>DIURNO</td>\n</tr>\n</tbody>\n</table></div>\n<p>Atenção, motorista: Durante a execução dos serviços, podem ocorrer retenções pontuais. Reduza a velocidade, mantenha distância segura do veículo à frente e acompanhe as condições da rodovia em tempo real pelos canais oficiais da Elovias. Mais cuidado, mais segurança e uma BR-040 cada vez melhor para todos.</p>\n",
+        "fonte": "Elovias",
+        "imagem": "Noticia/VMgrppPOVTYOqpPu61zeeyHWEYlB4Lye.webp",
+        "legenda": "Contenção de encosta no km 102 realizada pela Elovias",
+        "data": "2026-09-28T00:00:00",
+        "slug": "cronograma-de-obras-28-de-setembro-26",
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/VMgrppPOVTYOqpPu61zeeyHWEYlB4Lye.webp",
+        "imagens": []
+      },
+      {
+        "id": "15c79258-b7c9-441a-82b2-790c721132eb",
+        "tipo": 0,
+        "titulo": "Elovias em Ação: Registro de Obras – 25 de Setembro/26",
+        "chamada": "Entre os dias 21 e 25 de setembro, a Elovias deu sequência ao cronograma de intervenções na BR-040/495, mobilizando frentes de trabalho ao longo de todo o trecho sob concessão entre o Rio de Janeiro e Minas Gerais, com foco na infraestrutura, segurança viária e conservação da pista. Na Ponte do Arranha-Céu, as equipes avançaram nas etapas de concretagem e montagem de lajes. Ao mesmo tempo, seguiram em ritmo contínuo os trabalhos para implantação das novas Bases de Serviços Operacionais...",
+        "texto": "Entre os dias 21 e 25 de setembro, a Elovias deu sequência ao cronograma de intervenções na BR-040/495, mobilizando frentes de trabalho ao longo de todo o trecho sob concessão entre o Rio de Janeiro e Minas Gerais, com foco na infraestrutura, segurança viária e conservação da pista.\n\nNa Ponte do Arranha-Céu, as equipes avançaram nas etapas de concretagem e montagem de lajes. Ao mesmo tempo, seguiram em ritmo contínuo os trabalhos para implantação das novas Bases de Serviços Operacionais distribuídas pela rodovia, fortalecendo a estrutura de atendimento e suporte ao usuário.\n\nNos túneis da Serra de Petrópolis (Quitandinha, Papagaio, Washington Luiz e Ouriço), foram executadas rotinas de manutenção, melhorias e serviços nos sistemas elétricos. A pavimentação recebeu melhorias em pontos da Serra e da Baixada Fluminense, com frentes de pavimento flexível e rígido, incluindo ações no período noturno na Baixada. Nas encostas, prosseguiram as obras de contenção em trechos do Rio de Janeiro, da Serra, da Baixada Fluminense e de Minas Gerais.\n\nCompletando as atividades da semana, foram realizadas intervenções de pintura e sinalização viária, concretagem de barreiras New Jersey, instalação e manutenção de defensas metálicas e implantação de cercas ao longo do trecho. Houve também limpeza de acostamentos, manutenção e limpeza de placas, além de serviços nos sistemas elétricos, inclusive com etapa noturna. A concessionária manteve ainda o monitoramento constante de pavimento, sinalização, encostas, acessos e demais estruturas ao longo da rodovia.\n\nA Elovias segue trabalhando para entregar uma rodovia cada vez mais segura e moderna. Ao trafegar pelos trechos em obras, reforce a atenção, respeite a sinalização e os limites de velocidade, e acompanhe as condições da via pelos nossos canais oficiais.",
+        "textoHtml": "<p>Entre os dias 21 e 25 de setembro, a Elovias deu sequência ao cronograma de intervenções na BR-040/495, mobilizando frentes de trabalho ao longo de todo o trecho sob concessão entre o Rio de Janeiro e Minas Gerais, com foco na infraestrutura, segurança viária e conservação da pista.</p>\n<p>Na Ponte do Arranha-Céu, as equipes avançaram nas etapas de concretagem e montagem de lajes. Ao mesmo tempo, seguiram em ritmo contínuo os trabalhos para implantação das novas Bases de Serviços Operacionais distribuídas pela rodovia, fortalecendo a estrutura de atendimento e suporte ao usuário.</p>\n<p>Nos túneis da Serra de Petrópolis (Quitandinha, Papagaio, Washington Luiz e Ouriço), foram executadas rotinas de manutenção, melhorias e serviços nos sistemas elétricos. A pavimentação recebeu melhorias em pontos da Serra e da Baixada Fluminense, com frentes de pavimento flexível e rígido, incluindo ações no período noturno na Baixada. Nas encostas, prosseguiram as obras de contenção em trechos do Rio de Janeiro, da Serra, da Baixada Fluminense e de Minas Gerais.</p>\n<p>Completando as atividades da semana, foram realizadas intervenções de pintura e sinalização viária, concretagem de barreiras New Jersey, instalação e manutenção de defensas metálicas e implantação de cercas ao longo do trecho. Houve também limpeza de acostamentos, manutenção e limpeza de placas, além de serviços nos sistemas elétricos, inclusive com etapa noturna. A concessionária manteve ainda o monitoramento constante de pavimento, sinalização, encostas, acessos e demais estruturas ao longo da rodovia.</p>\n<p>A Elovias segue trabalhando para entregar uma rodovia cada vez mais segura e moderna. Ao trafegar pelos trechos em obras, reforce a atenção, respeite a sinalização e os limites de velocidade, e acompanhe as condições da via pelos nossos canais oficiais.</p>\n",
+        "fonte": "Elovias",
+        "imagem": "Noticia/aFCFGC4T9JsNexjcZbovShftm4CEwK2r.webp",
+        "legenda": "BSO da Elovias na BR-040",
+        "data": "2026-09-25T00:00:00",
+        "slug": "elovias-em-acao-registro-de-obras-25-de-setembro-26",
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Noticia/aFCFGC4T9JsNexjcZbovShftm4CEwK2r.webp",
+        "imagens": [
+          {
+            "id": "76a78498-fcdd-4b6a-9268-9355e18ed27d",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/iTNHmtjmhhgtO1LMYnEX1mY15XacKvk6.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/iTNHmtjmhhgtO1LMYnEX1mY15XacKvk6.webp"
+          },
+          {
+            "id": "b4bd04b5-8cda-414d-b93f-af1495534be0",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/tqih61ODWaU3p1maumKDPQeQSkRB1SYs.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/tqih61ODWaU3p1maumKDPQeQSkRB1SYs.webp"
+          },
+          {
+            "id": "b735eadd-3297-434b-93eb-148bf33050d4",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/HnAnhNHXA6rqpP4roTC47Zqrw2rDmxTw.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/HnAnhNHXA6rqpP4roTC47Zqrw2rDmxTw.webp"
+          },
+          {
+            "id": "0f0d4469-cea6-45e7-84a5-186c84e13d25",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/LaYyseIcw6aeUufzu6RFOwKK20JhQFDM.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/LaYyseIcw6aeUufzu6RFOwKK20JhQFDM.webp"
+          },
+          {
+            "id": "f968b2e8-3ff2-4c80-8225-7b9feddea9c2",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/vffahzwOfSidogAGNAryjXHoL4Xh2bdi.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/vffahzwOfSidogAGNAryjXHoL4Xh2bdi.webp"
+          },
+          {
+            "id": "4ee9be6e-93de-4444-9779-89887c3018a2",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/dF8QgGCukhzdjv6W9SCqYqbrtFGhn6Hs.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/dF8QgGCukhzdjv6W9SCqYqbrtFGhn6Hs.webp"
+          },
+          {
+            "id": "95db92b8-6478-4d92-bb9f-3ef3c7e8425e",
+            "noticiaId": "15c79258-b7c9-441a-82b2-790c721132eb",
+            "arquivo": "NoticiaImagem/hnjHeAh9BFwq2qXsJPQ6ZWIbO6JA6k2H.webp",
+            "legenda": "",
+            "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/NoticiaImagem/hnjHeAh9BFwq2qXsJPQ6ZWIbO6JA6k2H.webp"
+          }
+        ]
+      }
+    ],
+    "bulletins": [
+      {
+        "id": "399d4108-1c78-44f3-8170-28b9536cdd79",
+        "tipo": 0,
+        "titulo": "Setembro - 2026",
+        "data": "2026-09-10T00:00:00",
+        "paginas": [
+          {
+            "id": "p1_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p1.webp"
+          },
+          {
+            "id": "p2_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p2.webp"
+          },
+          {
+            "id": "p3_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p3.webp"
+          },
+          {
+            "id": "p4_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p4.webp"
+          },
+          {
+            "id": "p5_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p5.webp"
+          },
+          {
+            "id": "p6_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p6.webp"
+          },
+          {
+            "id": "p7_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p7.webp"
+          },
+          {
+            "id": "p8_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p8.webp"
+          },
+          {
+            "id": "p9_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p9.webp"
+          },
+          {
+            "id": "p10_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p10.webp"
+          },
+          {
+            "id": "p11_399d4108-1c78-44f3-8170-28b9536cdd79",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p11.webp"
+          }
+        ],
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ-p1.webp",
+        "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ/bpEfr7DL2H8rhEtAq9a1DCzOgmPgxcxZ.pdf"
+      },
+      {
+        "id": "e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+        "tipo": 0,
+        "titulo": "Agosto 2026",
+        "data": "2026-08-10T00:00:00",
+        "paginas": [
+          {
+            "id": "p1_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p1.webp"
+          },
+          {
+            "id": "p2_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p2.webp"
+          },
+          {
+            "id": "p3_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p3.webp"
+          },
+          {
+            "id": "p4_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p4.webp"
+          },
+          {
+            "id": "p5_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p5.webp"
+          },
+          {
+            "id": "p6_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p6.webp"
+          },
+          {
+            "id": "p7_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p7.webp"
+          },
+          {
+            "id": "p8_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p8.webp"
+          },
+          {
+            "id": "p9_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p9.webp"
+          },
+          {
+            "id": "p10_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p10.webp"
+          },
+          {
+            "id": "p11_e5214173-c681-45bc-bc2d-7d7ae9c6d1e2",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p11.webp"
+          }
+        ],
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn-p1.webp",
+        "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn/3EvquCNRsSuPlrwF3S2plAwEffpo0uTn.pdf"
+      },
+      {
+        "id": "490e342d-c71c-4749-ab20-780f025105a3",
+        "tipo": 0,
+        "titulo": "Julho 2026",
+        "data": "2026-07-09T00:00:00",
+        "paginas": [
+          {
+            "id": "p1_490e342d-c71c-4749-ab20-780f025105a3",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac-p1.webp"
+          },
+          {
+            "id": "p2_490e342d-c71c-4749-ab20-780f025105a3",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac-p2.webp"
+          },
+          {
+            "id": "p3_490e342d-c71c-4749-ab20-780f025105a3",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac-p3.webp"
+          },
+          {
+            "id": "p4_490e342d-c71c-4749-ab20-780f025105a3",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac-p4.webp"
+          }
+        ],
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac-p1.webp",
+        "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac/skdjfrQg8crx7RjCZaXeN2fFXOCKOoac.pdf"
+      },
+      {
+        "id": "1598749f-860f-4b1b-bded-462d653bd8bd",
+        "tipo": 0,
+        "titulo": "Junho 2026",
+        "data": "2026-06-08T00:00:00",
+        "paginas": [
+          {
+            "id": "p1_1598749f-860f-4b1b-bded-462d653bd8bd",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS-p1.webp"
+          },
+          {
+            "id": "p2_1598749f-860f-4b1b-bded-462d653bd8bd",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS-p2.webp"
+          },
+          {
+            "id": "p3_1598749f-860f-4b1b-bded-462d653bd8bd",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS-p3.webp"
+          },
+          {
+            "id": "p4_1598749f-860f-4b1b-bded-462d653bd8bd",
+            "url": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS-p4.webp"
+          }
+        ],
+        "imagemUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS-p1.webp",
+        "arquivoUrl": "https://cliente.api.elovias.com.br/v1/arquivo/Boletim/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS/NBRfrA6TqPz8SZDkmsByQQd730FA4QUS.pdf"
+      }
+    ],
+    "emergency_phone": "0800-040-0495",
+    "accessibility_phone": "0800-040-1495",
+    "whatsapp": "(21) 98040-0113",
+    "home_url": "https://elovias.com.br/home",
+    "map_url": "https://elovias.com.br/mapa",
+    "collected_at": "2026-10-03T16:42:29.938747-03:00",
+    "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
+    "error": null
+  },
   "integrations": {
     "cemaden_rj": "active",
     "inmet_alerts": "active",
@@ -1462,6 +1946,7 @@
     "weather_map": "ok",
     "radar": "ok",
     "pluviometers": "ok",
+    "roads": "ok",
     "utilities": "pending"
   }
 }
