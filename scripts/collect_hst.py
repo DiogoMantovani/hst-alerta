@@ -516,14 +516,14 @@ def fetch_defesa_civil(previous):
                 href="https://www.petropolis.rj.gov.br/pmp/"+href.lstrip("./")
             if href not in links:
                 links.append(href)
-            if len(links)>=15:
+            if len(links)>=4:
                 break
 
         latest_stage=None
         latest_news=None
         for url in links:
             try:
-                r=requests.get(url,timeout=6,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
+                r=requests.get(url,timeout=4,headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"})
                 r.raise_for_status()
                 art=BeautifulSoup(r.text,"html.parser")
                 title_el=art.find("h1") or art.find("h2")
