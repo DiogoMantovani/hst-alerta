@@ -1834,6 +1834,9 @@ def fetch_inmet_forecast(previous):
 
 OBS_RAIN_1H_MM=20.0
 OBS_RAIN_24H_MM=50.0
+BINGEN_SAFE_MAX_AGE_HOURS=2.0
+BINGEN_SAFE_SHORT_MM=20.0
+BINGEN_SAFE_24H_MM=50.0
 DEESCALATION_CONFIRMATIONS=3
 
 def supplemental_observation_signals(forecast, pluviometers):
@@ -1871,8 +1874,170 @@ def supplemental_observation_signals(forecast, pluviometers):
 
     return signals
 
-def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
-    """Escalation is immediate; de-escalation is gradual and source-aware."""
+def hydrological_normalization_evidence(hydro, geo, inmet, defesa, forecast, pluviometers):
+    """Evaluate whether stale hydrological information can stop blocking de-escalation.
+
+    Bingen - Geo is a local corroborating sensor, not a replacement for the
+    official CEMADEN hydrological risk classification.
+    """
+    evidence={
+        "applicable":False,
+        "safe":False,
+        "reference_station":"Bingen - Geo",
+        "reference_distance_km":None,
+        "bingen_status":None,
+        "bingen_age_hours":None,
+        "bingen_short_window":"1 h",
+        "bingen_short_mm":None,
+        "bingen_24h_mm":None,
+        "city_highest_1h_mm":None,
+        "city_highest_24h_mm":None,
+        "inmet_clear":False,
+        "forecast_and_pluvio_clear":False,
+        "defesa_clear":False,
+        "geological_old_allowed":False,
+        "checks":{},
+        "blockers":[],
+    }
+
+    hydro_status=(hydro or {}).get("status")
+    hydro_age=safe_float((hydro or {}).get("age_hours"))
+    evidence["applicable"]=bool(
+        hydro_status=="no_recent_update"
+        and hydro_age is not None
+        and hydro_age>=(hydro or {}).get("freshness_limit_hours",24)
+    )
+    if not evidence["applicable"]:
+        evidence["blockers"].append("Hidrológico ainda não está em condição de dado antigo elegível.")
+        return evidence
+
+    stations=(pluviometers or {}).get("stations") or []
+    bingen=next(
+        (s for s in stations if norm((s or {}).get("name"))=="BINGEN - GEO"),
+        None,
+    )
+    if not bingen:
+        evidence["blockers"].append("Bingen - Geo não localizado na coleta.")
+        return evidence
+
+    evidence["reference_distance_km"]=bingen.get("distance_to_hst_km")
+    evidence["bingen_status"]=bingen.get("status")
+    evidence["bingen_age_hours"]=safe_float(bingen.get("age_hours"))
+
+    bingen_1h=safe_float(bingen.get("acc1h_mm"))
+    bingen_12h=safe_float(bingen.get("acc12h_mm"))
+    # If the 1 h accumulator is temporarily absent, a 12 h total below the same
+    # threshold is a conservative proof that no 1 h interval can exceed it.
+    if bingen_1h is not None:
+        short_mm=bingen_1h
+        short_window="1 h"
+    else:
+        short_mm=bingen_12h
+        short_window="12 h (substituto conservador)"
+    evidence["bingen_short_window"]=short_window
+    evidence["bingen_short_mm"]=short_mm
+    evidence["bingen_24h_mm"]=safe_float(bingen.get("acc24h_mm"))
+
+    city_h1=safe_float(((pluviometers or {}).get("highest_1h") or {}).get("value"))
+    city_h24=safe_float(((pluviometers or {}).get("highest_24h") or {}).get("value"))
+    evidence["city_highest_1h_mm"]=city_h1
+    evidence["city_highest_24h_mm"]=city_h24
+
+    bingen_recent=(
+        bingen.get("status")=="ok"
+        and evidence["bingen_age_hours"] is not None
+        and -0.25<=evidence["bingen_age_hours"]<=BINGEN_SAFE_MAX_AGE_HOURS
+    )
+    bingen_short_safe=short_mm is not None and short_mm<BINGEN_SAFE_SHORT_MM
+    bingen_24h_safe=(
+        evidence["bingen_24h_mm"] is not None
+        and evidence["bingen_24h_mm"]<BINGEN_SAFE_24H_MM
+    )
+    city_1h_safe=city_h1 is not None and city_h1<OBS_RAIN_1H_MM
+    city_24h_safe=city_h24 is not None and city_h24<OBS_RAIN_24H_MM
+
+    inmet_clear=(
+        (inmet or {}).get("status")=="ok"
+        and isinstance((inmet or {}).get("level"),int)
+        and int(inmet.get("level"))<=1
+    )
+    evidence["inmet_clear"]=inmet_clear
+
+    supplemental=supplemental_observation_signals(forecast,pluviometers)
+    evidence["forecast_and_pluvio_clear"]=not supplemental
+
+    defesa_clear=not (
+        (defesa or {}).get("status")=="ok"
+        and isinstance((defesa or {}).get("level"),int)
+        and int(defesa.get("level"))>=2
+    )
+    evidence["defesa_clear"]=defesa_clear
+
+    geo_status=(geo or {}).get("status")
+    evidence["geological_old_allowed"]=geo_status=="no_recent_update"
+
+    checks={
+        "bingen_recent":bingen_recent,
+        "bingen_short_safe":bingen_short_safe,
+        "bingen_24h_safe":bingen_24h_safe,
+        "city_1h_safe":city_1h_safe,
+        "city_24h_safe":city_24h_safe,
+        "inmet_clear":inmet_clear,
+        "forecast_and_pluvio_clear":evidence["forecast_and_pluvio_clear"],
+        "defesa_clear":defesa_clear,
+    }
+    evidence["checks"]=checks
+
+    labels={
+        "bingen_recent":"Bingen - Geo sem leitura recente",
+        "bingen_short_safe":"Bingen - Geo acima do limite de curto prazo",
+        "bingen_24h_safe":"Bingen - Geo acima do limite de 24 h",
+        "city_1h_safe":"Há pluviômetro recente em Petrópolis acima do limite de 1 h",
+        "city_24h_safe":"Há pluviômetro recente em Petrópolis acima do limite de 24 h",
+        "inmet_clear":"INMET não confirma cenário de normalização",
+        "forecast_and_pluvio_clear":"Previsão ou pluviometria ainda contém gatilho de Observação",
+        "defesa_clear":"Defesa Civil possui sinal operacional oficial recente",
+    }
+    evidence["blockers"]=[labels[k] for k,v in checks.items() if not v]
+    evidence["safe"]=all(checks.values())
+    return evidence
+
+
+def deescalation_source_readiness(geo, hydro, inmet, local_hydro):
+    """Return blockers for de-escalation, treating stale data differently from outage."""
+    blockers=[]
+
+    inmet_status=(inmet or {}).get("status")
+    if not (
+        inmet_status=="ok"
+        and isinstance((inmet or {}).get("level"),int)
+    ):
+        blockers.append("INMET sem confirmação atual")
+
+    hydro_status=(hydro or {}).get("status")
+    if hydro_status=="ok" and isinstance((hydro or {}).get("level"),int):
+        pass
+    elif hydro_status=="no_recent_update":
+        if not (local_hydro or {}).get("safe"):
+            blockers.append("Hidrológico antigo sem confirmação local segura pelo Bingen")
+    else:
+        blockers.append("Hidrológico indisponível ou não confirmado")
+
+    geo_status=(geo or {}).get("status")
+    if geo_status=="ok" and isinstance((geo or {}).get("level"),int):
+        pass
+    elif geo_status=="no_recent_update":
+        # A geological classification older than its validity window no longer
+        # freezes de-escalation. If it updates again, it immediately participates.
+        pass
+    else:
+        blockers.append("Geológico indisponível ou não confirmado")
+
+    return blockers
+
+
+def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, local_hydro):
+    """Escalation is immediate; de-escalation is gradual and evidence-aware."""
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
     try:
         previous_level=int(prev_overall.get("level") or 1)
@@ -1880,10 +2045,8 @@ def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
         previous_level=1
 
     state=prev_overall.get("deescalation") or {}
-    complete=all(
-        isinstance(s,dict) and s.get("status")=="ok" and isinstance(s.get("level"),int)
-        for s in core_sources
-    )
+    blockers=deescalation_source_readiness(geo,hydro,inmet,local_hydro)
+    mode="bingen_local" if (local_hydro or {}).get("safe") else "standard"
 
     if candidate_level>=previous_level:
         return candidate_level,{
@@ -1892,16 +2055,22 @@ def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
             "consecutive_confirmations":0,
             "confirmations_required":DEESCALATION_CONFIRMATIONS,
             "blocked_by_source_gap":False,
+            "mode":mode,
+            "blocked_reasons":blockers,
+            "local_hydrological_evidence":local_hydro,
         },False
 
     target=max(candidate_level,previous_level-1)
-    if not complete:
+    if blockers:
         return previous_level,{
             "pending":True,
             "target_level":target,
             "consecutive_confirmations":0,
             "confirmations_required":DEESCALATION_CONFIRMATIONS,
             "blocked_by_source_gap":True,
+            "mode":mode,
+            "blocked_reasons":blockers,
+            "local_hydrological_evidence":local_hydro,
         },True
 
     previous_target=state.get("target_level")
@@ -1915,6 +2084,9 @@ def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
             "consecutive_confirmations":0,
             "confirmations_required":DEESCALATION_CONFIRMATIONS,
             "blocked_by_source_gap":False,
+            "mode":mode,
+            "blocked_reasons":[],
+            "local_hydrological_evidence":local_hydro,
         },False
 
     return previous_level,{
@@ -1923,6 +2095,9 @@ def apply_deescalation_hysteresis(candidate_level, previous, core_sources):
         "consecutive_confirmations":count,
         "confirmations_required":DEESCALATION_CONFIRMATIONS,
         "blocked_by_source_gap":False,
+        "mode":mode,
+        "blocked_reasons":[],
+        "local_hydrological_evidence":local_hydro,
     },True
 
 def main():
@@ -1975,8 +2150,12 @@ def main():
     if supplemental_observation and candidate<2:
         candidate=2
 
+    local_hydro_normalization=hydrological_normalization_evidence(
+        hydro,geo,inmet,defesa,forecast,pluviometers
+    )
+
     overall,deescalation,deescalation_held=apply_deescalation_hysteresis(
-        candidate,previous,(geo,hydro,inmet)
+        candidate,previous,geo,hydro,inmet,local_hydro_normalization
     )
 
     driver_floor=max(1,candidate-(1 if escalated else 0))
@@ -2006,15 +2185,28 @@ def main():
     if gaps:
         reason_parts.append("Sem confirmação oficial recente em: "+", ".join(gaps))
 
+    if local_hydro_normalization.get("safe"):
+        short_value=local_hydro_normalization.get("bingen_short_mm")
+        day_value=local_hydro_normalization.get("bingen_24h_mm")
+        short_window=local_hydro_normalization.get("bingen_short_window") or "curto prazo"
+        reason_parts.append(
+            "Normalização hidrológica local elegível pelo Bingen - Geo "
+            +f"({short_value:.1f} mm/{short_window}; {day_value:.1f} mm/24 h)"
+        )
+
     if deescalation_held:
         if deescalation.get("blocked_by_source_gap"):
-            reason_parts.append("Rebaixamento retido por indisponibilidade ou defasagem de fonte oficial")
+            blocked=", ".join(deescalation.get("blocked_reasons") or [])
+            reason_parts.append(
+                "Rebaixamento retido por evidência insuficiente"
+                +((": "+blocked) if blocked else "")
+            )
         else:
             reason_parts.append(
-                "Rebaixamento aguardando "
+                "Normalização em avaliação: "
                 +str(deescalation.get("consecutive_confirmations") or 0)
                 +"/"+str(DEESCALATION_CONFIRMATIONS)
-                +" coletas consecutivas de melhora"
+                +" coletas consecutivas de melhora para o próximo nível"
             )
 
     reason=". ".join(x.rstrip(".") for x in reason_parts if x)+"."
@@ -2033,7 +2225,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Valores preservados de fontes sem atualização recente, não confirmadas ou indisponíveis não provocam nova subida; nesses casos, o nível anterior pode ser mantido pela histerese. Defesa Civil de Petrópolis pode elevar o nível por estágio operacional recente ou por sinal operacional oficial recente, como acionamento de sirenes e abertura de pontos de apoio. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Previsão de chuva forte/intensa e pluviometria elevada podem levar somente a Observação (2). Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora e não ocorre com lacuna das fontes-base CEMADEN/INMET."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
