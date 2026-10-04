@@ -1928,17 +1928,22 @@ def hydrological_normalization_evidence(hydro, geo, inmet, defesa, forecast, plu
 
     bingen_1h=safe_float(bingen.get("acc1h_mm"))
     bingen_12h=safe_float(bingen.get("acc12h_mm"))
-    # If the 1 h accumulator is temporarily absent, a 12 h total below the same
-    # threshold is a conservative proof that no 1 h interval can exceed it.
+    bingen_24h=safe_float(bingen.get("acc24h_mm"))
+    # If the 1 h accumulator is temporarily absent, a longer non-negative
+    # accumulation below the same 20 mm threshold is a conservative upper bound
+    # for any contained 1 h interval. Prefer 12 h, then 24 h.
     if bingen_1h is not None:
         short_mm=bingen_1h
         short_window="1 h"
-    else:
+    elif bingen_12h is not None:
         short_mm=bingen_12h
         short_window="12 h (substituto conservador)"
+    else:
+        short_mm=bingen_24h
+        short_window="24 h (substituto conservador)"
     evidence["bingen_short_window"]=short_window
     evidence["bingen_short_mm"]=short_mm
-    evidence["bingen_24h_mm"]=safe_float(bingen.get("acc24h_mm"))
+    evidence["bingen_24h_mm"]=bingen_24h
 
     city_h1=safe_float(((pluviometers or {}).get("highest_1h") or {}).get("value"))
     city_h24=safe_float(((pluviometers or {}).get("highest_24h") or {}).get("value"))
