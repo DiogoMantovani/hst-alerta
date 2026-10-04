@@ -3,6 +3,7 @@ import json
 import os
 import re
 import unicodedata
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
@@ -33,6 +34,7 @@ DEFESA_CIVIL_METEO_PAGE = "https://www.petropolis.rj.gov.br/pmp/index.php/boleti
 DEFESA_CIVIL_JOURNALISM = "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo"
 DEFESA_CIVIL_RSS = DEFESA_CIVIL_JOURNALISM + "?format=feed&type=rss"
 DEFESA_CIVIL_CACHE_READER = "https://r.jina.ai/"
+DEFESA_CIVIL_NEWS_INDEX = "https://news.google.com/rss/search"
 DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
 HST_LAT = -22.50825
 HST_LON = -43.19345
@@ -733,6 +735,7 @@ def fetch_defesa_civil(previous):
         "message":"Cache secundário não necessário nesta coleta.",
     }
     cache_pages={}
+    cache_index_items=[]
 
     def cache_get_official(url, timeout=8):
         # Third-party reader used only as an intermediary cache of official URLs.
@@ -788,9 +791,86 @@ def fetch_defesa_civil(previous):
             "message":(
                 "Cache secundário ativo somente para contexto; não pode elevar o Nível HST."
                 if cache_ok
-                else "Cache secundário também indisponível nesta coleta."
+                else "Proxy de leitura indisponível; tentando índice RSS secundário."
             ),
         }
+
+        if not cache_ok:
+            try:
+                index_response=requests.get(
+                    DEFESA_CIVIL_NEWS_INDEX,
+                    params={
+                        "q":'site:petropolis.rj.gov.br "Defesa Civil" Petrópolis',
+                        "hl":"pt-BR",
+                        "gl":"BR",
+                        "ceid":"BR:pt-419",
+                    },
+                    timeout=8,
+                    headers={"User-Agent":"HST-Alerta/1.0","Accept":"application/rss+xml,application/xml,text/xml,*/*"},
+                )
+                index_response.raise_for_status()
+                root=ET.fromstring(index_response.text)
+                for item in root.findall(".//item")[:20]:
+                    title=(item.findtext("title") or "").strip()
+                    link=(item.findtext("link") or "").strip()
+                    pub_raw=(item.findtext("pubDate") or "").strip()
+                    source=item.find("source")
+                    source_name=(source.text or "").strip() if source is not None and source.text else None
+                    source_url=source.attrib.get("url") if source is not None else None
+                    published=None
+                    if pub_raw:
+                        try:
+                            published=parsedate_to_datetime(pub_raw)
+                            published=published.astimezone(TZ) if published.tzinfo else published.replace(tzinfo=TZ)
+                        except Exception:
+                            published=parse_portuguese_datetime(pub_raw)
+                    combined=norm((title or "")+" "+(source_name or ""))
+                    if "DEFESA CIVIL" not in combined and not any(
+                        term in combined
+                        for term in ("SIREN","PONTO DE APOIO","RISCO DE DESLIZAMENTO","CELL BROADCAST")
+                    ):
+                        continue
+                    cache_index_items.append({
+                        "title":title or "Publicação indexada da Defesa Civil",
+                        "url":link or source_url or DEFESA_CIVIL_JOURNALISM,
+                        "official_source_url":source_url,
+                        "published":published,
+                        "text":title,
+                        "normalized":combined,
+                        "verification":"cache_index",
+                    })
+
+                if cache_index_items:
+                    cache_result={
+                        "provider":"Google News RSS",
+                        "status":"ok",
+                        "used":True,
+                        "can_escalate":False,
+                        "routes":{
+                            **cache_routes,
+                            "news_index":{
+                                "status":"ok",
+                                "url":index_response.url,
+                                "items":len(cache_index_items),
+                            },
+                        },
+                        "available_routes":["news_index"],
+                        "message":"Índice RSS secundário ativo somente para contexto; não pode elevar o Nível HST.",
+                    }
+                else:
+                    cache_result["routes"]["news_index"]={
+                        "status":"ok",
+                        "url":index_response.url,
+                        "items":0,
+                    }
+                    cache_result["message"]="Índice RSS respondeu, mas sem publicação relevante identificada nesta coleta."
+            except Exception as exc:
+                cache_result["routes"]["news_index"]={
+                    "status":"unavailable",
+                    "url":DEFESA_CIVIL_NEWS_INDEX,
+                    "error":exc.__class__.__name__,
+                }
+                cache_result["message"]="Caches intermediários indisponíveis nesta coleta."
 
     def canonical_article_url(href):
         href=str(href or "").strip()
@@ -902,6 +982,7 @@ def fetch_defesa_civil(previous):
         return fallback
 
     if cache_result.get("used"):
+        cached_context_items.extend(cache_index_items)
         cached_links=[]
         for page in cache_pages.values():
             for match in re.findall(
