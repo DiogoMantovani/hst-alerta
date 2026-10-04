@@ -32,6 +32,7 @@ DEFESA_CIVIL_BOLETIM = "https://www.petropolis.rj.gov.br/boletim"
 DEFESA_CIVIL_METEO_PAGE = "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil"
 DEFESA_CIVIL_JOURNALISM = "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo"
 DEFESA_CIVIL_RSS = DEFESA_CIVIL_JOURNALISM + "?format=feed&type=rss"
+DEFESA_CIVIL_CACHE_READER = "https://r.jina.ai/"
 DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
 HST_LAT = -22.50825
 HST_LON = -43.19345
@@ -723,6 +724,74 @@ def fetch_defesa_civil(previous):
 
     successful_routes=[key for key,item in route_results.items() if item.get("status")=="ok"]
 
+    cache_result={
+        "provider":"Jina Reader",
+        "status":"not_used",
+        "used":False,
+        "can_escalate":False,
+        "routes":{},
+        "message":"Cache secundário não necessário nesta coleta.",
+    }
+    cache_pages={}
+
+    def cache_get_official(url, timeout=8):
+        # Third-party reader used only as an intermediary cache of official URLs.
+        # Its content is informational and is never allowed to create HST escalation.
+        proxy_url=DEFESA_CIVIL_CACHE_READER+url
+        response=requests.get(
+            proxy_url,
+            timeout=timeout,
+            headers={"User-Agent":"HST-Alerta/1.0","Accept":"text/plain,*/*"},
+        )
+        response.raise_for_status()
+        if not response.text.strip():
+            raise RuntimeError("cache vazio")
+        return response
+
+    if not successful_routes:
+        cache_targets={
+            "jornalismo":DEFESA_CIVIL_JOURNALISM,
+            "tag_defesa_civil":DEFESA_CIVIL_TAG,
+            "boletim_meteorologico":DEFESA_CIVIL_METEO_PAGE,
+        }
+        cache_routes={}
+        with ThreadPoolExecutor(max_workers=len(cache_targets)) as executor:
+            futures={
+                executor.submit(cache_get_official,url,8):(key,url)
+                for key,url in cache_targets.items()
+            }
+            for future in as_completed(futures):
+                key,url=futures[future]
+                try:
+                    response=future.result()
+                    cache_pages[key]=response.text
+                    cache_routes[key]={
+                        "status":"ok",
+                        "official_url":url,
+                        "cache_url":response.url,
+                    }
+                except Exception as exc:
+                    cache_routes[key]={
+                        "status":"unavailable",
+                        "official_url":url,
+                        "error":exc.__class__.__name__,
+                    }
+
+        cache_ok=[key for key,item in cache_routes.items() if item.get("status")=="ok"]
+        cache_result={
+            "provider":"Jina Reader",
+            "status":"ok" if cache_ok else "unavailable",
+            "used":bool(cache_ok),
+            "can_escalate":False,
+            "routes":cache_routes,
+            "available_routes":cache_ok,
+            "message":(
+                "Cache secundário ativo somente para contexto; não pode elevar o Nível HST."
+                if cache_ok
+                else "Cache secundário também indisponível nesta coleta."
+            ),
+        }
+
     def canonical_article_url(href):
         href=str(href or "").strip()
         if not href:
@@ -801,6 +870,82 @@ def fetch_defesa_civil(previous):
                     article_items.append(future.result())
                 except Exception:
                     continue
+
+    cached_context_items=[]
+
+    def cached_datetime(text):
+        text=str(text or "")
+        for pattern in (
+            r"(?im)^Published Time:\s*(.+)$",
+            r"(?im)^Published:\s*(.+)$",
+            r"(?im)^Data(?: de publicação)?\s*[:\-]\s*(.+)$",
+        ):
+            match=re.search(pattern,text)
+            if match:
+                raw=match.group(1).strip()
+                parsed=parse_portuguese_datetime(raw)
+                if parsed:
+                    return parsed
+                try:
+                    parsed=parsedate_to_datetime(raw)
+                    return parsed.astimezone(TZ) if parsed.tzinfo else parsed.replace(tzinfo=TZ)
+                except Exception:
+                    pass
+        iso_match=re.search(r"20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:Z|[+\-]\d{2}:?\d{2})?",text)
+        return parse_dt(iso_match.group(0)) if iso_match else None
+
+    def cached_title(text, fallback):
+        for pattern in (r"(?im)^Title:\s*(.+)$",r"(?m)^#\s+(.+)$"):
+            match=re.search(pattern,str(text or ""))
+            if match:
+                return re.sub(r"\s+"," ",match.group(1)).strip()[:300]
+        return fallback
+
+    if cache_result.get("used"):
+        cached_links=[]
+        for page in cache_pages.values():
+            for match in re.findall(
+                r"https?://(?:www\.)?petropolis\.rj\.gov\.br/[^\s\]\)\>\"']*?/noticias/item/[^\s\]\)\>\"']+",
+                page,
+                flags=re.I,
+            ):
+                clean=match.rstrip(".,;:")
+                if clean not in cached_links:
+                    cached_links.append(clean)
+
+        cached_article_pages=[]
+        for url in cached_links[:8]:
+            try:
+                response=cache_get_official(url,7)
+                cached_article_pages.append((url,response.text))
+            except Exception:
+                continue
+
+        source_pages=cached_article_pages or [
+            (route_defs.get(key) or DEFESA_CIVIL_HOME,page)
+            for key,page in cache_pages.items()
+        ]
+        for official_url,page in source_pages:
+            normalized=norm(page)
+            if not any(term in normalized for term in (
+                "DEFESA CIVIL","SIREN","PONTO DE APOIO","PONTOS DE APOIO",
+                "RISCO DE DESLIZAMENTO","RISCO DE INUNDACAO","ESTAGIO OPERACIONAL",
+                "BOLETIM METEOROLOGICO","CELL BROADCAST",
+            )):
+                continue
+            cached_context_items.append({
+                "title":cached_title(page,"Publicação oficial recuperada via cache"),
+                "url":official_url,
+                "published":cached_datetime(page),
+                "text":page[:18000],
+                "normalized":normalized,
+                "verification":"cache_indirect",
+            })
+
+        cached_context_items.sort(
+            key=lambda item:item.get("published") or datetime.min.replace(tzinfo=TZ),
+            reverse=True,
+        )
 
     parsed_items=[]
     seen=set()
@@ -887,6 +1032,38 @@ def fetch_defesa_civil(previous):
     latest_news_item=latest_news[1] if latest_news else None
     latest_bulletin_item=latest_bulletin[1] if latest_bulletin else (latest_stage[2] if latest_stage else None)
 
+    cache_latest=None
+    cache_hint=None
+    if cached_context_items:
+        first=cached_context_items[0]
+        cache_latest={
+            "title":first.get("title"),
+            "url":first.get("url"),
+            "published_at":first.get("published").isoformat() if first.get("published") else None,
+            "verification":"cache_indirect",
+        }
+        for cached in cached_context_items:
+            combined=cached.get("normalized") or ""
+            hint=None
+            if "SEGUNDO TOQUE" in combined and "SIREN" in combined:
+                hint="Possível segundo toque de sirene localizado no cache"
+            elif "PRIMEIRO TOQUE" in combined and "SIREN" in combined:
+                hint="Possível primeiro toque de sirene localizado no cache"
+            elif "CELL BROADCAST" in combined and "SEVER" in combined:
+                hint="Possível alerta severo localizado no cache"
+            elif "PONTOS DE APOIO" in combined and any(x in combined for x in ("ABRE ", "ABERTURA", "ESTAO ABERTOS")):
+                hint="Possível abertura de pontos de apoio localizada no cache"
+            elif "ESTAGIO OPERACIONAL" in combined:
+                hint="Possível atualização de estágio operacional localizada no cache"
+            if hint:
+                cache_hint={
+                    "label":hint,
+                    "url":cached.get("url"),
+                    "published_at":cached.get("published").isoformat() if cached.get("published") else None,
+                    "can_escalate":False,
+                }
+                break
+
     stage_candidate=None
     if latest_stage:
         stage_published,stage_norm,stage_item=latest_stage
@@ -942,6 +1119,8 @@ def fetch_defesa_civil(previous):
             "total":len(route_defs),
             "available_routes":successful_routes,
         },
+        "cache":cache_result,
+        "cache_hint":cache_hint,
         "freshness":{
             "stage_hours":stage_freshness_hours,
             "operational_signal_hours":signal_freshness_hours,
@@ -997,6 +1176,25 @@ def fetch_defesa_civil(previous):
             "error":None,
         }
 
+    if cache_result.get("used"):
+        return {
+            **common,
+            "status":"cache_only",
+            "stage":None,
+            "risk":"Fonte direta indisponível · cache secundário ativo",
+            "level":None,
+            "basis":None,
+            "official_updated_at":None,
+            "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
+            "last_known_level":prev.get("level") if prev.get("level") is not None else prev.get("last_known_level"),
+            "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
+            "latest_bulletin":prev.get("latest_bulletin"),
+            "latest_news":cache_latest or prev.get("latest_news"),
+            "operational_signal":None,
+            "message":"Rotas oficiais diretas indisponíveis; cache secundário recuperou contexto. Conteúdo indireto não pode elevar o Nível HST.",
+            "error":"Todas as rotas oficiais diretas ficaram indisponíveis nesta coleta.",
+        }
+
     return {
         **common,
         "status":"source_unconfirmed",
@@ -1004,14 +1202,15 @@ def fetch_defesa_civil(previous):
         "risk":"Sem informação oficial recente confirmada",
         "level":None,
         "basis":None,
+        "official_updated_at":None,
         "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
         "last_known_level":prev.get("level") if prev.get("level") is not None else prev.get("last_known_level"),
         "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
         "latest_bulletin":prev.get("latest_bulletin"),
         "latest_news":prev.get("latest_news"),
         "operational_signal":None,
-        "message":"Nenhuma das rotas oficiais da Defesa Civil pôde ser confirmada nesta coleta. Isso não significa ausência de risco.",
-        "error":"Todas as rotas oficiais ficaram indisponíveis nesta coleta.",
+        "message":"Nenhuma das rotas oficiais diretas nem o cache secundário puderam ser confirmados nesta coleta. Isso não significa ausência de risco.",
+        "error":"Rotas oficiais e cache secundário indisponíveis nesta coleta.",
     }
 
 def _elovias_get(endpoint, timeout=15):
