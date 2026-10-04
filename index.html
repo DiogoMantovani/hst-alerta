@@ -1257,7 +1257,9 @@ function applyLevel(l,reason,generatedAt,data){
   const base=generatedAt?new Date(generatedAt):new Date();
   const updatedEl=document.getElementById('updatedAt');
   const nextEl=document.getElementById('nextAt');
-  const nextPlanned=new Date(base.getTime()+15*60000);
+  const nextPlanned=new Date(base);
+  nextPlanned.setSeconds(0,0);
+  nextPlanned.setMinutes(Math.floor(base.getMinutes()/15)*15+15);
   const ageMinutes=Math.max(0,(Date.now()-base.getTime())/60000);
   const stale=ageMinutes>30;
   updatedEl.textContent=fmtDate(base)+(stale?' · DADOS DESATUALIZADOS':'');
