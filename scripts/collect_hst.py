@@ -3,7 +3,9 @@ import json
 import os
 import re
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
+from email.utils import parsedate_to_datetime
 from zoneinfo import ZoneInfo
 
 import requests
@@ -27,6 +29,9 @@ INMET_FORECAST = "https://apiprevmet3.inmet.gov.br/previsao/3303906"
 DEFESA_CIVIL_HOME = "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil"
 DEFESA_CIVIL_TAG = "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil"
 DEFESA_CIVIL_BOLETIM = "https://www.petropolis.rj.gov.br/boletim"
+DEFESA_CIVIL_METEO_PAGE = "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil"
+DEFESA_CIVIL_JOURNALISM = "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo"
+DEFESA_CIVIL_RSS = DEFESA_CIVIL_JOURNALISM + "?format=feed&type=rss"
 DEFESA_CIVIL_WHATSAPP = "https://whatsapp.com/channel/0029VaKX3R5D38CZuMcmc03i"
 HST_LAT = -22.50825
 HST_LON = -43.19345
@@ -656,203 +661,325 @@ def fetch_defesa_civil(previous):
         "whatsapp":DEFESA_CIVIL_WHATSAPP,
         "bulletin":DEFESA_CIVIL_BOLETIM,
         "home":DEFESA_CIVIL_HOME,
+        "journalism":DEFESA_CIVIL_JOURNALISM,
+        "rss":DEFESA_CIVIL_RSS,
     }
+    headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"}
 
-    try:
-        headers={"User-Agent":"Mozilla/5.0 HST-Alerta/1.0"}
+    def dc_get(url, timeout=4):
+        candidates=[url]
+        if "://www.petropolis.rj.gov.br/" in url:
+            candidates.append(url.replace("://www.petropolis.rj.gov.br/","://petropolis.rj.gov.br/",1))
+        last_error=None
+        for candidate_url in candidates:
+            try:
+                response=requests.get(
+                    candidate_url,
+                    timeout=timeout,
+                    headers={**headers,"Connection":"close"},
+                    allow_redirects=True,
+                )
+                response.raise_for_status()
+                if not response.text.strip():
+                    raise RuntimeError("resposta vazia")
+                return response
+            except Exception as exc:
+                last_error=exc
+        raise last_error or RuntimeError("rota oficial indisponível")
 
-        def dc_get(url, timeout=7):
-            candidates=[url]
-            if "://www.petropolis.rj.gov.br/" in url:
-                candidates.append(url.replace("://www.petropolis.rj.gov.br/","://petropolis.rj.gov.br/",1))
-            last_error=None
-            for candidate_url in candidates:
-                try:
-                    response=requests.get(
-                        candidate_url,
-                        timeout=timeout,
-                        headers={**headers,"Connection":"close"},
-                        allow_redirects=True,
-                    )
-                    response.raise_for_status()
-                    return response
-                except Exception as exc:
-                    last_error=exc
-            raise last_error or RuntimeError("Defesa Civil indisponível")
+    route_defs={
+        "portal":DEFESA_CIVIL_HOME,
+        "tag_defesa_civil":DEFESA_CIVIL_TAG,
+        "jornalismo":DEFESA_CIVIL_JOURNALISM,
+        "rss_jornalismo":DEFESA_CIVIL_RSS,
+        "boletim_meteorologico":DEFESA_CIVIL_METEO_PAGE,
+    }
+    route_results={}
+    route_pages={}
 
-        home=dc_get(DEFESA_CIVIL_HOME)
-        tag=dc_get(DEFESA_CIVIL_TAG)
+    # Independent routes are queried in parallel so one timeout does not block
+    # the remaining official municipal channels.
+    with ThreadPoolExecutor(max_workers=len(route_defs)) as executor:
+        futures={
+            executor.submit(dc_get,url,4):(key,url)
+            for key,url in route_defs.items()
+        }
+        for future in as_completed(futures):
+            key,url=futures[future]
+            try:
+                response=future.result()
+                route_pages[key]=response.text
+                route_results[key]={
+                    "status":"ok",
+                    "url":response.url,
+                    "http_status":response.status_code,
+                }
+            except Exception as exc:
+                route_results[key]={
+                    "status":"unavailable",
+                    "url":url,
+                    "error":exc.__class__.__name__,
+                }
 
-        links=[]
-        for page in (tag.text,home.text):
-            soup=BeautifulSoup(page,"html.parser")
-            for a_tag in soup.find_all("a",href=True):
-                href=a_tag.get("href","")
-                if "/noticias/item/" not in href:
-                    continue
-                if href.startswith("/"):
-                    href="https://www.petropolis.rj.gov.br"+href
-                elif not href.startswith("http"):
-                    href="https://www.petropolis.rj.gov.br/pmp/"+href.lstrip("./")
-                if href not in links:
-                    links.append(href)
-                if len(links)>=12:
-                    break
-            if len(links)>=12:
-                break
+    successful_routes=[key for key,item in route_results.items() if item.get("status")=="ok"]
 
-        latest_stage=None
-        latest_signal=None
-        latest_news=None
+    def canonical_article_url(href):
+        href=str(href or "").strip()
+        if not href:
+            return None
+        if href.startswith("//"):
+            href="https:"+href
+        elif href.startswith("/"):
+            href="https://www.petropolis.rj.gov.br"+href
+        elif not href.startswith("http"):
+            href="https://www.petropolis.rj.gov.br/pmp/"+href.lstrip("./")
+        if "/noticias/item/" not in href:
+            return None
+        return href
 
-        stage_labels={
-            "VIGILANCIA":"Vigilância",
-            "OBSERVACAO":"Observação",
-            "ATENCAO":"Atenção",
-            "ALERTA":"Alerta",
-            "ALERTA MAXIMO":"Alerta Máximo",
-            "CRISE":"Crise",
+    links=[]
+    feed_items=[]
+
+    # HTML routes provide article URLs even when the Defesa Civil landing page
+    # itself is unavailable.
+    for key,page in route_pages.items():
+        soup=BeautifulSoup(page,"html.parser")
+        for a_tag in soup.find_all("a",href=True):
+            href=canonical_article_url(a_tag.get("href"))
+            if href and href not in links:
+                links.append(href)
+
+        if key=="rss_jornalismo":
+            for item_tag in soup.find_all("item"):
+                title_tag=item_tag.find("title")
+                link_tag=item_tag.find("link")
+                date_tag=item_tag.find("pubdate")
+                desc_tag=item_tag.find("description")
+                title=re.sub(r"\s+"," ",title_tag.get_text(" ",strip=True) if title_tag else "").strip()
+                url=canonical_article_url(link_tag.get_text(" ",strip=True) if link_tag else "")
+                published=None
+                if date_tag:
+                    try:
+                        published=parsedate_to_datetime(date_tag.get_text(" ",strip=True)).astimezone(TZ)
+                    except Exception:
+                        published=parse_portuguese_datetime(date_tag.get_text(" ",strip=True))
+                description=re.sub(r"<[^>]+>"," ",desc_tag.decode_contents() if desc_tag else "")
+                description=re.sub(r"\s+"," ",description).strip()
+                if title or description:
+                    feed_items.append({
+                        "title":title or "Notícia da Defesa Civil",
+                        "url":url or DEFESA_CIVIL_JOURNALISM,
+                        "published":published,
+                        "text":title+" "+description,
+                        "route":"rss_jornalismo",
+                    })
+
+    # Keep the list bounded; broad Journalism pages can contain many unrelated links.
+    links=links[:18]
+    article_items=[]
+
+    def fetch_article(url):
+        response=dc_get(url,4)
+        art=BeautifulSoup(response.text,"html.parser")
+        title_el=art.find("h1") or art.find("h2")
+        title=re.sub(r"\s+"," ",title_el.get_text(" ",strip=True) if title_el else "").strip()
+        published=article_datetime(art)
+        text_body=re.sub(r"\s+"," ",art.get_text(" ",strip=True))
+        return {
+            "title":title or "Notícia da Defesa Civil",
+            "url":response.url or url,
+            "published":published,
+            "text":text_body,
+            "route":"article",
         }
 
-        for url in links:
-            try:
-                r=dc_get(url,timeout=5)
-                art=BeautifulSoup(r.text,"html.parser")
-                title_el=art.find("h1") or art.find("h2")
-                title=re.sub(r"\s+"," ",title_el.get_text(" ",strip=True) if title_el else "").strip()
-                published=article_datetime(art)
-                text_body=re.sub(r"\s+"," ",art.get_text(" ",strip=True))
-                item={
-                    "title":title or "Notícia da Defesa Civil",
-                    "url":url,
-                    "published_at":published.isoformat() if published else None,
-                }
+    if links:
+        with ThreadPoolExecutor(max_workers=min(6,len(links))) as executor:
+            futures={executor.submit(fetch_article,url):url for url in links}
+            for future in as_completed(futures):
+                try:
+                    article_items.append(future.result())
+                except Exception:
+                    continue
 
-                if published and (latest_news is None or published>latest_news[0]):
-                    latest_news=(published,item)
+    parsed_items=[]
+    seen=set()
+    dc_terms=(
+        "DEFESA CIVIL","SIREN","PONTO DE APOIO","PONTOS DE APOIO",
+        "RISCO DE DESLIZAMENTO","RISCO DE INUNDACAO","ESTAGIO OPERACIONAL",
+        "BOLETIM METEOROLOGICO","CELL BROADCAST","CHUVAS","CHUVA FORTE",
+    )
+    for item in feed_items+article_items:
+        combined=norm((item.get("title") or "")+" "+(item.get("text") or ""))
+        if not any(term in combined for term in dc_terms):
+            continue
+        key=(item.get("url"),item.get("title"),item.get("published").isoformat() if item.get("published") else None)
+        if key in seen:
+            continue
+        seen.add(key)
+        item["normalized"]=combined
+        parsed_items.append(item)
 
-                body_norm=norm(text_body)
-                title_norm=norm(title)
-                combined=title_norm+" "+body_norm
+    latest_stage=None
+    latest_signal=None
+    latest_news=None
+    latest_bulletin=None
 
-                stage_match=re.search(
-                    r"ESTAGIO OPERACIONAL\s*[:\-]?\s*(VIGILANCIA|OBSERVACAO|ATENCAO|ALERTA MAXIMO|ALERTA|CRISE)",
-                    body_norm,
-                )
-                if stage_match and published and (latest_stage is None or published>latest_stage[0]):
-                    stage_norm=stage_match.group(1)
-                    latest_stage=(published,stage_norm,item)
+    stage_labels={
+        "VIGILANCIA":"Vigilância",
+        "OBSERVACAO":"Observação",
+        "ATENCAO":"Atenção",
+        "ALERTA":"Alerta",
+        "ALERTA MAXIMO":"Alerta Máximo",
+        "CRISE":"Crise",
+    }
 
-                signal=None
-                if "SEGUNDO TOQUE" in combined and "SIREN" in combined:
-                    signal=(4,"second_siren","Segundo toque de sirene acionado")
-                elif (
-                    ("RISCO DE DESLIZAMENTO" in combined or "RISCO DE INUNDACAO" in combined)
-                    and ("SMS" in combined or "PONTOS DE APOIO" in combined)
-                ):
-                    signal=(4,"risk_alert","Alerta oficial de risco com mobilização")
-                elif "PRIMEIRO TOQUE" in combined and "SIREN" in combined:
-                    signal=(3,"first_siren","Primeiro toque de sirene acionado")
-                elif (
-                    "PONTOS DE APOIO" in combined
-                    and any(x in combined for x in ("ABRE ", "ABERTURA", "FORAM ABERTOS", "ESTAO ABERTOS"))
-                ):
-                    signal=(3,"support_points","Pontos de apoio abertos")
+    for entry in parsed_items:
+        published=entry.get("published")
+        if not published:
+            continue
+        item={
+            "title":entry.get("title") or "Notícia da Defesa Civil",
+            "url":entry.get("url"),
+            "published_at":published.isoformat(),
+        }
+        combined=entry.get("normalized") or ""
 
-                if signal and published and (latest_signal is None or published>latest_signal[0]):
-                    latest_signal=(published,signal[0],signal[1],signal[2],item)
+        if latest_news is None or published>latest_news[0]:
+            latest_news=(published,item)
 
-            except Exception:
-                continue
+        if "BOLETIM METEOROLOGICO" in combined and (latest_bulletin is None or published>latest_bulletin[0]):
+            latest_bulletin=(published,item)
 
-        latest_news_item=latest_news[1] if latest_news else None
+        stage_match=re.search(
+            r"ESTAGIO OPERACIONAL\s*[:\-]?\s*(VIGILANCIA|OBSERVACAO|ATENCAO|ALERTA MAXIMO|ALERTA|CRISE)",
+            combined,
+        )
+        if stage_match and (latest_stage is None or published>latest_stage[0]):
+            latest_stage=(published,stage_match.group(1),item)
 
-        stage_candidate=None
-        if latest_stage:
-            stage_published,stage_norm,stage_item=latest_stage
-            stage_age=round((now-stage_published).total_seconds()/3600,1)
-            if stage_age<=stage_freshness_hours:
-                stage_candidate={
-                    "published":stage_published,
-                    "level":DC_LEVEL[stage_norm],
-                    "label":stage_labels[stage_norm],
-                    "item":stage_item,
-                    "age_hours":stage_age,
-                }
+        signal=None
+        if (
+            ("DESMOBILIZA" in combined and "PONTO" in combined and "APOIO" in combined)
+            or ("SIREN" in combined and any(x in combined for x in ("DESACION", "DESMOBIL", "NORMALIZ")))
+        ):
+            signal=(1,"stand_down","Desmobilização operacional informada")
+        elif "SEGUNDO TOQUE" in combined and "SIREN" in combined:
+            signal=(4,"second_siren","Segundo toque de sirene acionado")
+        elif "CELL BROADCAST" in combined and "SEVER" in combined:
+            signal=(4,"cell_broadcast_severe","Alerta severo via Cell Broadcast")
+        elif (
+            ("RISCO DE DESLIZAMENTO" in combined or "RISCO DE INUNDACAO" in combined)
+            and ("SMS" in combined or "PONTOS DE APOIO" in combined or "CELL BROADCAST" in combined)
+        ):
+            signal=(4,"risk_alert","Alerta oficial de risco com mobilização")
+        elif "PRIMEIRO TOQUE" in combined and "SIREN" in combined:
+            signal=(3,"first_siren","Primeiro toque de sirene acionado")
+        elif (
+            "PONTOS DE APOIO" in combined
+            and any(x in combined for x in ("ABRE ", "ABERTURA", "FORAM ABERTOS", "ESTAO ABERTOS"))
+        ):
+            signal=(3,"support_points","Pontos de apoio abertos")
 
-        signal_candidate=None
-        if latest_signal:
-            signal_published,signal_level,signal_type,signal_label,signal_item=latest_signal
-            signal_age=round((now-signal_published).total_seconds()/3600,1)
-            if signal_age<=signal_freshness_hours:
-                signal_candidate={
-                    "published":signal_published,
-                    "level":signal_level,
-                    "type":signal_type,
-                    "label":signal_label,
-                    "item":signal_item,
-                    "age_hours":signal_age,
-                }
+        if signal and (latest_signal is None or published>latest_signal[0]):
+            latest_signal=(published,signal[0],signal[1],signal[2],item)
 
-        effective=None
-        basis=None
+    latest_news_item=latest_news[1] if latest_news else None
+    latest_bulletin_item=latest_bulletin[1] if latest_bulletin else (latest_stage[2] if latest_stage else None)
 
-        # A newer explicit municipal stage supersedes an older operational signal.
-        if stage_candidate and signal_candidate and stage_candidate["published"]>=signal_candidate["published"]:
-            effective=stage_candidate["level"]
-            basis="Estágio operacional: "+stage_candidate["label"]
-        else:
-            candidates=[x for x in (stage_candidate,signal_candidate) if x]
-            if candidates:
-                effective=max(x["level"] for x in candidates)
-                strongest=max(candidates,key=lambda x:x["level"])
-                if strongest is stage_candidate:
-                    basis="Estágio operacional: "+stage_candidate["label"]
-                else:
-                    basis=signal_candidate["label"]
-
-        if effective is not None:
-            newest_times=[
-                x["published"]
-                for x in (stage_candidate,signal_candidate)
-                if x
-            ]
-            official_updated=max(newest_times) if newest_times else None
-            stage_label=stage_candidate["label"] if stage_candidate else None
-            risk_label=LEVEL_LABELS.get(effective,"Informação operacional")
-            return {
-                "name":"Defesa Civil",
-                "provider":"Defesa Civil de Petrópolis",
-                "status":"ok",
-                "stage":stage_label,
-                "risk":risk_label,
-                "level":effective,
-                "basis":basis,
-                "official_updated_at":official_updated.isoformat() if official_updated else None,
-                "age_hours":round((now-official_updated).total_seconds()/3600,1) if official_updated else None,
-                "latest_bulletin":stage_candidate["item"] if stage_candidate else None,
-                "latest_news":latest_news_item,
-                "operational_signal":{
-                    "type":signal_candidate["type"],
-                    "label":signal_candidate["label"],
-                    "level":signal_candidate["level"],
-                    "published_at":signal_candidate["published"].isoformat(),
-                    "url":signal_candidate["item"].get("url"),
-                } if signal_candidate else None,
-                "channels":channels,
-                "freshness":{
-                    "stage_hours":stage_freshness_hours,
-                    "operational_signal_hours":signal_freshness_hours,
-                },
-                "message":"Informação operacional oficial recente da Defesa Civil de Petrópolis.",
-                "collected_at":now.isoformat(),
-                "url":DEFESA_CIVIL_HOME,
-                "error":None,
+    stage_candidate=None
+    if latest_stage:
+        stage_published,stage_norm,stage_item=latest_stage
+        stage_age=round((now-stage_published).total_seconds()/3600,1)
+        if -0.25<=stage_age<=stage_freshness_hours:
+            stage_candidate={
+                "published":stage_published,
+                "level":DC_LEVEL[stage_norm],
+                "label":stage_labels[stage_norm],
+                "item":stage_item,
+                "age_hours":stage_age,
             }
 
+    signal_candidate=None
+    if latest_signal:
+        signal_published,signal_level,signal_type,signal_label,signal_item=latest_signal
+        signal_age=round((now-signal_published).total_seconds()/3600,1)
+        if -0.25<=signal_age<=signal_freshness_hours:
+            signal_candidate={
+                "published":signal_published,
+                "level":signal_level,
+                "type":signal_type,
+                "label":signal_label,
+                "item":signal_item,
+                "age_hours":signal_age,
+            }
+
+    effective=None
+    basis=None
+
+    # A newer explicit municipal stage supersedes an older operational signal.
+    # Otherwise both recent official signals are considered conservatively.
+    if stage_candidate and signal_candidate and stage_candidate["published"]>=signal_candidate["published"]:
+        effective=stage_candidate["level"]
+        basis="Estágio operacional: "+stage_candidate["label"]
+    else:
+        candidates=[x for x in (stage_candidate,signal_candidate) if x]
+        if candidates:
+            effective=max(x["level"] for x in candidates)
+            strongest=max(candidates,key=lambda x:x["level"])
+            if strongest is stage_candidate:
+                basis="Estágio operacional: "+stage_candidate["label"]
+            else:
+                basis=signal_candidate["label"]
+
+    common={
+        "name":"Defesa Civil",
+        "provider":"Defesa Civil de Petrópolis",
+        "channels":channels,
+        "routes":route_results,
+        "route_summary":{
+            "available":len(successful_routes),
+            "total":len(route_defs),
+            "available_routes":successful_routes,
+        },
+        "freshness":{
+            "stage_hours":stage_freshness_hours,
+            "operational_signal_hours":signal_freshness_hours,
+        },
+        "collected_at":now.isoformat(),
+        "url":DEFESA_CIVIL_HOME,
+    }
+
+    if effective is not None:
+        newest_times=[x["published"] for x in (stage_candidate,signal_candidate) if x]
+        official_updated=max(newest_times) if newest_times else None
+        stage_label=stage_candidate["label"] if stage_candidate else None
+        risk_label=LEVEL_LABELS.get(effective,"Informação operacional")
         return {
-            "name":"Defesa Civil",
-            "provider":"Defesa Civil de Petrópolis",
+            **common,
+            "status":"ok",
+            "stage":stage_label,
+            "risk":risk_label,
+            "level":effective,
+            "basis":basis,
+            "official_updated_at":official_updated.isoformat() if official_updated else None,
+            "age_hours":round((now-official_updated).total_seconds()/3600,1) if official_updated else None,
+            "latest_bulletin":latest_bulletin_item,
+            "latest_news":latest_news_item,
+            "operational_signal":{
+                "type":signal_candidate["type"],
+                "label":signal_candidate["label"],
+                "level":signal_candidate["level"],
+                "published_at":signal_candidate["published"].isoformat(),
+                "url":signal_candidate["item"].get("url"),
+            } if signal_candidate else None,
+            "message":"Informação operacional oficial recente da Defesa Civil de Petrópolis.",
+            "error":None,
+        }
+
+    if successful_routes:
+        return {
+            **common,
             "status":"no_recent_update",
             "stage":None,
             "risk":"Sem atualização oficial recente",
@@ -860,45 +987,32 @@ def fetch_defesa_civil(previous):
             "basis":None,
             "official_updated_at":latest_stage[0].isoformat() if latest_stage else None,
             "age_hours":round((now-latest_stage[0]).total_seconds()/3600,1) if latest_stage else None,
-            "latest_bulletin":latest_stage[2] if latest_stage else None,
+            "latest_bulletin":latest_bulletin_item,
             "latest_news":latest_news_item,
             "operational_signal":None,
             "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
             "last_known_level":prev.get("level") if prev.get("level") is not None else prev.get("last_known_level"),
             "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
-            "channels":channels,
-            "freshness":{
-                "stage_hours":stage_freshness_hours,
-                "operational_signal_hours":signal_freshness_hours,
-            },
-            "message":"Canal oficial acessível, mas sem estágio ou sinal operacional recente dentro da janela definida.",
-            "collected_at":now.isoformat(),
-            "url":DEFESA_CIVIL_HOME,
+            "message":f"{len(successful_routes)} de {len(route_defs)} rotas oficiais responderam; sem estágio ou sinal operacional recente dentro da janela definida.",
             "error":None,
         }
-    except Exception as exc:
-        return {
-            "name":"Defesa Civil",
-            "provider":"Defesa Civil de Petrópolis",
-            "status":"source_unconfirmed",
-            "stage":None,
-            "risk":"Sem informação oficial recente confirmada",
-            "level":None,
-            "basis":None,
-            "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
-            "last_known_level":prev.get("level") if prev.get("level") is not None else prev.get("last_known_level"),
-            "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
-            "operational_signal":None,
-            "channels":channels,
-            "freshness":{
-                "stage_hours":stage_freshness_hours,
-                "operational_signal_hours":signal_freshness_hours,
-            },
-            "message":"Não foi possível confirmar a Defesa Civil de Petrópolis nesta coleta. Isso não significa ausência de risco.",
-            "collected_at":now.isoformat(),
-            "url":DEFESA_CIVIL_HOME,
-            "error":str(exc)[:500],
-        }
+
+    return {
+        **common,
+        "status":"source_unconfirmed",
+        "stage":None,
+        "risk":"Sem informação oficial recente confirmada",
+        "level":None,
+        "basis":None,
+        "last_known_stage":prev.get("stage") or prev.get("last_known_stage"),
+        "last_known_level":prev.get("level") if prev.get("level") is not None else prev.get("last_known_level"),
+        "last_known_updated_at":prev.get("official_updated_at") or prev.get("last_known_updated_at"),
+        "latest_bulletin":prev.get("latest_bulletin"),
+        "latest_news":prev.get("latest_news"),
+        "operational_signal":None,
+        "message":"Nenhuma das rotas oficiais da Defesa Civil pôde ser confirmada nesta coleta. Isso não significa ausência de risco.",
+        "error":"Todas as rotas oficiais ficaram indisponíveis nesta coleta.",
+    }
 
 def _elovias_get(endpoint, timeout=15):
     r=requests.get(
