@@ -772,6 +772,21 @@ footer{
   </article>
 </div>
 
+<article class="card" style="margin-bottom:16px">
+  <div class="section">
+    <div><h3>Rotas oficiais de coleta</h3><div class="small">As rotas são consultadas em paralelo. A falha de uma página não interrompe as demais.</div></div>
+    <span id="dcRouteSummary" class="badge">Verificando</span>
+  </div>
+  <div id="dcRouteStatus" class="source-health-list">
+    <div class="source-health-row"><div class="source-health-name">Portal Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">Tag Defesa Civil</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">Jornalismo da Prefeitura</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">RSS Jornalismo</div><span class="connection-pill connection-na">Verificando</span></div>
+    <div class="source-health-row"><div class="source-health-name">Boletim Meteorológico</div><span class="connection-pill connection-na">Verificando</span></div>
+  </div>
+  <div class="source-health-footer">Uma rota acessível já permite manter a fonte conectada; somente informação operacional oficial recente pode influenciar o nível.</div>
+</article>
+
 <article class="card">
   <div class="section">
     <div><h3>Histórico da Defesa Civil</h3><div class="small">Registra somente mudanças de estágio, sinal operacional ou estado de comunicação.</div></div>
@@ -1538,6 +1553,26 @@ function renderDefenseCivilPanel(data){
   document.getElementById('dcLatestDate').textContent=latest.published_at?'Publicado em '+fmtDate(latest.published_at):'—';
   const latestLink=document.getElementById('dcLatestLink');
   if(latest.url){latestLink.href=latest.url;latestLink.style.display='inline-block';}else{latestLink.style.display='none';}
+
+  const routes=dc.routes||{};
+  const routeLabels={
+    portal:'Portal Defesa Civil',
+    tag_defesa_civil:'Tag Defesa Civil',
+    jornalismo:'Jornalismo da Prefeitura',
+    rss_jornalismo:'RSS Jornalismo',
+    boletim_meteorologico:'Boletim Meteorológico'
+  };
+  const routeRows=Object.entries(routeLabels).map(([key,label])=>{
+    const route=routes[key]||{};
+    const ok=route.status==='ok';
+    return '<div class="source-health-row"><div class="source-health-name">'+esc(label)+'</div>'+
+      '<span class="connection-pill '+(ok?'connection-ok':'connection-off')+'">'+(ok?'Ativa':'Sem resposta')+'</span></div>';
+  }).join('');
+  document.getElementById('dcRouteStatus').innerHTML=routeRows;
+  const routeSummary=dc.route_summary||{};
+  const available=Number(routeSummary.available||0);
+  const total=Number(routeSummary.total||Object.keys(routeLabels).length);
+  document.getElementById('dcRouteSummary').textContent=available+' / '+total+' ativas';
 
   const channels=dc.channels||{};
   document.getElementById('dcEmergency').textContent=channels.emergency||'199';
