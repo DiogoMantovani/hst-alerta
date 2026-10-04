@@ -784,7 +784,8 @@ footer{
     <div class="source-health-row"><div class="source-health-name">RSS Jornalismo</div><span class="connection-pill connection-na">Verificando</span></div>
     <div class="source-health-row"><div class="source-health-name">Boletim Meteorológico</div><span class="connection-pill connection-na">Verificando</span></div>
   </div>
-  <div class="source-health-footer">Uma rota acessível já permite manter a fonte conectada; somente informação operacional oficial recente pode influenciar o nível.</div>
+  <div class="source-health-row" style="margin-top:8px"><div class="source-health-name">Cache secundário</div><span id="dcCacheStatus" class="connection-pill connection-na">Verificando</span></div>
+  <div id="dcCacheMeta" class="source-health-footer">O cache é apenas informativo e nunca eleva o Nível HST.</div>
 </article>
 
 <article class="card">
@@ -1497,13 +1498,14 @@ function updateOperationalMapSummary(data){
 }
 
 function defenseCivilStatusText(status){
-  if(status==='ok') return 'Fonte confirmada';
-  if(status==='no_recent_update') return 'Conectividade ativa · sem atualização recente';
+  if(status==='ok') return 'Fonte oficial confirmada';
+  if(status==='no_recent_update') return 'Conectividade oficial ativa · sem atualização recente';
+  if(status==='cache_only') return 'Cache secundário ativo · fonte direta indisponível';
   return 'Sem confirmação da fonte';
 }
 function defenseCivilStatusClass(status){
   if(status==='ok') return 'ok';
-  if(status==='no_recent_update') return 'warn';
+  if(status==='no_recent_update' || status==='cache_only') return 'warn';
   return 'off';
 }
 function renderDefenseCivilPanel(data){
@@ -1514,7 +1516,8 @@ function renderDefenseCivilPanel(data){
   setConnection('dcSourceStatus',defenseCivilStatusClass(status),defenseCivilStatusText(status));
   document.getElementById('dcStage').textContent=status==='ok'
     ?(dc.stage||dc.risk||'Informação operacional')
-    :status==='no_recent_update'?'Sem atualização recente':'Sem confirmação';
+    :status==='no_recent_update'?'Sem atualização recente'
+    :status==='cache_only'?'Cache secundário ativo':'Sem confirmação';
   document.getElementById('dcBasis').textContent=dc.basis||dc.message||'Nenhuma informação operacional recente confirmada.';
   document.getElementById('dcOfficialUpdated').textContent=dc.official_updated_at
     ?'Atualização oficial: '+fmtDate(dc.official_updated_at)+' · coleta: '+fmtDate(dc.collected_at)
@@ -1550,7 +1553,9 @@ function renderDefenseCivilPanel(data){
 
   const latest=dc.latest_news||dc.latest_bulletin||{};
   document.getElementById('dcLatestTitle').textContent=latest.title||'Nenhuma publicação recente confirmada';
-  document.getElementById('dcLatestDate').textContent=latest.published_at?'Publicado em '+fmtDate(latest.published_at):'—';
+  document.getElementById('dcLatestDate').textContent=latest.published_at
+    ?'Publicado em '+fmtDate(latest.published_at)+(latest.verification==='cache_indirect'?' · recuperado via cache secundário':'')
+    :(latest.verification==='cache_indirect'?'Recuperado via cache secundário · data não confirmada':'—');
   const latestLink=document.getElementById('dcLatestLink');
   if(latest.url){latestLink.href=latest.url;latestLink.style.display='inline-block';}else{latestLink.style.display='none';}
 
@@ -1572,7 +1577,21 @@ function renderDefenseCivilPanel(data){
   const routeSummary=dc.route_summary||{};
   const available=Number(routeSummary.available||0);
   const total=Number(routeSummary.total||Object.keys(routeLabels).length);
-  document.getElementById('dcRouteSummary').textContent=available+' / '+total+' ativas';
+  document.getElementById('dcRouteSummary').textContent=available+' / '+total+' oficiais ativas';
+
+  const cache=dc.cache||{};
+  setConnection(
+    'dcCacheStatus',
+    cache.status==='ok'?'warn':cache.status==='not_used'?'na':'off',
+    cache.status==='ok'?'Ativo · somente contexto':cache.status==='not_used'?'Não necessário':'Indisponível'
+  );
+  document.getElementById('dcCacheMeta').textContent=cache.message||'O cache é apenas informativo e nunca eleva o Nível HST.';
+  const cacheHint=dc.cache_hint||null;
+  if(cacheHint && status==='cache_only'){
+    document.getElementById('dcSignalTitle').textContent=cacheHint.label||'Sinal localizado no cache';
+    document.getElementById('dcSignalMeta').textContent='Informação indireta aguardando confirmação oficial direta. Não altera o Nível HST.';
+    if(cacheHint.url){signalLink.href=cacheHint.url;signalLink.style.display='inline-block';}
+  }
 
   const channels=dc.channels||{};
   document.getElementById('dcEmergency').textContent=channels.emergency||'199';
@@ -1684,13 +1703,18 @@ async function loadOfficialData(){
     document.getElementById('inmetCard').textContent=imet?.risk||'Indisponível';
     document.getElementById('inmetBadge').textContent='INMET';
     document.getElementById('inmetMeta').textContent=imet?.status==='ok'?(imet?.active_count?((imet?.title||'Aviso meteorológico')+' · '+imet.active_count+' aviso(s) ativo(s).'):'Nenhum aviso meteorológico ativo identificado para Petrópolis/RJ.'):'Sem informação meteorológica recente confirmada nesta coleta.';
-    document.getElementById('defesaCard').textContent=dc?.status==='ok'?(dc.stage||dc.risk||'Informação operacional'):(dc?.status==='no_recent_update'?'Sem atualização recente':'Indisponível');
+    document.getElementById('defesaCard').textContent=dc?.status==='ok'
+      ?(dc.stage||dc.risk||'Informação operacional')
+      :dc?.status==='no_recent_update'?'Sem atualização recente'
+      :dc?.status==='cache_only'?'Cache secundário ativo':'Indisponível';
     document.getElementById('defesaBadge').textContent='DEFESA CIVIL';
     document.getElementById('defesaMeta').textContent=dc?.status==='ok'
       ?((dc.basis||'Informação operacional oficial')+(dc.official_updated_at?' · '+fmtDate(dc.official_updated_at):''))
       :dc?.status==='no_recent_update'
         ?'Canal oficial acessível, sem estágio ou sinal operacional recente dentro da janela definida.'
-        :'Não foi possível confirmar a fonte oficial nesta coleta.';
+        :dc?.status==='cache_only'
+          ?'Fonte oficial direta indisponível; cache secundário disponível somente para contexto e sem poder de escalada.'
+          :'Não foi possível confirmar a fonte oficial nesta coleta.';
     document.getElementById('geoBadge').textContent=sourceBadge(g);
     document.getElementById('hidroBadge').textContent=sourceBadge(h);
     document.getElementById('geoMeta').textContent=sourceMeta(g);
@@ -1806,8 +1830,13 @@ async function loadOfficialData(){
     setConnection('pluvioConnection',pluvioConnected?'ok':'off',pluvioConnected?'Conectividade ativa':'Sem confirmação');
     const inmetConnected=imet?.status==='ok' || fc?.status==='ok';
     setConnection('inmetConnection',inmetConnected?'ok':'off',inmetConnected?'Conectividade ativa':'Sem confirmação');
-    const defesaConnected=dc?.status==='ok' || dc?.status==='no_recent_update';
-    setConnection('defesaConnection',defesaConnected?'ok':'off',defesaConnected?'Conectividade ativa':'Sem confirmação');
+    const defesaDirect=dc?.status==='ok' || dc?.status==='no_recent_update';
+    const defesaCache=dc?.status==='cache_only';
+    setConnection(
+      'defesaConnection',
+      defesaDirect?'ok':defesaCache?'warn':'off',
+      defesaDirect?'Conectividade oficial ativa':defesaCache?'Cache secundário ativo':'Sem confirmação'
+    );
     const weatherRefConnected=wr?.status==='ok';
     setConnection('weatherRefConnection',weatherRefConnected?'ok':'off',weatherRefConnected?'Conectividade ativa':'Sem confirmação');
     const roadsConnected=roads?.status==='ok';
