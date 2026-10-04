@@ -3,7 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="hst-ui-revision" content="20261004-1530">
 <meta name="theme-color" content="#006f76">
+<script>
+window.HST_UI_REVISION='20261004-1530';
+window.checkHstUiRevision=async function(){
+  try{
+    const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
+    if(!r.ok) return;
+    const html=await r.text();
+    const m=html.match(/<meta name="hst-ui-revision" content="([^"]+)"/i);
+    if(m && m[1] && m[1]!==window.HST_UI_REVISION){
+      const u=new URL(window.location.href);
+      u.searchParams.set('ui',m[1]);
+      window.location.replace(u.toString());
+    }
+  }catch(_){}
+};
+setTimeout(window.checkHstUiRevision,2000);
+setInterval(window.checkHstUiRevision,60000);
+</script>
 <title>HST Alerta | Hospital Santa Teresa</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="shortcut icon" href="favicon.svg">
