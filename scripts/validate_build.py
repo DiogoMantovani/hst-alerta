@@ -9,7 +9,7 @@ REQUIRED_IDS = {
     "geoCard","hidroCard","inmetCard","defesaCard","defesaConnection",
     "dcStage","dcSourceStatus","dcBasis","dcOfficialUpdated","dcHstImpact","dcHstImpactDetail",
     "dcSignalTitle","dcSignalMeta","dcSignalLink","dcLatestTitle","dcLatestDate","dcLatestLink",
-    "dcEmergency","dcSms","dcHomeLink","dcBulletinLink","dcWhatsappLink","dcRouteSummary","dcRouteStatus","dcHistoryBody","dcHistoryCount",
+    "dcEmergency","dcSms","dcHomeLink","dcBulletinLink","dcWhatsappLink","dcRouteSummary","dcRouteStatus","dcCacheStatus","dcCacheMeta","dcHistoryBody","dcHistoryCount",
     "pluvioBody","pluvioHidden","bingenHistoryBody","bingenHistoryStatus","bingenHistoryLast","bingenHistory1h","bingenHistory24h","bingenHistoryDistance",
     "historyBody","pluvioHistoryBody","historyCount","historyRiskView","historyRainView","exportPluvioHistory",
     "nearestPluvioName","nearestPluvio1h","nearestPluvio24h","pluvioConnection","weatherRefConnection",
