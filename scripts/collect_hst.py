@@ -1121,26 +1121,37 @@ def fetch_defesa_civil(previous):
             "title":first.get("title"),
             "url":first.get("url"),
             "published_at":first.get("published").isoformat() if first.get("published") else None,
-            "verification":"cache_indirect",
+            "verification":first.get("verification") or "cache_indirect",
         }
         for cached in cached_context_items:
             combined=cached.get("normalized") or ""
+            published=cached.get("published")
+            if not published:
+                continue
+            age_hours=round((now-published).total_seconds()/3600,1)
+            if age_hours < -0.25:
+                continue
+
             hint=None
+            freshness_limit=signal_freshness_hours
             if "SEGUNDO TOQUE" in combined and "SIREN" in combined:
                 hint="Possível segundo toque de sirene localizado no cache"
             elif "PRIMEIRO TOQUE" in combined and "SIREN" in combined:
                 hint="Possível primeiro toque de sirene localizado no cache"
-            elif "CELL BROADCAST" in combined and "SEVER" in combined:
+            elif ("CELL BROADCAST" in combined or "CELLBROADCAST" in combined) and "SEVER" in combined:
                 hint="Possível alerta severo localizado no cache"
             elif "PONTOS DE APOIO" in combined and any(x in combined for x in ("ABRE ", "ABERTURA", "ESTAO ABERTOS")):
                 hint="Possível abertura de pontos de apoio localizada no cache"
             elif "ESTAGIO OPERACIONAL" in combined:
                 hint="Possível atualização de estágio operacional localizada no cache"
-            if hint:
+                freshness_limit=stage_freshness_hours
+
+            if hint and age_hours<=freshness_limit:
                 cache_hint={
                     "label":hint,
                     "url":cached.get("url"),
-                    "published_at":cached.get("published").isoformat() if cached.get("published") else None,
+                    "published_at":published.isoformat(),
+                    "age_hours":age_hours,
                     "can_escalate":False,
                 }
                 break
