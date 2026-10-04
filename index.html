@@ -1255,8 +1255,15 @@ function applyLevel(l,reason,generatedAt,data){
   document.getElementById('levelReason').textContent=reason;
   renderActions(l,data||latestOfficialData);
   const base=generatedAt?new Date(generatedAt):new Date();
-  document.getElementById('updatedAt').textContent=fmtDate(base);
-  document.getElementById('nextAt').textContent=fmtDate(new Date(base.getTime()+15*60000));
+  const updatedEl=document.getElementById('updatedAt');
+  const nextEl=document.getElementById('nextAt');
+  const nextPlanned=new Date(base.getTime()+15*60000);
+  const ageMinutes=Math.max(0,(Date.now()-base.getTime())/60000);
+  const stale=ageMinutes>30;
+  updatedEl.textContent=fmtDate(base)+(stale?' · DADOS DESATUALIZADOS':'');
+  updatedEl.style.color=stale?'#b42318':'';
+  nextEl.textContent=stale?'COLETA ATRASADA · prevista '+fmtDate(nextPlanned):fmtDate(nextPlanned);
+  nextEl.style.color=stale?'#b42318':'';
 }
 function setConnection(id,state,label){
   const el=document.getElementById(id);
