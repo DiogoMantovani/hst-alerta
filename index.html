@@ -6,10 +6,10 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="hst-ui-revision" content="20261004-1530">
+<meta name="hst-ui-revision" content="20261004-1549">
 <meta name="theme-color" content="#006f76">
 <script>
-window.HST_UI_REVISION='20261004-1530';
+window.HST_UI_REVISION='20261004-1549';
 window.checkHstUiRevision=async function(){
   try{
     const r=await fetch('index.html?ui-check='+Date.now(),{cache:'no-store'});
@@ -1281,20 +1281,36 @@ function applyLevel(l,reason,generatedAt,data){
   const nextEl=document.getElementById('nextAt');
   const scheduleMinutes=[0,15,30,45];
   const now=new Date();
-  const nextPlanned=new Date(now);
-  nextPlanned.setSeconds(0,0);
-  const nextMinute=scheduleMinutes.find(m=>m>now.getMinutes());
-  if(nextMinute!=null){
-    nextPlanned.setMinutes(nextMinute);
-  }else{
-    nextPlanned.setHours(nextPlanned.getHours()+1,0,0,0);
+
+  function nextQuarterAfter(d){
+    const out=new Date(d);
+    out.setSeconds(0,0);
+    const nextMinute=scheduleMinutes.find(m=>m>d.getMinutes());
+    if(nextMinute!=null){
+      out.setMinutes(nextMinute);
+    }else{
+      out.setHours(out.getHours()+1,0,0,0);
+    }
+    return out;
   }
+
+  const expectedNext=nextQuarterAfter(base);
+  const nextNominal=nextQuarterAfter(now);
+  const overdueGraceMinutes=5;
+  const overdue=now.getTime()>expectedNext.getTime()+overdueGraceMinutes*60000;
   const ageMinutes=Math.max(0,(Date.now()-base.getTime())/60000);
   const stale=ageMinutes>30;
+
   updatedEl.textContent=fmtDate(base)+(stale?' · DADOS DESATUALIZADOS':'');
-  updatedEl.style.color=stale?'#b42318':'';
-  nextEl.textContent=stale?'COLETA ATRASADA · próxima tentativa '+fmtDate(nextPlanned):fmtDate(nextPlanned);
-  nextEl.style.color=stale?'#b42318':'';
+  updatedEl.style.color=(stale||overdue)?'#b42318':'';
+
+  if(overdue){
+    nextEl.textContent='COLETA ATRASADA · esperada '+fmtDate(expectedNext)+' · próxima tentativa nominal '+fmtDate(nextNominal);
+    nextEl.style.color='#b42318';
+  }else{
+    nextEl.textContent=fmtDate(expectedNext);
+    nextEl.style.color='';
+  }
 }
 function setConnection(id,state,label){
   const el=document.getElementById(id);
