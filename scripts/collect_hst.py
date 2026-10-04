@@ -1837,7 +1837,9 @@ OBS_RAIN_24H_MM=50.0
 BINGEN_SAFE_MAX_AGE_HOURS=2.0
 BINGEN_SAFE_SHORT_MM=20.0
 BINGEN_SAFE_24H_MM=50.0
-DEESCALATION_STEP_MINUTES=30
+DEESCALATION_OFFICIAL_HOLD_HOURS=2
+DEESCALATION_CONFIRMATIONS=3
+DEESCALATION_CONFIRMATION_MIN_INTERVAL_MINUTES=10
 
 def supplemental_observation_signals(forecast, pluviometers):
     """Complementary signals may raise only the HST Observation level (2).
@@ -2036,12 +2038,193 @@ def deescalation_source_readiness(geo, hydro, inmet, local_hydro):
     return blockers
 
 
-def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, local_hydro):
-    """Escalation is immediate; de-escalation uses continuous safe time.
+def _official_event_from_source(key, source, allow_last_known=False):
+    """Return a stable official elevated-risk event without treating rereads as new."""
+    if not isinstance(source,dict):
+        return None
 
-    One level is reduced at a time. A safe window is preserved across delayed
-    GitHub Actions runs so missed schedules do not freeze the HST level.
-    """
+    status=source.get("status")
+    level=source.get("level")
+    historical=False
+
+    if not (status=="ok" and isinstance(level,int) and level>1):
+        if not allow_last_known:
+            return None
+        level=source.get("last_known_level")
+        if not (isinstance(level,int) and level>1):
+            return None
+        historical=True
+
+    if key in ("cemaden_geological","cemaden_hydrological"):
+        risk=(source.get("last_known_risk") if historical else source.get("risk")) or ""
+        official_at=(
+            source.get("last_known_updated_at")
+            if historical
+            else source.get("official_updated_at")
+        ) or source.get("official_updated_at")
+        identity={
+            "source":key,
+            "level":level,
+            "risk":risk,
+            "official_at":official_at,
+        }
+    elif key=="inmet_alerts":
+        official_at=source.get("starts_at") or source.get("official_updated_at")
+        identity={
+            "source":key,
+            "level":level,
+            "title":source.get("title"),
+            "starts_at":source.get("starts_at"),
+            "ends_at":source.get("ends_at"),
+        }
+    elif key=="defesa_civil":
+        signal=source.get("operational_signal") or {}
+        bulletin=source.get("latest_bulletin") or {}
+        official_at=(
+            source.get("official_updated_at")
+            or signal.get("published_at")
+            or bulletin.get("published_at")
+        )
+        identity={
+            "source":key,
+            "level":level,
+            "stage":source.get("stage"),
+            "basis":source.get("basis"),
+            "signal_type":source.get("signal_type"),
+            "signal_label":source.get("signal_label"),
+            "official_at":official_at,
+        }
+    else:
+        return None
+
+    signature=json.dumps(identity,ensure_ascii=False,sort_keys=True,separators=(",",":"))
+    return {
+        "source":key,
+        "level":int(level),
+        "signature":signature,
+        "official_at":official_at,
+        "historical":historical,
+    }
+
+
+def _official_driver_floor(level):
+    """Minimum official source level capable of sustaining the current HST level."""
+    try:
+        level=int(level)
+    except Exception:
+        return 2
+    if level<=2:
+        return 2
+    if level==3:
+        return 3
+    return level-1
+
+
+def update_official_hold_state(previous, current_level, geo, hydro, inmet, defesa):
+    """Track new official publications and derive the two-hour no-descent window."""
+    now=datetime.now(TZ)
+    prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
+    prev_state=prev_overall.get("deescalation") or {}
+    tracked=dict(prev_state.get("official_signals") or {})
+    prev_sources=(previous.get("sources") or {}) if isinstance(previous,dict) else {}
+
+    sources={
+        "cemaden_geological":geo,
+        "cemaden_hydrological":hydro,
+        "inmet_alerts":inmet,
+        "defesa_civil":defesa,
+    }
+
+    for key,source in sources.items():
+        event=_official_event_from_source(key,source,allow_last_known=True)
+
+        # If the current source no longer carries an elevated event, migrate the
+        # last known official event from the previous payload when needed.
+        if event is None and key not in tracked:
+            event=_official_event_from_source(
+                key,
+                prev_sources.get(key),
+                allow_last_known=True,
+            )
+
+        if event is None:
+            continue
+
+        old=tracked.get(key) or {}
+        same_signature=old.get("signature")==event.get("signature")
+
+        parsed_official=parse_dt(event.get("official_at"))
+        if parsed_official and parsed_official>now+timedelta(minutes=15):
+            parsed_official=None
+
+        if same_signature:
+            effective_at=(
+                parse_dt(old.get("effective_at"))
+                or parsed_official
+                or parse_dt(old.get("first_seen_at"))
+                or now
+            )
+            first_seen=parse_dt(old.get("first_seen_at")) or effective_at
+        else:
+            # Historical/stale CEMADEN information must retain its original
+            # timestamp and must not become "new" merely because the code saw it.
+            effective_at=parsed_official or now
+            first_seen=now
+
+        tracked[key]={
+            "source":key,
+            "level":event.get("level"),
+            "signature":event.get("signature"),
+            "official_at":(
+                parsed_official.isoformat()
+                if parsed_official
+                else event.get("official_at")
+            ),
+            "effective_at":effective_at.isoformat(),
+            "first_seen_at":first_seen.isoformat(),
+            "last_seen_at":now.isoformat(),
+            "historical":bool(event.get("historical")),
+        }
+
+    floor=_official_driver_floor(current_level)
+    relevant=[]
+    for item in tracked.values():
+        try:
+            lvl=int(item.get("level") or 0)
+        except Exception:
+            lvl=0
+        when=parse_dt(item.get("effective_at"))
+        if lvl>=floor and when:
+            relevant.append((when,item))
+
+    if not relevant:
+        return {
+            "official_signals":tracked,
+            "official_driver_floor":floor,
+            "last_relevant_official_at":None,
+            "last_relevant_official_source":None,
+            "official_hold_until":None,
+            "official_hold_active":False,
+            "official_hold_remaining_minutes":0,
+        }
+
+    last_when,last_item=max(relevant,key=lambda x:x[0])
+    hold_until=last_when+timedelta(hours=DEESCALATION_OFFICIAL_HOLD_HOURS)
+    remaining=max(0.0,(hold_until-now).total_seconds()/60.0)
+
+    return {
+        "official_signals":tracked,
+        "official_driver_floor":floor,
+        "last_relevant_official_at":last_when.isoformat(),
+        "last_relevant_official_source":last_item.get("source"),
+        "official_hold_until":hold_until.isoformat(),
+        "official_hold_active":remaining>0,
+        "official_hold_remaining_minutes":round(remaining,1),
+    }
+
+
+def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, defesa, local_hydro):
+    """Escalate immediately; descend after 2 h quiet + 3 spaced safe checks."""
     now=datetime.now(TZ)
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
     try:
@@ -2049,106 +2232,112 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
     except Exception:
         previous_level=1
 
-    state=prev_overall.get("deescalation") or {}
+    prior_state=prev_overall.get("deescalation") or {}
     blockers=deescalation_source_readiness(geo,hydro,inmet,local_hydro)
     mode="bingen_local" if (local_hydro or {}).get("safe") else "standard"
+    official=update_official_hold_state(
+        previous,previous_level,geo,hydro,inmet,defesa
+    )
 
-    def reset_state(level, pending=False, target=None, blocked=False, reasons=None):
+    def state_base():
         return {
-            "pending":pending,
-            "target_level":target,
-            "blocked_by_source_gap":blocked,
             "mode":mode,
-            "blocked_reasons":reasons or [],
             "local_hydrological_evidence":local_hydro,
-            "safe_since":None,
-            "safe_origin_level":None,
-            "safe_elapsed_minutes":0,
-            "step_minutes":DEESCALATION_STEP_MINUTES,
-            "required_minutes_for_next_level":None,
+            "official_hold_hours":DEESCALATION_OFFICIAL_HOLD_HOURS,
+            "confirmations_required":DEESCALATION_CONFIRMATIONS,
+            "confirmation_min_interval_minutes":DEESCALATION_CONFIRMATION_MIN_INTERVAL_MINUTES,
+            **official,
         }
 
     if candidate_level>=previous_level:
-        return candidate_level,reset_state(candidate_level),False
+        return candidate_level,{
+            **state_base(),
+            "pending":False,
+            "phase":"stable_or_escalating",
+            "target_level":None,
+            "blocked_by_source_gap":False,
+            "blocked_by_official_hold":False,
+            "blocked_reasons":blockers,
+            "consecutive_confirmations":0,
+            "last_confirmation_at":None,
+        },False
 
     target=max(candidate_level,previous_level-1)
 
+    # A new/recent official publication supporting the current elevated level
+    # blocks any descent for two full hours. Re-reading the same publication does
+    # not restart this timer because its stable signature is preserved above.
+    if official.get("official_hold_active"):
+        return previous_level,{
+            **state_base(),
+            "pending":True,
+            "phase":"official_hold",
+            "target_level":target,
+            "blocked_by_source_gap":False,
+            "blocked_by_official_hold":True,
+            "blocked_reasons":[],
+            "consecutive_confirmations":0,
+            "last_confirmation_at":None,
+        },True
+
     if blockers:
-        return previous_level,reset_state(
-            previous_level,
-            pending=True,
-            target=target,
-            blocked=True,
-            reasons=blockers,
-        ),True
+        return previous_level,{
+            **state_base(),
+            "pending":True,
+            "phase":"blocked",
+            "target_level":target,
+            "blocked_by_source_gap":True,
+            "blocked_by_official_hold":False,
+            "blocked_reasons":blockers,
+            "consecutive_confirmations":0,
+            "last_confirmation_at":None,
+        },True
 
-    safe_since=parse_dt(state.get("safe_since"))
-    safe_origin_level=state.get("safe_origin_level")
+    same_target=(
+        prior_state.get("phase")=="confirming"
+        and prior_state.get("target_level")==target
+        and not prior_state.get("blocked_by_source_gap")
+        and not prior_state.get("blocked_by_official_hold")
+    )
+    count=int(prior_state.get("consecutive_confirmations") or 0) if same_target else 0
+    last_confirmation=parse_dt(prior_state.get("last_confirmation_at")) if same_target else None
 
-    # Migration from the former "3 consecutive collections" rule: if the
-    # immediately previous collection had already validated safe local evidence,
-    # use that collection time as the beginning of the continuous safe window.
-    if safe_since is None:
-        previous_local=state.get("local_hydrological_evidence") or {}
-        prior_was_safe=(
-            state.get("blocked_by_source_gap") is False
-            and (
-                previous_local.get("safe") is True
-                or (
-                    state.get("mode")=="standard"
-                    and bool(state.get("consecutive_confirmations"))
-                )
-            )
-        )
-        migrated_since=parse_dt(previous.get("generated_at")) if prior_was_safe else None
-        safe_since=migrated_since or now
-        safe_origin_level=previous_level
+    may_count=(
+        last_confirmation is None
+        or (now-last_confirmation).total_seconds()/60.0
+           >=DEESCALATION_CONFIRMATION_MIN_INTERVAL_MINUTES
+    )
+    if may_count:
+        count+=1
+        last_confirmation=now
 
-    try:
-        safe_origin_level=int(safe_origin_level)
-    except Exception:
-        safe_origin_level=previous_level
-
-    # Never let an origin below the current level distort the required duration.
-    safe_origin_level=max(safe_origin_level,previous_level)
-
-    elapsed_minutes=max(0.0,(now-safe_since).total_seconds()/60.0)
-    steps_to_target=max(1,safe_origin_level-target)
-    required_minutes=steps_to_target*DEESCALATION_STEP_MINUTES
-
-    common={
-        "blocked_by_source_gap":False,
-        "mode":mode,
-        "blocked_reasons":[],
-        "local_hydrological_evidence":local_hydro,
-        "safe_since":safe_since.isoformat(),
-        "safe_origin_level":safe_origin_level,
-        "safe_elapsed_minutes":round(elapsed_minutes,1),
-        "step_minutes":DEESCALATION_STEP_MINUTES,
-    }
-
-    if elapsed_minutes>=required_minutes:
+    if count>=DEESCALATION_CONFIRMATIONS:
         new_level=target
         still_pending=candidate_level<new_level
         next_target=max(candidate_level,new_level-1) if still_pending else None
-        next_required=(
-            max(1,safe_origin_level-next_target)*DEESCALATION_STEP_MINUTES
-            if next_target is not None
-            else None
-        )
         return new_level,{
-            **common,
+            **state_base(),
             "pending":still_pending,
+            "phase":"confirming" if still_pending else "stable",
             "target_level":next_target,
-            "required_minutes_for_next_level":next_required,
+            "blocked_by_source_gap":False,
+            "blocked_by_official_hold":False,
+            "blocked_reasons":[],
+            "consecutive_confirmations":0,
+            "last_confirmation_at":None,
             "last_step_at":now.isoformat(),
         },False
 
     return previous_level,{
-        **common,
+        **state_base(),
         "pending":True,
+        "phase":"confirming",
         "target_level":target,
-        "required_minutes_for_next_level":required_minutes,
+        "blocked_by_source_gap":False,
+        "blocked_by_official_hold":False,
+        "blocked_reasons":[],
+        "consecutive_confirmations":count,
+        "last_confirmation_at":last_confirmation.isoformat() if last_confirmation else None,
     },True
 
 def main():
@@ -2206,7 +2395,7 @@ def main():
     )
 
     overall,deescalation,deescalation_held=apply_deescalation_hysteresis(
-        candidate,previous,geo,hydro,inmet,local_hydro_normalization
+        candidate,previous,geo,hydro,inmet,defesa,local_hydro_normalization
     )
 
     driver_floor=max(1,candidate-(1 if escalated else 0))
@@ -2246,19 +2435,34 @@ def main():
         )
 
     if deescalation_held:
-        if deescalation.get("blocked_by_source_gap"):
+        if deescalation.get("blocked_by_official_hold"):
+            remaining=safe_float(deescalation.get("official_hold_remaining_minutes")) or 0
+            reason_parts.append(
+                "Descida bloqueada pela janela de segurança após informação oficial: "
+                +f"restam aproximadamente {remaining:.0f} min das "
+                +str(DEESCALATION_OFFICIAL_HOLD_HOURS)
+                +" h mínimas"
+            )
+        elif deescalation.get("blocked_by_source_gap"):
             blocked=", ".join(deescalation.get("blocked_reasons") or [])
             reason_parts.append(
                 "Rebaixamento retido por evidência insuficiente"
                 +((": "+blocked) if blocked else "")
             )
         else:
-            elapsed=safe_float(deescalation.get("safe_elapsed_minutes")) or 0
-            required=safe_float(deescalation.get("required_minutes_for_next_level")) or DEESCALATION_STEP_MINUTES
             reason_parts.append(
-                "Normalização em avaliação: "
-                +f"{elapsed:.0f}/{required:.0f} min de condição segura para o próximo nível"
+                "Normalização em confirmação: "
+                +str(deescalation.get("consecutive_confirmations") or 0)
+                +"/"+str(DEESCALATION_CONFIRMATIONS)
+                +" verificações válidas para o próximo nível"
             )
+    elif deescalation.get("pending"):
+        reason_parts.append(
+            "Nível reduzido uma faixa; a próxima redução exigirá "
+            +str(DEESCALATION_CONFIRMATIONS)
+            +" novas verificações válidas se a melhora persistir"
+        )
+
 
     reason=". ".join(x.rstrip(".") for x in reason_parts if x)+"."
 
@@ -2276,7 +2480,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Rebaixamento ocorre um nível por vez após 30 minutos contínuos de condição segura por faixa; o tempo seguro é preservado entre execuções para que atrasos do agendamento não congelem o nível."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 2 horas. Encerrada essa janela sem nova informação de mesmo peso ou maior, são exigidas 3 verificações válidas consecutivas, separadas por ciclos reais de monitoramento, para reduzir apenas uma faixa. Novas publicações oficiais relevantes reiniciam as 2 horas; reler o mesmo aviso não reinicia o relógio. Depois da primeira queda, não há nova espera de 2 horas: são necessárias 3 novas verificações válidas para cada faixa seguinte, desde que não haja agravamento."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
