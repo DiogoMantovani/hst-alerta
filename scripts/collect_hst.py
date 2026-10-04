@@ -1837,7 +1837,7 @@ OBS_RAIN_24H_MM=50.0
 BINGEN_SAFE_MAX_AGE_HOURS=2.0
 BINGEN_SAFE_SHORT_MM=20.0
 BINGEN_SAFE_24H_MM=50.0
-DEESCALATION_CONFIRMATIONS=3
+DEESCALATION_STEP_MINUTES=30
 
 def supplemental_observation_signals(forecast, pluviometers):
     """Complementary signals may raise only the HST Observation level (2).
@@ -2037,7 +2037,12 @@ def deescalation_source_readiness(geo, hydro, inmet, local_hydro):
 
 
 def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, local_hydro):
-    """Escalation is immediate; de-escalation is gradual and evidence-aware."""
+    """Escalation is immediate; de-escalation uses continuous safe time.
+
+    One level is reduced at a time. A safe window is preserved across delayed
+    GitHub Actions runs so missed schedules do not freeze the HST level.
+    """
+    now=datetime.now(TZ)
     prev_overall=(previous.get("overall") or {}) if isinstance(previous,dict) else {}
     try:
         previous_level=int(prev_overall.get("level") or 1)
@@ -2048,56 +2053,102 @@ def apply_deescalation_hysteresis(candidate_level, previous, geo, hydro, inmet, 
     blockers=deescalation_source_readiness(geo,hydro,inmet,local_hydro)
     mode="bingen_local" if (local_hydro or {}).get("safe") else "standard"
 
-    if candidate_level>=previous_level:
-        return candidate_level,{
-            "pending":False,
-            "target_level":None,
-            "consecutive_confirmations":0,
-            "confirmations_required":DEESCALATION_CONFIRMATIONS,
-            "blocked_by_source_gap":False,
+    def reset_state(level, pending=False, target=None, blocked=False, reasons=None):
+        return {
+            "pending":pending,
+            "target_level":target,
+            "blocked_by_source_gap":blocked,
             "mode":mode,
-            "blocked_reasons":blockers,
+            "blocked_reasons":reasons or [],
             "local_hydrological_evidence":local_hydro,
-        },False
+            "safe_since":None,
+            "safe_origin_level":None,
+            "safe_elapsed_minutes":0,
+            "step_minutes":DEESCALATION_STEP_MINUTES,
+            "required_minutes_for_next_level":None,
+        }
+
+    if candidate_level>=previous_level:
+        return candidate_level,reset_state(candidate_level),False
 
     target=max(candidate_level,previous_level-1)
+
     if blockers:
-        return previous_level,{
-            "pending":True,
-            "target_level":target,
-            "consecutive_confirmations":0,
-            "confirmations_required":DEESCALATION_CONFIRMATIONS,
-            "blocked_by_source_gap":True,
-            "mode":mode,
-            "blocked_reasons":blockers,
-            "local_hydrological_evidence":local_hydro,
-        },True
+        return previous_level,reset_state(
+            previous_level,
+            pending=True,
+            target=target,
+            blocked=True,
+            reasons=blockers,
+        ),True
 
-    previous_target=state.get("target_level")
-    previous_count=int(state.get("consecutive_confirmations") or 0)
-    count=previous_count+1 if previous_target==target else 1
+    safe_since=parse_dt(state.get("safe_since"))
+    safe_origin_level=state.get("safe_origin_level")
 
-    if count>=DEESCALATION_CONFIRMATIONS:
-        return target,{
-            "pending":False,
-            "target_level":None,
-            "consecutive_confirmations":0,
-            "confirmations_required":DEESCALATION_CONFIRMATIONS,
-            "blocked_by_source_gap":False,
-            "mode":mode,
-            "blocked_reasons":[],
-            "local_hydrological_evidence":local_hydro,
-        },False
+    # Migration from the former "3 consecutive collections" rule: if the
+    # immediately previous collection had already validated safe local evidence,
+    # use that collection time as the beginning of the continuous safe window.
+    if safe_since is None:
+        previous_local=state.get("local_hydrological_evidence") or {}
+        prior_was_safe=(
+            state.get("blocked_by_source_gap") is False
+            and (
+                previous_local.get("safe") is True
+                or (
+                    state.get("mode")=="standard"
+                    and bool(state.get("consecutive_confirmations"))
+                )
+            )
+        )
+        migrated_since=parse_dt(previous.get("generated_at")) if prior_was_safe else None
+        safe_since=migrated_since or now
+        safe_origin_level=previous_level
 
-    return previous_level,{
-        "pending":True,
-        "target_level":target,
-        "consecutive_confirmations":count,
-        "confirmations_required":DEESCALATION_CONFIRMATIONS,
+    try:
+        safe_origin_level=int(safe_origin_level)
+    except Exception:
+        safe_origin_level=previous_level
+
+    # Never let an origin below the current level distort the required duration.
+    safe_origin_level=max(safe_origin_level,previous_level)
+
+    elapsed_minutes=max(0.0,(now-safe_since).total_seconds()/60.0)
+    steps_to_target=max(1,safe_origin_level-target)
+    required_minutes=steps_to_target*DEESCALATION_STEP_MINUTES
+
+    common={
         "blocked_by_source_gap":False,
         "mode":mode,
         "blocked_reasons":[],
         "local_hydrological_evidence":local_hydro,
+        "safe_since":safe_since.isoformat(),
+        "safe_origin_level":safe_origin_level,
+        "safe_elapsed_minutes":round(elapsed_minutes,1),
+        "step_minutes":DEESCALATION_STEP_MINUTES,
+    }
+
+    if elapsed_minutes>=required_minutes:
+        new_level=target
+        still_pending=candidate_level<new_level
+        next_target=max(candidate_level,new_level-1) if still_pending else None
+        next_required=(
+            max(1,safe_origin_level-next_target)*DEESCALATION_STEP_MINUTES
+            if next_target is not None
+            else None
+        )
+        return new_level,{
+            **common,
+            "pending":still_pending,
+            "target_level":next_target,
+            "required_minutes_for_next_level":next_required,
+            "last_step_at":now.isoformat(),
+        },False
+
+    return previous_level,{
+        **common,
+        "pending":True,
+        "target_level":target,
+        "required_minutes_for_next_level":required_minutes,
     },True
 
 def main():
@@ -2202,11 +2253,11 @@ def main():
                 +((": "+blocked) if blocked else "")
             )
         else:
+            elapsed=safe_float(deescalation.get("safe_elapsed_minutes")) or 0
+            required=safe_float(deescalation.get("required_minutes_for_next_level")) or DEESCALATION_STEP_MINUTES
             reason_parts.append(
                 "Normalização em avaliação: "
-                +str(deescalation.get("consecutive_confirmations") or 0)
-                +"/"+str(DEESCALATION_CONFIRMATIONS)
-                +" coletas consecutivas de melhora para o próximo nível"
+                +f"{elapsed:.0f}/{required:.0f} min de condição segura para o próximo nível"
             )
 
     reason=". ".join(x.rstrip(".") for x in reason_parts if x)+"."
@@ -2225,7 +2276,7 @@ def main():
           "supplemental_observation":supplemental_observation,
           "supplemental_signals":supplemental_signals,
           "deescalation":deescalation,
-          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Rebaixamento ocorre um nível por vez após 3 coletas consecutivas válidas de melhora."
+          "rule":"Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Rebaixamento ocorre um nível por vez após 30 minutos contínuos de condição segura por faixa; o tempo seguro é preservado entre execuções para que atrasos do agendamento não congelem o nível."
       },
       "sources":{"cemaden_geological":geo,"cemaden_hydrological":hydro,"inmet_alerts":inmet,"defesa_civil":defesa},
       "weather":weather,
