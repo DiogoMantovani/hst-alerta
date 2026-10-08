@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-08T08:03:43.312272-03:00",
+  "generated_at": "2026-10-08T08:03:44.720819-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -47,8 +47,8 @@
           "signature": "{\"level\":2,\"official_at\":\"2026-10-07T08:03:37-03:00\",\"risk\":\"Baixo\",\"source\":\"cemaden_geological\"}",
           "official_at": "2026-10-07T08:03:37-03:00",
           "effective_at": "2026-10-07T08:03:37-03:00",
-          "first_seen_at": "2026-10-08T08:03:43.312075-03:00",
-          "last_seen_at": "2026-10-08T08:03:43.312075-03:00",
+          "first_seen_at": "2026-10-08T08:03:44.720629-03:00",
+          "last_seen_at": "2026-10-08T08:03:44.720629-03:00",
           "historical": false
         },
         "cemaden_hydrological": {
@@ -93,7 +93,7 @@
       "last_known_updated_at": "2026-10-07T08:03:37-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-08T08:03:12.449830-03:00",
+      "collected_at": "2026-10-08T08:03:16.874165-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -110,7 +110,7 @@
       "last_known_updated_at": "2026-10-08T05:46:29-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-08T08:03:13.469148-03:00",
+      "collected_at": "2026-10-08T08:03:17.862978-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -124,7 +124,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-08T08:03:21.520967-03:00",
+      "collected_at": "2026-10-08T08:03:25.139099-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -146,16 +146,6 @@
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
           "error": "ConnectTimeout"
         },
-        "jornalismo": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
-          "error": "ConnectTimeout"
-        },
-        "boletim_meteorologico": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
-          "error": "ConnectTimeout"
-        },
         "tag_defesa_civil": {
           "status": "unavailable",
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
@@ -164,6 +154,16 @@
         "rss_jornalismo": {
           "status": "unavailable",
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
+          "error": "ConnectTimeout"
+        },
+        "jornalismo": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
+          "error": "ConnectTimeout"
+        },
+        "boletim_meteorologico": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
           "error": "ConnectTimeout"
         }
       },
@@ -178,6 +178,11 @@
         "used": true,
         "can_escalate": false,
         "routes": {
+          "boletim_meteorologico": {
+            "status": "unavailable",
+            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
+            "error": "ReadTimeout"
+          },
           "jornalismo": {
             "status": "unavailable",
             "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
@@ -186,11 +191,6 @@
           "tag_defesa_civil": {
             "status": "unavailable",
             "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
-            "error": "ReadTimeout"
-          },
-          "boletim_meteorologico": {
-            "status": "unavailable",
-            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
             "error": "ReadTimeout"
           },
           "news_index": {
@@ -209,7 +209,7 @@
         "stage_hours": 48,
         "operational_signal_hours": 12
       },
-      "collected_at": "2026-10-08T08:03:23.322719-03:00",
+      "collected_at": "2026-10-08T08:03:26.954505-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
       "status": "cache_only",
       "stage": null,
@@ -240,7 +240,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-08T08:03:14.448998-03:00",
+    "collected_at": "2026-10-08T08:03:18.888569-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-10-07/2026-10-08/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-10-07/2026-10-08/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-08 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-08 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-07 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-07"
   },
@@ -265,7 +265,7 @@
     "wind_gust_kmh": 13.0,
     "weather_code": 0,
     "condition": "Céu limpo",
-    "collected_at": "2026-10-08T08:03:16.858917-03:00",
+    "collected_at": "2026-10-08T08:03:21.258535-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -281,7 +281,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-08T08:03:17.329329-03:00",
+    "grid_updated_at": "2026-10-08T08:03:21.334182-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -934,14 +934,14 @@
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-08T08:03:17.329329-03:00",
+    "collected_at": "2026-10-08T08:03:21.334182-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas estáticas são usadas somente para ordenar as estações por distância do HST.",
-    "collected_at": "2026-10-08T08:03:18.243110-03:00",
+    "collected_at": "2026-10-08T08:03:21.788574-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 14,
@@ -1513,7 +1513,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-08T08:03:19.694749-03:00",
+    "collected_at": "2026-10-08T08:03:23.229497-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -2073,7 +2073,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-08T08:03:40.635496-03:00",
+    "collected_at": "2026-10-08T08:03:44.063664-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
