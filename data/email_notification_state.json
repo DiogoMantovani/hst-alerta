@@ -9,7 +9,7 @@
       "last_sent_at": "2026-10-17T23:31:02.928316+00:00",
       "last_attempt_at": "2026-10-17T23:31:01.792994+00:00",
       "last_event": "recovery",
-      "last_result": "sent",
+      "last_result": "no_event",
       "last_error": null,
       "last_message_id": [
         null
@@ -26,5 +26,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-17T23:31:01.792873+00:00"
+  "updated_at": "2026-10-17T23:45:49.503034+00:00"
 }
