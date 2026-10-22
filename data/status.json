@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-21T23:46:12.072042-03:00",
+  "generated_at": "2026-10-22T00:01:31.509350-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -105,13 +105,13 @@
       "risk": "Muito Baixo",
       "level": 1,
       "official_updated_at": "2026-10-21T07:23:17-03:00",
-      "age_hours": 16.4,
+      "age_hours": 16.6,
       "last_known_risk": "Muito Baixo",
       "last_known_level": 1,
       "last_known_updated_at": "2026-10-21T07:23:17-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-10-21T23:45:16.078302-03:00",
+      "collected_at": "2026-10-22T00:00:29.262823-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -122,13 +122,13 @@
       "risk": "Sem atualização oficial recente",
       "level": null,
       "official_updated_at": "2026-10-20T05:53:27-03:00",
-      "age_hours": 41.9,
+      "age_hours": 42.1,
       "last_known_risk": "Muito Baixo",
       "last_known_level": 1,
       "last_known_updated_at": "2026-10-20T05:53:27-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-10-21T23:45:17.759100-03:00",
+      "collected_at": "2026-10-22T00:00:31.334105-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -142,7 +142,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-10-21T23:45:51.395256-03:00",
+      "collected_at": "2026-10-22T00:01:06.444286-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -159,14 +159,9 @@
         "rss": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss"
       },
       "routes": {
-        "tag_defesa_civil": {
+        "rss_jornalismo": {
           "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
-          "error": "ConnectTimeout"
-        },
-        "boletim_meteorologico": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
           "error": "ConnectTimeout"
         },
         "jornalismo": {
@@ -179,9 +174,14 @@
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
           "error": "ConnectTimeout"
         },
-        "rss_jornalismo": {
+        "tag_defesa_civil": {
           "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
+          "error": "ConnectTimeout"
+        },
+        "boletim_meteorologico": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
           "error": "ConnectTimeout"
         }
       },
@@ -227,7 +227,7 @@
         "stage_hours": 48,
         "operational_signal_hours": 12
       },
-      "collected_at": "2026-10-21T23:45:53.525887-03:00",
+      "collected_at": "2026-10-22T00:01:08.734834-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
       "status": "cache_only",
       "stage": null,
@@ -258,9 +258,9 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-10-21T23:45:18.798171-03:00",
-    "url": "https://apitempo.inmet.gov.br/estacao/2026-10-20/2026-10-21/A610",
-    "error": "https://apitempo.inmet.gov.br/estacao/2026-10-20/2026-10-21/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-21 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-21 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-20 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-20"
+    "collected_at": "2026-10-22T00:00:32.230330-03:00",
+    "url": "https://apitempo.inmet.gov.br/estacao/2026-10-21/2026-10-22/A610",
+    "error": "https://apitempo.inmet.gov.br/estacao/2026-10-21/2026-10-22/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-10-22 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-22 | https://apitempo.inmet.gov.br/estacao/dados/2026-10-21 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-10-21"
   },
   "weather_reference": {
     "provider": "Open-Meteo",
@@ -272,18 +272,18 @@
       "latitude": -22.50825,
       "longitude": -43.19345
     },
-    "observed_at": "2026-10-21T23:45:00-03:00",
+    "observed_at": "2026-10-22T00:00:00-03:00",
     "age_hours": 0.0,
     "temperature_c": 15.4,
-    "apparent_temperature_c": 17.0,
+    "apparent_temperature_c": 16.9,
     "humidity_pct": 100.0,
     "precipitation_mm": 0.1,
     "rain_mm": 0.1,
-    "wind_speed_kmh": 2.2,
-    "wind_gust_kmh": 7.9,
+    "wind_speed_kmh": 2.3,
+    "wind_gust_kmh": 8.3,
     "weather_code": 51,
     "condition": "Garoa fraca",
-    "collected_at": "2026-10-21T23:45:21.483879-03:00",
+    "collected_at": "2026-10-22T00:00:35.391085-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -299,7 +299,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-10-21T23:45:22.154565-03:00",
+    "grid_updated_at": "2026-10-22T00:00:37.077461-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -940,26 +940,26 @@
       }
     ],
     "grid_points": 49,
-    "grid_error": null,
+    "grid_error": "HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=25)",
     "radar": {
       "status": "ok",
       "provider": "RainViewer",
       "host": "https://tilecache.rainviewer.com",
-      "path": "/v2/radar/484e8db2a60c",
-      "frame_time": "2026-10-21T23:40:00-03:00",
-      "generated_unix": 1792636826,
+      "path": "/v2/radar/3c96b5cdbadf",
+      "frame_time": "2026-10-22T00:00:00-03:00",
+      "generated_unix": 1792638023,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-10-21T23:45:22.154565-03:00",
+    "collected_at": "2026-10-22T00:00:37.077461-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "unavailable",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas estáticas são usadas somente para ordenar as estações por distância do HST.",
-    "collected_at": "2026-10-21T23:45:23.271710-03:00",
+    "collected_at": "2026-10-22T00:01:03.128402-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 14,
@@ -1524,59 +1524,16 @@
         "station_type": 1
       }
     ],
-    "error": "HTTPSConnectionPool(host='resources.cemaden.gov.br', port=443): Read timed out. (read timeout=25)"
+    "error": "HTTPSConnectionPool(host='resources.cemaden.gov.br', port=443): Max retries exceeded with url: /graficos/interativo/getJson2.php?uf=RJ (Caused by NewConnectionError(\"HTTPSConnection(host='resources.cemaden.gov.br', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
   },
   "forecast": {
     "provider": "INMET",
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-10-21T23:45:49.477775-03:00",
+    "collected_at": "2026-10-22T00:01:04.175133-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
-      {
-        "date": "21/10/2026",
-        "summary": "Muitas nuvens com possibilidade de chuva isolada",
-        "temperature_min_c": 13.0,
-        "temperature_max_c": 22.0,
-        "humidity_min_pct": 60.0,
-        "humidity_max_pct": 100.0,
-        "periods": [
-          {
-            "period": "manha",
-            "summary": "Muitas nuvens com possibilidade de chuva isolada",
-            "temperature_min_c": 13.0,
-            "temperature_max_c": 22.0,
-            "humidity_min_pct": 60.0,
-            "humidity_max_pct": 100.0,
-            "wind_direction": "N-NW",
-            "wind_intensity": "Fracos",
-            "weekday": "Quarta-Feira"
-          },
-          {
-            "period": "tarde",
-            "summary": "Muitas nuvens com possibilidade de chuva isolada",
-            "temperature_min_c": 13.0,
-            "temperature_max_c": 22.0,
-            "humidity_min_pct": 60.0,
-            "humidity_max_pct": 100.0,
-            "wind_direction": "S-SE",
-            "wind_intensity": "Fracos",
-            "weekday": "Quarta-Feira"
-          },
-          {
-            "period": "noite",
-            "summary": "Muitas nuvens com possibilidade de chuva isolada",
-            "temperature_min_c": 13.0,
-            "temperature_max_c": 22.0,
-            "humidity_min_pct": 60.0,
-            "humidity_max_pct": 100.0,
-            "wind_direction": "SE-N",
-            "wind_intensity": "Fracos",
-            "weekday": "Quarta-Feira"
-          }
-        ]
-      },
       {
         "date": "22/10/2026",
         "summary": "Muitas nuvens com pancadas de chuva isoladas / Muitas nuvens com pancadas de chuva e trovoadas isoladas",
@@ -1622,15 +1579,15 @@
       },
       {
         "date": "23/10/2026",
-        "summary": "Muitas nuvens com pancadas de chuva isoladas",
+        "summary": "Encoberto com chuvisco / Encoberto com pancadas de chuva e trovoadas isoladas / Encoberto com chuva isolada",
         "temperature_min_c": 16.0,
         "temperature_max_c": 25.0,
         "humidity_min_pct": 70.0,
         "humidity_max_pct": 100.0,
         "periods": [
           {
-            "period": "dia",
-            "summary": "Muitas nuvens com pancadas de chuva isoladas",
+            "period": "manha",
+            "summary": "Encoberto com chuvisco",
             "temperature_min_c": 16.0,
             "temperature_max_c": 25.0,
             "humidity_min_pct": 70.0,
@@ -1638,6 +1595,49 @@
             "wind_direction": "N-NE",
             "wind_intensity": "Fracos",
             "weekday": "Sexta-Feira"
+          },
+          {
+            "period": "tarde",
+            "summary": "Encoberto com pancadas de chuva e trovoadas isoladas",
+            "temperature_min_c": 16.0,
+            "temperature_max_c": 25.0,
+            "humidity_min_pct": 70.0,
+            "humidity_max_pct": 100.0,
+            "wind_direction": "E-NE",
+            "wind_intensity": "Fracos",
+            "weekday": "Sexta-Feira"
+          },
+          {
+            "period": "noite",
+            "summary": "Encoberto com chuva isolada",
+            "temperature_min_c": 16.0,
+            "temperature_max_c": 25.0,
+            "humidity_min_pct": 70.0,
+            "humidity_max_pct": 100.0,
+            "wind_direction": "N-NE",
+            "wind_intensity": "Fracos",
+            "weekday": "Sexta-Feira"
+          }
+        ]
+      },
+      {
+        "date": "24/10/2026",
+        "summary": "Muitas nuvens com pancadas de chuva e trovoadas isoladas",
+        "temperature_min_c": 17.0,
+        "temperature_max_c": 28.0,
+        "humidity_min_pct": 70.0,
+        "humidity_max_pct": 100.0,
+        "periods": [
+          {
+            "period": "dia",
+            "summary": "Muitas nuvens com pancadas de chuva e trovoadas isoladas",
+            "temperature_min_c": 17.0,
+            "temperature_max_c": 28.0,
+            "humidity_min_pct": 70.0,
+            "humidity_max_pct": 100.0,
+            "wind_direction": "N-NW",
+            "wind_intensity": "Fracos",
+            "weekday": "Sábado"
           }
         ]
       }
@@ -2059,7 +2059,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-10-21T23:46:11.121257-03:00",
+    "collected_at": "2026-10-22T00:01:25.988554-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
