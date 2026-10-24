@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "last_seen_level": 2,
+  "last_seen_level": 1,
   "last_seen_context": "rain",
   "groups": {
     "operational": {
@@ -26,5 +26,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-24T23:15:45.651436+00:00"
+  "updated_at": "2026-10-24T23:30:50.415236+00:00"
 }
