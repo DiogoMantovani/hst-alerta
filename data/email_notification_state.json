@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "last_seen_level": 2,
-  "last_seen_context": "geo",
+  "last_seen_context": "rain",
   "groups": {
     "operational": {
       "last_notified_level": null,
@@ -26,5 +26,5 @@
       "last_message_id": null
     }
   },
-  "updated_at": "2026-10-27T12:15:45.897050+00:00"
+  "updated_at": "2026-10-27T12:30:56.027610+00:00"
 }
