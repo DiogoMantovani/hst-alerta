@@ -1,6 +1,6 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-11-03T00:45:59.315901-03:00",
+  "generated_at": "2026-11-03T01:01:14.613493-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
@@ -9,9 +9,9 @@
   "overall": {
     "level": 2,
     "label": "Observação",
-    "reason": "Hidrológico: Baixo. Sem confirmação oficial recente em: Deslizamento.",
+    "reason": "Hidrológico: Baixo. Sem confirmação oficial recente em: Deslizamento. Normalização em confirmação: 1/3 verificações válidas para o próximo nível.",
     "candidate_level": 2,
-    "effective_candidate_level": 2,
+    "effective_candidate_level": 1,
     "official_candidate_level": 2,
     "supplemental_observation": false,
     "supplemental_signals": [],
@@ -42,13 +42,15 @@
       "confirmations_required": 3,
       "confirmation_min_interval_minutes": 15,
       "raw_candidate_level": 2,
-      "effective_candidate_level": 2,
-      "aged_level2_decay": false,
-      "aged_level2_sources": [],
-      "descent_from_level": null,
-      "descent_window_target": null,
-      "descent_window_started_at": null,
-      "minimum_stability_elapsed_minutes": 0.0,
+      "effective_candidate_level": 1,
+      "aged_level2_decay": true,
+      "aged_level2_sources": [
+        "cemaden_hydrological"
+      ],
+      "descent_from_level": 2,
+      "descent_window_target": 1,
+      "descent_window_started_at": "2026-11-02T17:41:06-03:00",
+      "minimum_stability_elapsed_minutes": 440.1,
       "minimum_stability_remaining_minutes": 0.0,
       "minimum_stability_window_hours": 3,
       "official_signals": {
@@ -59,7 +61,7 @@
           "official_at": "2026-10-30T06:49:34-03:00",
           "effective_at": "2026-10-30T06:49:34-03:00",
           "first_seen_at": "2026-10-30T07:00:52.802020-03:00",
-          "last_seen_at": "2026-11-03T00:45:59.315665-03:00",
+          "last_seen_at": "2026-11-03T01:01:14.613130-03:00",
           "historical": true
         },
         "cemaden_hydrological": {
@@ -69,7 +71,7 @@
           "official_at": "2026-11-02T17:41:06-03:00",
           "effective_at": "2026-11-02T17:41:06-03:00",
           "first_seen_at": "2026-11-02T17:45:51.891202-03:00",
-          "last_seen_at": "2026-11-03T00:45:59.315665-03:00",
+          "last_seen_at": "2026-11-03T01:01:14.613130-03:00",
           "historical": false
         }
       },
@@ -79,14 +81,14 @@
       "official_hold_until": "2026-11-02T20:41:06-03:00",
       "official_hold_active": false,
       "official_hold_remaining_minutes": 0.0,
-      "pending": false,
-      "phase": "stable_or_escalating",
-      "target_level": null,
+      "pending": true,
+      "phase": "confirming",
+      "target_level": 1,
       "blocked_by_source_gap": false,
       "blocked_by_official_hold": false,
       "blocked_reasons": [],
-      "consecutive_confirmations": 0,
-      "last_confirmation_at": null
+      "consecutive_confirmations": 1,
+      "last_confirmation_at": "2026-11-03T01:01:14.613102-03:00"
     },
     "rule": "Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Cada rebaixamento de uma faixa exige 3 horas contínuas de estabilidade e, depois dessa janela, 3 verificações válidas consecutivas separadas por ciclos reais de monitoramento. Novas informações oficiais que agravem ou sustentem o risco reiniciam ou interrompem a normalização conforme aplicável; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Após cada queda de faixa, uma nova janela de 3 horas é iniciada antes de qualquer redução adicional."
   },
@@ -98,13 +100,13 @@
       "risk": "Sem atualização oficial recente",
       "level": null,
       "official_updated_at": "2026-10-30T06:49:34-03:00",
-      "age_hours": 89.9,
+      "age_hours": 90.2,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-10-30T06:49:34-03:00",
       "freshness_limit_hours": 24,
       "message": "Sem atualização oficial relevante nas últimas 24 h. Isso não significa ausência de risco.",
-      "collected_at": "2026-11-03T00:45:26.233982-03:00",
+      "collected_at": "2026-11-03T01:00:25.585805-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -115,13 +117,13 @@
       "risk": "Baixo",
       "level": 2,
       "official_updated_at": "2026-11-02T17:41:06-03:00",
-      "age_hours": 7.1,
+      "age_hours": 7.3,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-11-02T17:41:06-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-11-03T00:45:27.414354-03:00",
+      "collected_at": "2026-11-03T01:00:26.793956-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -135,7 +137,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-11-03T00:45:35.830209-03:00",
+      "collected_at": "2026-11-03T01:00:50.681499-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -152,14 +154,9 @@
         "rss": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss"
       },
       "routes": {
-        "jornalismo": {
+        "rss_jornalismo": {
           "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
-          "error": "ConnectTimeout"
-        },
-        "tag_defesa_civil": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
           "error": "ConnectTimeout"
         },
         "boletim_meteorologico": {
@@ -167,14 +164,19 @@
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
           "error": "ConnectTimeout"
         },
-        "rss_jornalismo": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
-          "error": "ConnectTimeout"
-        },
         "portal": {
           "status": "unavailable",
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
+          "error": "ConnectTimeout"
+        },
+        "tag_defesa_civil": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
+          "error": "ConnectTimeout"
+        },
+        "jornalismo": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
           "error": "ConnectTimeout"
         }
       },
@@ -189,9 +191,9 @@
         "used": true,
         "can_escalate": false,
         "routes": {
-          "jornalismo": {
+          "tag_defesa_civil": {
             "status": "unavailable",
-            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
+            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
             "error": "ReadTimeout"
           },
           "boletim_meteorologico": {
@@ -199,15 +201,15 @@
             "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
             "error": "ReadTimeout"
           },
-          "tag_defesa_civil": {
+          "jornalismo": {
             "status": "unavailable",
-            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
+            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
             "error": "ReadTimeout"
           },
           "news_index": {
             "status": "ok",
             "url": "https://news.google.com/rss/search?q=site%3Apetropolis.rj.gov.br+%22Defesa+Civil%22+Petr%C3%B3polis&hl=pt-BR&gl=BR&ceid=BR%3Apt-419",
-            "items": 15
+            "items": 11
           }
         },
         "available_routes": [
@@ -220,7 +222,7 @@
         "stage_hours": 48,
         "operational_signal_hours": 12
       },
-      "collected_at": "2026-11-03T00:45:37.469503-03:00",
+      "collected_at": "2026-11-03T01:00:52.504966-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
       "status": "cache_only",
       "stage": null,
@@ -251,7 +253,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-11-03T00:45:28.580405-03:00",
+    "collected_at": "2026-11-03T01:00:27.845985-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-11-02/2026-11-03/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-11-02/2026-11-03/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-11-03 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-03 | https://apitempo.inmet.gov.br/estacao/dados/2026-11-02 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-02"
   },
@@ -265,18 +267,18 @@
       "latitude": -22.50825,
       "longitude": -43.19345
     },
-    "observed_at": "2026-11-03T00:45:00-03:00",
+    "observed_at": "2026-11-03T01:00:00-03:00",
     "age_hours": 0.0,
     "temperature_c": 19.6,
-    "apparent_temperature_c": 21.5,
+    "apparent_temperature_c": 21.4,
     "humidity_pct": 92.0,
     "precipitation_mm": 0.0,
     "rain_mm": 0.0,
-    "wind_speed_kmh": 7.9,
-    "wind_gust_kmh": 23.4,
+    "wind_speed_kmh": 8.1,
+    "wind_gust_kmh": 23.8,
     "weather_code": 45,
     "condition": "Nevoeiro",
-    "collected_at": "2026-11-03T00:45:31.278963-03:00",
+    "collected_at": "2026-11-03T01:00:30.324367-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
     "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
     "error": null
@@ -292,58 +294,58 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-11-03T00:45:31.573235-03:00",
+    "grid_updated_at": "2026-11-03T01:00:30.971620-03:00",
     "grid": [
       {
         "latitude": -22.601055,
         "longitude": -43.271027,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 23.4,
-        "cloud_cover_pct": 47.0,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.271027,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 22.0,
-        "cloud_cover_pct": 47.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 21.9,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.271027,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 22.7,
-        "cloud_cover_pct": 47.0,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.17758,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 23.8,
-        "cloud_cover_pct": 42.0,
+        "cloud_cover_pct": 46.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 3.3,
-        "wind_direction_deg": 6.0,
+        "wind_speed_kmh": 3.1,
+        "wind_direction_deg": 7.0,
         "weather_code": 1
       },
       {
@@ -351,12 +353,12 @@
         "longitude": -43.17758,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 23.7,
-        "cloud_cover_pct": 42.0,
+        "cloud_cover_pct": 46.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 3.3,
-        "wind_direction_deg": 6.0,
+        "wind_speed_kmh": 3.1,
+        "wind_direction_deg": 7.0,
         "weather_code": 1
       },
       {
@@ -364,12 +366,12 @@
         "longitude": -43.128906,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 23.2,
-        "cloud_cover_pct": 38.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 23.1,
+        "cloud_cover_pct": 42.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 3.3,
-        "wind_direction_deg": 49.0,
+        "wind_speed_kmh": 2.8,
+        "wind_direction_deg": 50.0,
         "weather_code": 1
       },
       {
@@ -377,51 +379,51 @@
         "longitude": -43.084106,
         "requested_latitude": -22.59825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 22.6,
-        "cloud_cover_pct": 48.0,
+        "cloud_cover_pct": 52.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 2.5,
-        "wind_direction_deg": 4.0,
-        "weather_code": 1
+        "wind_speed_kmh": 2.2,
+        "wind_direction_deg": 360.0,
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.271027,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 23.6,
-        "cloud_cover_pct": 47.0,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.271027,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 22.7,
-        "cloud_cover_pct": 47.0,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.530756,
         "longitude": -43.226135,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 20.7,
-        "cloud_cover_pct": 63.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 20.6,
+        "cloud_cover_pct": 66.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 7.9,
-        "wind_direction_deg": 360.0,
+        "wind_speed_kmh": 8.1,
+        "wind_direction_deg": 1.0,
         "weather_code": 45
       },
       {
@@ -429,12 +431,12 @@
         "longitude": -43.17758,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 23.2,
-        "cloud_cover_pct": 42.0,
+        "cloud_cover_pct": 46.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 3.3,
-        "wind_direction_deg": 6.0,
+        "wind_speed_kmh": 3.1,
+        "wind_direction_deg": 7.0,
         "weather_code": 1
       },
       {
@@ -442,12 +444,12 @@
         "longitude": -43.17758,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 21.4,
-        "cloud_cover_pct": 42.0,
+        "cloud_cover_pct": 46.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 3.3,
-        "wind_direction_deg": 6.0,
+        "wind_speed_kmh": 3.1,
+        "wind_direction_deg": 7.0,
         "weather_code": 1
       },
       {
@@ -455,35 +457,35 @@
         "longitude": -43.084106,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 21.2,
-        "cloud_cover_pct": 48.0,
+        "cloud_cover_pct": 52.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 2.5,
-        "wind_direction_deg": 4.0,
-        "weather_code": 1
+        "wind_speed_kmh": 2.2,
+        "wind_direction_deg": 360.0,
+        "weather_code": 2
       },
       {
         "latitude": -22.601055,
         "longitude": -43.084106,
         "requested_latitude": -22.56825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 21.9,
-        "cloud_cover_pct": 48.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 21.8,
+        "cloud_cover_pct": 52.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 2.5,
-        "wind_direction_deg": 4.0,
-        "weather_code": 1
+        "wind_speed_kmh": 2.2,
+        "wind_direction_deg": 360.0,
+        "weather_code": 2
       },
       {
         "latitude": -22.530756,
         "longitude": -43.31949,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 20.7,
-        "cloud_cover_pct": 83.0,
+        "cloud_cover_pct": 88.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.0,
         "wind_direction_deg": 359.0,
@@ -494,25 +496,25 @@
         "longitude": -43.271027,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 22.5,
-        "cloud_cover_pct": 47.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 22.4,
+        "cloud_cover_pct": 54.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 2.5,
         "wind_direction_deg": 339.0,
-        "weather_code": 1
+        "weather_code": 2
       },
       {
         "latitude": -22.530756,
         "longitude": -43.226135,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 20.7,
-        "cloud_cover_pct": 63.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 20.6,
+        "cloud_cover_pct": 66.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 7.9,
-        "wind_direction_deg": 360.0,
+        "wind_speed_kmh": 8.1,
+        "wind_direction_deg": 1.0,
         "weather_code": 45
       },
       {
@@ -520,12 +522,12 @@
         "longitude": -43.226135,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 19.1,
-        "cloud_cover_pct": 63.0,
+        "cloud_cover_pct": 66.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 7.9,
-        "wind_direction_deg": 360.0,
+        "wind_speed_kmh": 8.1,
+        "wind_direction_deg": 1.0,
         "weather_code": 45
       },
       {
@@ -533,12 +535,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 16.6,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -546,8 +548,8 @@
         "longitude": -43.088074,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 16.5,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 16.4,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -559,12 +561,12 @@
         "longitude": -43.0394,
         "requested_latitude": -22.53825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 22.1,
-        "cloud_cover_pct": 58.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 22.0,
+        "cloud_cover_pct": 63.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 4.3,
-        "wind_direction_deg": 338.0,
+        "wind_speed_kmh": 4.2,
+        "wind_direction_deg": 335.0,
         "weather_code": 45
       },
       {
@@ -572,12 +574,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 17.5,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -585,9 +587,9 @@
         "longitude": -43.31949,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 20.7,
-        "cloud_cover_pct": 83.0,
+        "cloud_cover_pct": 88.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.0,
         "wind_direction_deg": 359.0,
@@ -598,12 +600,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 18.9,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -611,12 +613,12 @@
         "longitude": -43.226135,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 19.6,
-        "cloud_cover_pct": 63.0,
+        "cloud_cover_pct": 66.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 7.9,
-        "wind_direction_deg": 360.0,
+        "wind_speed_kmh": 8.1,
+        "wind_direction_deg": 1.0,
         "weather_code": 45
       },
       {
@@ -624,12 +626,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 18.8,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -637,8 +639,8 @@
         "longitude": -43.088074,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 18.4,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 18.3,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -650,8 +652,8 @@
         "longitude": -43.088074,
         "requested_latitude": -22.50825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 16.6,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 16.5,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -663,12 +665,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 18.9,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -676,12 +678,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 17.3,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -689,12 +691,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 18.0,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -702,12 +704,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 16.1,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -715,11 +717,11 @@
         "longitude": -43.132782,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 20.3,
-        "cloud_cover_pct": 60.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 20.2,
+        "cloud_cover_pct": 63.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 6.0,
+        "wind_speed_kmh": 6.1,
         "wind_direction_deg": 355.0,
         "weather_code": 45
       },
@@ -728,7 +730,7 @@
         "longitude": -43.088074,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 16.7,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
@@ -741,7 +743,7 @@
         "longitude": -43.088074,
         "requested_latitude": -22.47825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 15.2,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
@@ -754,12 +756,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 16.4,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -767,12 +769,12 @@
         "longitude": -43.274597,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 15.3,
         "cloud_cover_pct": 93.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 13.0,
-        "wind_direction_deg": 27.0,
+        "wind_direction_deg": 28.0,
         "weather_code": 45
       },
       {
@@ -780,12 +782,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 16.5,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -793,12 +795,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 19.7,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -806,12 +808,12 @@
         "longitude": -43.181335,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 19.3,
-        "cloud_cover_pct": 88.0,
+        "cloud_cover_pct": 89.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 9.6,
-        "wind_direction_deg": 16.0,
+        "wind_direction_deg": 17.0,
         "weather_code": 45
       },
       {
@@ -819,8 +821,8 @@
         "longitude": -43.088074,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 20.3,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 20.2,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -832,8 +834,8 @@
         "longitude": -43.088074,
         "requested_latitude": -22.44825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 15.0,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 14.9,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -845,12 +847,12 @@
         "longitude": -43.322998,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.31345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 19.4,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 19.3,
         "cloud_cover_pct": 98.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 16.3,
-        "wind_direction_deg": 53.0,
+        "wind_speed_kmh": 16.4,
+        "wind_direction_deg": 52.0,
         "weather_code": 45
       },
       {
@@ -858,12 +860,12 @@
         "longitude": -43.229828,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.27345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 15.4,
         "cloud_cover_pct": 100.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 12.3,
-        "wind_direction_deg": 50.0,
+        "wind_direction_deg": 51.0,
         "weather_code": 45
       },
       {
@@ -871,12 +873,12 @@
         "longitude": -43.229828,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.23345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 15.9,
         "cloud_cover_pct": 100.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 12.3,
-        "wind_direction_deg": 50.0,
+        "wind_direction_deg": 51.0,
         "weather_code": 45
       },
       {
@@ -884,34 +886,34 @@
         "longitude": -43.18509,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.19345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 20.0,
         "cloud_cover_pct": 97.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 9.1,
-        "wind_direction_deg": 72.0,
-        "weather_code": 3
+        "wind_speed_kmh": 9.0,
+        "wind_direction_deg": 74.0,
+        "weather_code": 45
       },
       {
         "latitude": -22.31986,
         "longitude": -43.18509,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.15345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 20.2,
         "cloud_cover_pct": 97.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 9.1,
-        "wind_direction_deg": 72.0,
-        "weather_code": 3
+        "wind_speed_kmh": 9.0,
+        "wind_direction_deg": 74.0,
+        "weather_code": 45
       },
       {
         "latitude": -22.460457,
         "longitude": -43.088074,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.11345,
-        "observed_at": "2026-11-03T00:45",
-        "temperature_c": 19.7,
+        "observed_at": "2026-11-03T01:00",
+        "temperature_c": 19.6,
         "cloud_cover_pct": 84.0,
         "precipitation_mm": 0.0,
         "wind_speed_kmh": 6.9,
@@ -923,11 +925,11 @@
         "longitude": -42.994812,
         "requested_latitude": -22.41825,
         "requested_longitude": -43.07345,
-        "observed_at": "2026-11-03T00:45",
+        "observed_at": "2026-11-03T01:00",
         "temperature_c": 19.7,
-        "cloud_cover_pct": 91.0,
+        "cloud_cover_pct": 92.0,
         "precipitation_mm": 0.0,
-        "wind_speed_kmh": 7.8,
+        "wind_speed_kmh": 8.1,
         "wind_direction_deg": 328.0,
         "weather_code": 45
       }
@@ -938,21 +940,21 @@
       "status": "ok",
       "provider": "RainViewer",
       "host": "https://tilecache.rainviewer.com",
-      "path": "/v2/radar/31cfbe1f4a51",
-      "frame_time": "2026-11-03T00:40:00-03:00",
-      "generated_unix": 1793677226,
+      "path": "/v2/radar/598f8ef4e5f8",
+      "frame_time": "2026-11-03T01:00:00-03:00",
+      "generated_unix": 1793678429,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-11-03T00:45:31.573235-03:00",
+    "collected_at": "2026-11-03T01:00:30.971620-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
-    "status": "ok",
+    "status": "unavailable",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas estáticas são usadas somente para ordenar as estações por distância do HST.",
-    "collected_at": "2026-11-03T00:45:32.197932-03:00",
+    "collected_at": "2026-11-03T01:00:47.770481-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
     "recent_stations": 15,
@@ -1517,14 +1519,14 @@
         "station_type": 1
       }
     ],
-    "error": null
+    "error": "HTTPSConnectionPool(host='resources.cemaden.gov.br', port=443): Max retries exceeded with url: /graficos/interativo/getJson2.php?uf=RJ (Caused by NewConnectionError(\"HTTPSConnection(host='resources.cemaden.gov.br', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
   },
   "forecast": {
     "provider": "INMET",
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-11-03T00:45:33.909104-03:00",
+    "collected_at": "2026-11-03T01:00:49.011510-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -2073,7 +2075,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-11-03T00:45:58.881343-03:00",
+    "collected_at": "2026-11-03T01:01:13.604326-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
@@ -2127,7 +2129,7 @@
     "weather_reference": "ok",
     "weather_map": "ok",
     "radar": "ok",
-    "pluviometers": "ok",
+    "pluviometers": "unavailable",
     "roads": "ok",
     "utilities": "pending"
   }
