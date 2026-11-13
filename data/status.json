@@ -1,15 +1,15 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-11-13T07:45:46.058623-03:00",
+  "generated_at": "2026-11-13T08:01:52.124765-03:00",
   "location": {
     "city": "Petrópolis",
     "state": "RJ",
     "country": "Brasil"
   },
   "overall": {
-    "level": 2,
-    "label": "Observação",
-    "reason": "Deslizamento: Baixo, Hidrológico: Baixo. Normalização em confirmação: 2/3 verificações válidas para o próximo nível.",
+    "level": 1,
+    "label": "Vigilância",
+    "reason": "Sem condição oficial de risco acima de Vigilância nas fontes integradas. Retorno à Vigilância confirmado após 3 h sem nova publicação CEMADEN de nível 2 e 3 verificações válidas consecutivas.",
     "candidate_level": 2,
     "effective_candidate_level": 1,
     "official_candidate_level": 2,
@@ -51,7 +51,7 @@
       "descent_from_level": 2,
       "descent_window_target": 1,
       "descent_window_started_at": "2026-11-13T00:38:20-03:00",
-      "minimum_stability_elapsed_minutes": 427.4,
+      "minimum_stability_elapsed_minutes": 443.5,
       "minimum_stability_remaining_minutes": 0.0,
       "minimum_stability_window_hours": 3,
       "official_signals": {
@@ -62,7 +62,7 @@
           "official_at": "2026-11-13T00:38:20-03:00",
           "effective_at": "2026-11-13T00:38:20-03:00",
           "first_seen_at": "2026-11-13T00:45:46.580774-03:00",
-          "last_seen_at": "2026-11-13T07:45:46.058329-03:00",
+          "last_seen_at": "2026-11-13T08:01:52.123622-03:00",
           "historical": false
         },
         "cemaden_hydrological": {
@@ -72,7 +72,7 @@
           "official_at": "2026-11-13T00:25:40-03:00",
           "effective_at": "2026-11-13T00:25:40-03:00",
           "first_seen_at": "2026-11-13T00:30:49.567291-03:00",
-          "last_seen_at": "2026-11-13T07:45:46.058329-03:00",
+          "last_seen_at": "2026-11-13T08:01:52.123622-03:00",
           "historical": false
         }
       },
@@ -82,14 +82,15 @@
       "official_hold_until": "2026-11-13T03:38:20-03:00",
       "official_hold_active": false,
       "official_hold_remaining_minutes": 0.0,
-      "pending": true,
-      "phase": "confirming",
-      "target_level": 1,
+      "pending": false,
+      "phase": "stable",
+      "target_level": null,
       "blocked_by_source_gap": false,
       "blocked_by_official_hold": false,
       "blocked_reasons": [],
-      "consecutive_confirmations": 2,
-      "last_confirmation_at": "2026-11-13T07:45:46.058322-03:00"
+      "consecutive_confirmations": 0,
+      "last_confirmation_at": null,
+      "last_step_at": "2026-11-13T08:01:52.123616-03:00"
     },
     "rule": "Escalada imediata somente por fonte oficial com status ok. Informação antiga não provoca nova subida. O risco Hidrológico é prioritário para o HST; quando o CEMADEN Hidrológico ultrapassa sua janela de 24 h sem nova atualização, o Bingen - Geo pode atuar como evidência local de normalização, desde que esteja recente e abaixo de 20 mm no curto prazo e 50 mm/24 h, sem outro pluviômetro recente acima desses gatilhos, sem aviso INMET, sem previsão forte e sem sinal operacional recente da Defesa Civil. O risco Geológico antigo não congela indefinidamente o rebaixamento, mas volta a participar imediatamente quando atualizado. Defesa Civil de Petrópolis pode elevar por estágio ou sinal operacional oficial recente. CEMADEN-RJ + INMET, ambos atuais e em nível >=3, podem elevar +1. Após uma informação oficial relevante, o nível não pode cair por 3 horas. Cada rebaixamento de uma faixa exige 3 horas contínuas de estabilidade e, depois dessa janela, 3 verificações válidas consecutivas separadas por ciclos reais de monitoramento. Novas informações oficiais que agravem ou sustentem o risco reiniciam ou interrompem a normalização conforme aplicável; reler o mesmo aviso não reinicia o relógio. Quando o único sustentador do nível 2 for uma classificação CEMADEN Baixo sem nova publicação por 3 horas, inicia-se o ciclo de 3 confirmações para retorno à Vigilância. Após cada queda de faixa, uma nova janela de 3 horas é iniciada antes de qualquer redução adicional."
   },
@@ -101,13 +102,13 @@
       "risk": "Baixo",
       "level": 2,
       "official_updated_at": "2026-11-13T00:38:20-03:00",
-      "age_hours": 7.1,
+      "age_hours": 7.4,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-11-13T00:38:20-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-11-13T07:45:18.335924-03:00",
+      "collected_at": "2026-11-13T08:00:30.576749-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=1",
       "error": null
     },
@@ -118,13 +119,13 @@
       "risk": "Baixo",
       "level": 2,
       "official_updated_at": "2026-11-13T00:25:40-03:00",
-      "age_hours": 7.3,
+      "age_hours": 7.6,
       "last_known_risk": "Baixo",
       "last_known_level": 2,
       "last_known_updated_at": "2026-11-13T00:25:40-03:00",
       "freshness_limit_hours": 24,
       "message": "Informação oficial dentro da janela de 24 h.",
-      "collected_at": "2026-11-13T07:45:19.568654-03:00",
+      "collected_at": "2026-11-13T08:00:32.640266-03:00",
       "url": "https://painelcemadenrj.defesacivil.rj.gov.br/monitoramento/v2/municipio/?action=2",
       "error": null
     },
@@ -138,7 +139,7 @@
       "active_count": 0,
       "starts_at": null,
       "ends_at": null,
-      "collected_at": "2026-11-13T07:45:27.192261-03:00",
+      "collected_at": "2026-11-13T08:01:24.979987-03:00",
       "url": "https://apiprevmet3.inmet.gov.br/avisos/ativos",
       "error": null
     },
@@ -155,16 +156,6 @@
         "rss": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss"
       },
       "routes": {
-        "portal": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
-          "error": "ConnectTimeout"
-        },
-        "jornalismo": {
-          "status": "unavailable",
-          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
-          "error": "ConnectTimeout"
-        },
         "rss_jornalismo": {
           "status": "unavailable",
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo?format=feed&type=rss",
@@ -175,9 +166,19 @@
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
           "error": "ConnectTimeout"
         },
+        "portal": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
+          "error": "ConnectTimeout"
+        },
         "boletim_meteorologico": {
           "status": "unavailable",
           "url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
+          "error": "ConnectTimeout"
+        },
+        "jornalismo": {
+          "status": "unavailable",
+          "url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
           "error": "ConnectTimeout"
         }
       },
@@ -192,11 +193,6 @@
         "used": true,
         "can_escalate": false,
         "routes": {
-          "tag_defesa_civil": {
-            "status": "unavailable",
-            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
-            "error": "ReadTimeout"
-          },
           "jornalismo": {
             "status": "unavailable",
             "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/noticias/itemlist/user/257-jornalismo",
@@ -205,6 +201,11 @@
           "boletim_meteorologico": {
             "status": "unavailable",
             "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/boletim-meteorologico-defesa-civil",
+            "error": "ReadTimeout"
+          },
+          "tag_defesa_civil": {
+            "status": "unavailable",
+            "official_url": "https://www.petropolis.rj.gov.br/pmp/index.php/component/tags/tag/defesa-civil",
             "error": "ReadTimeout"
           },
           "news_index": {
@@ -223,7 +224,7 @@
         "stage_hours": 48,
         "operational_signal_hours": 12
       },
-      "collected_at": "2026-11-13T07:45:28.633472-03:00",
+      "collected_at": "2026-11-13T08:01:26.710754-03:00",
       "url": "https://www.petropolis.rj.gov.br/pmp/index.php/defesa-civil",
       "status": "cache_only",
       "stage": null,
@@ -254,7 +255,7 @@
       "type": "referência regional"
     },
     "status": "unavailable",
-    "collected_at": "2026-11-13T07:45:20.570743-03:00",
+    "collected_at": "2026-11-13T08:00:34.615096-03:00",
     "url": "https://apitempo.inmet.gov.br/estacao/2026-11-12/2026-11-13/A610",
     "error": "https://apitempo.inmet.gov.br/estacao/2026-11-12/2026-11-13/A610 -> HTTP 204 sem conteúdo | https://apitempo.inmet.gov.br/estacao/dados/2026-11-13 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-13 | https://apitempo.inmet.gov.br/estacao/dados/2026-11-12 -> 404 Client Error: Not Found for url: https://apitempo.inmet.gov.br/estacao/dados/2026-11-12"
   },
@@ -262,7 +263,7 @@
     "provider": "Open-Meteo",
     "source_type": "estimativa meteorológica complementar",
     "official": false,
-    "status": "ok",
+    "status": "source_unconfirmed",
     "location": {
       "name": "Hospital Santa Teresa",
       "latitude": -22.50825,
@@ -279,10 +280,10 @@
     "wind_gust_kmh": 22.0,
     "weather_code": 3,
     "condition": "Nublado",
-    "collected_at": "2026-11-13T07:45:23.146562-03:00",
+    "collected_at": "2026-11-13T08:00:37.648214-03:00",
     "url": "https://api.open-meteo.com/v1/forecast?latitude=-22.50825&longitude=-43.19345&current=temperature_2m%2Crelative_humidity_2m%2Capparent_temperature%2Cprecipitation%2Crain%2Cweather_code%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=America%2FSao_Paulo",
-    "message": "Referência complementar próxima ao HST. Não substitui INMET, CEMADEN ou Defesa Civil para alertas oficiais.",
-    "error": null
+    "message": "Sem condição meteorológica complementar recente confirmada. Isso não significa ausência de risco.",
+    "error": "HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=18)"
   },
   "weather_map": {
     "status": "ok",
@@ -295,7 +296,7 @@
       "longitude": -43.19345
     },
     "operational_radius_km": 5,
-    "grid_updated_at": "2026-11-13T07:45:23.289084-03:00",
+    "grid_updated_at": "2026-11-13T08:00:55.690546-03:00",
     "grid": [
       {
         "latitude": -22.601055,
@@ -936,31 +937,31 @@
       }
     ],
     "grid_points": 49,
-    "grid_error": null,
+    "grid_error": "HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=25)",
     "radar": {
       "status": "ok",
       "provider": "RainViewer",
       "host": "https://tilecache.rainviewer.com",
-      "path": "/v2/radar/690664b80f80",
-      "frame_time": "2026-11-13T07:40:00-03:00",
-      "generated_unix": 1794566426,
+      "path": "/v2/radar/9ab70711a966",
+      "frame_time": "2026-11-13T08:00:00-03:00",
+      "generated_unix": 1794567623,
       "tile_color_scheme": 2,
       "url": "https://api.rainviewer.com/public/weather-maps.json",
       "error": null
     },
-    "collected_at": "2026-11-13T07:45:23.289084-03:00",
+    "collected_at": "2026-11-13T08:00:55.690546-03:00",
     "message": "Mapa complementar. Alertas e níveis HST permanecem baseados nas fontes oficiais integradas."
   },
   "pluviometers": {
     "provider": "CEMADEN",
     "status": "ok",
     "source_note": "Chuvas do Mapa Interativo do CEMADEN; horários em UTC convertidos para Brasília. Coordenadas estáticas são usadas somente para ordenar as estações por distância do HST.",
-    "collected_at": "2026-11-13T07:45:23.946326-03:00",
+    "collected_at": "2026-11-13T08:01:21.271481-03:00",
     "url": "https://resources.cemaden.gov.br/graficos/interativo/getJson2.php?uf=RJ",
     "total_stations": 25,
-    "recent_stations": 16,
-    "hidden_stations": 9,
-    "time_anomaly_stations": 2,
+    "recent_stations": 15,
+    "hidden_stations": 10,
+    "time_anomaly_stations": 3,
     "georeferenced_stations": 20,
     "coordinate_source": "cadastro estático consolidado das estações CEMADEN",
     "highest_1h": {
@@ -980,7 +981,7 @@
       "distance_to_hst_km": 1.66,
       "raw_timestamp": "13/11/26 10:10",
       "observed_at": "2026-11-13T07:10:00-03:00",
-      "age_hours": 0.6,
+      "age_hours": 0.9,
       "last_mm": 0.0,
       "acc1h_mm": null,
       "acc3h_mm": null,
@@ -1003,7 +1004,7 @@
         "distance_to_hst_km": 1.66,
         "raw_timestamp": "13/11/26 10:10",
         "observed_at": "2026-11-13T07:10:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1024,7 +1025,7 @@
         "distance_to_hst_km": 3.02,
         "raw_timestamp": "13/11/26 10:50",
         "observed_at": "2026-11-13T07:50:00-03:00",
-        "age_hours": -0.1,
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1045,7 +1046,7 @@
         "distance_to_hst_km": 3.19,
         "raw_timestamp": "13/11/26 10:10",
         "observed_at": "2026-11-13T07:10:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1054,19 +1055,19 @@
         "acc24h_mm": null,
         "acc48h_mm": null,
         "acc72h_mm": 2.0,
-        "acc96h_mm": 11.6,
+        "acc96h_mm": 10.6,
         "station_type": 10
       },
       {
         "id": 3303,
         "name": "Alto da Serra",
-        "status": "ok",
+        "status": "time_anomaly",
         "latitude": -22.53,
         "longitude": -43.171,
         "distance_to_hst_km": 3.34,
-        "raw_timestamp": "13/11/26 10:50",
-        "observed_at": "2026-11-13T07:50:00-03:00",
-        "age_hours": -0.1,
+        "raw_timestamp": "13/11/26 11:50",
+        "observed_at": "2026-11-13T08:50:00-03:00",
+        "age_hours": -0.8,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1087,7 +1088,7 @@
         "distance_to_hst_km": 3.43,
         "raw_timestamp": "13/11/26 10:10",
         "observed_at": "2026-11-13T07:10:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1096,7 +1097,7 @@
         "acc24h_mm": null,
         "acc48h_mm": null,
         "acc72h_mm": 1.2,
-        "acc96h_mm": 9.4,
+        "acc96h_mm": 8.8,
         "station_type": 10
       },
       {
@@ -1108,7 +1109,7 @@
         "distance_to_hst_km": 3.43,
         "raw_timestamp": "13/11/26 10:10",
         "observed_at": "2026-11-13T07:10:00-03:00",
-        "age_hours": 0.6,
+        "age_hours": 0.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1117,7 +1118,7 @@
         "acc24h_mm": null,
         "acc48h_mm": null,
         "acc72h_mm": 1.2,
-        "acc96h_mm": 11.2,
+        "acc96h_mm": 10.2,
         "station_type": 10
       },
       {
@@ -1129,7 +1130,7 @@
         "distance_to_hst_km": 3.81,
         "raw_timestamp": "05/01/25 11:00",
         "observed_at": "2025-01-05T08:00:00-03:00",
-        "age_hours": 16247.8,
+        "age_hours": 16248.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1148,9 +1149,9 @@
         "latitude": -22.527,
         "longitude": -43.161,
         "distance_to_hst_km": 3.93,
-        "raw_timestamp": "13/11/26 09:50",
-        "observed_at": "2026-11-13T06:50:00-03:00",
-        "age_hours": 0.9,
+        "raw_timestamp": "13/11/26 10:50",
+        "observed_at": "2026-11-13T07:50:00-03:00",
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1159,7 +1160,7 @@
         "acc24h_mm": null,
         "acc48h_mm": null,
         "acc72h_mm": 1.99,
-        "acc96h_mm": 7.15,
+        "acc96h_mm": 6.36,
         "station_type": 1
       },
       {
@@ -1171,7 +1172,7 @@
         "distance_to_hst_km": 4.01,
         "raw_timestamp": "13/11/26 09:00",
         "observed_at": "2026-11-13T06:00:00-03:00",
-        "age_hours": 1.8,
+        "age_hours": 2.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1192,7 +1193,7 @@
         "distance_to_hst_km": 4.7,
         "raw_timestamp": "13/11/26 11:20",
         "observed_at": "2026-11-13T08:20:00-03:00",
-        "age_hours": -0.6,
+        "age_hours": -0.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1201,7 +1202,7 @@
         "acc24h_mm": null,
         "acc48h_mm": 0.2,
         "acc72h_mm": 1.19,
-        "acc96h_mm": 21.85,
+        "acc96h_mm": 21.06,
         "station_type": 1
       },
       {
@@ -1213,7 +1214,7 @@
         "distance_to_hst_km": 7.95,
         "raw_timestamp": "13/11/26 10:20",
         "observed_at": "2026-11-13T07:20:00-03:00",
-        "age_hours": 0.4,
+        "age_hours": 0.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1234,7 +1235,7 @@
         "distance_to_hst_km": 10.69,
         "raw_timestamp": "13/11/26 10:20",
         "observed_at": "2026-11-13T07:20:00-03:00",
-        "age_hours": 0.4,
+        "age_hours": 0.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1255,11 +1256,11 @@
         "distance_to_hst_km": 12.43,
         "raw_timestamp": "13/11/26 11:00",
         "observed_at": "2026-11-13T08:00:00-03:00",
-        "age_hours": -0.2,
+        "age_hours": 0.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
-        "acc6h_mm": 1.57,
+        "acc6h_mm": 0.59,
         "acc12h_mm": 3.54,
         "acc24h_mm": 3.54,
         "acc48h_mm": 3.54,
@@ -1276,7 +1277,7 @@
         "distance_to_hst_km": 14.79,
         "raw_timestamp": "13/11/26 10:50",
         "observed_at": "2026-11-13T07:50:00-03:00",
-        "age_hours": -0.1,
+        "age_hours": 0.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1295,9 +1296,9 @@
         "latitude": -22.401,
         "longitude": -43.097,
         "distance_to_hst_km": 15.51,
-        "raw_timestamp": "13/11/26 10:00",
-        "observed_at": "2026-11-13T07:00:00-03:00",
-        "age_hours": 0.8,
+        "raw_timestamp": "13/11/26 11:00",
+        "observed_at": "2026-11-13T08:00:00-03:00",
+        "age_hours": 0.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1316,9 +1317,9 @@
         "latitude": -22.369,
         "longitude": -43.112,
         "distance_to_hst_km": 17.6,
-        "raw_timestamp": "13/11/26 10:10",
-        "observed_at": "2026-11-13T07:10:00-03:00",
-        "age_hours": 0.6,
+        "raw_timestamp": "13/11/26 11:10",
+        "observed_at": "2026-11-13T08:10:00-03:00",
+        "age_hours": -0.1,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1337,10 +1338,10 @@
         "latitude": -22.349,
         "longitude": -43.132,
         "distance_to_hst_km": 18.8,
-        "raw_timestamp": "13/11/26 10:30",
-        "observed_at": "2026-11-13T07:30:00-03:00",
-        "age_hours": 0.3,
-        "last_mm": 0.2,
+        "raw_timestamp": "13/11/26 11:00",
+        "observed_at": "2026-11-13T08:00:00-03:00",
+        "age_hours": 0.0,
+        "last_mm": 0.0,
         "acc1h_mm": 0.2,
         "acc3h_mm": 0.2,
         "acc6h_mm": 0.2,
@@ -1360,7 +1361,7 @@
         "distance_to_hst_km": 20.01,
         "raw_timestamp": "13/11/26 10:30",
         "observed_at": "2026-11-13T07:30:00-03:00",
-        "age_hours": 0.3,
+        "age_hours": 0.5,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1381,7 +1382,7 @@
         "distance_to_hst_km": 20.21,
         "raw_timestamp": "13/11/26 11:20",
         "observed_at": "2026-11-13T08:20:00-03:00",
-        "age_hours": -0.6,
+        "age_hours": -0.3,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1402,7 +1403,7 @@
         "distance_to_hst_km": 24.36,
         "raw_timestamp": "27/04/25 12:50",
         "observed_at": "2025-04-27T09:50:00-03:00",
-        "age_hours": 13557.9,
+        "age_hours": 13558.2,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1423,7 +1424,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "16/03/25 05:10",
         "observed_at": "2025-03-16T02:10:00-03:00",
-        "age_hours": 14573.6,
+        "age_hours": 14573.9,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1444,7 +1445,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "08/10/26 12:20",
         "observed_at": "2026-10-08T09:20:00-03:00",
-        "age_hours": 862.4,
+        "age_hours": 862.7,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1465,7 +1466,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "31/12/16 23:00",
         "observed_at": "2016-12-31T21:00:00-02:00",
-        "age_hours": 86482.8,
+        "age_hours": 86483.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1486,7 +1487,7 @@
         "distance_to_hst_km": null,
         "raw_timestamp": "22/05/26 20:30",
         "observed_at": "2026-05-22T17:30:00-03:00",
-        "age_hours": 4190.3,
+        "age_hours": 4190.5,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1505,9 +1506,9 @@
         "latitude": null,
         "longitude": null,
         "distance_to_hst_km": null,
-        "raw_timestamp": "20/10/26 12:30",
-        "observed_at": "2026-10-20T09:30:00-03:00",
-        "age_hours": 574.3,
+        "raw_timestamp": "21/10/26 06:00",
+        "observed_at": "2026-10-21T03:00:00-03:00",
+        "age_hours": 557.0,
         "last_mm": 0.0,
         "acc1h_mm": null,
         "acc3h_mm": null,
@@ -1527,7 +1528,7 @@
     "status": "ok",
     "municipality_code": "3303906",
     "municipality": "Petrópolis/RJ",
-    "collected_at": "2026-11-13T07:45:25.294747-03:00",
+    "collected_at": "2026-11-13T08:01:22.842435-03:00",
     "url": "https://apiprevmet3.inmet.gov.br/previsao/3303906",
     "days": [
       {
@@ -1670,7 +1671,7 @@
       "wind_speed_kmh": 11.4,
       "wind_direction_deg": 26.0,
       "wind_direction": "NE",
-      "updated_at": "2026-11-13T07:01:41.048246Z"
+      "updated_at": "2026-11-13T11:01:39.622258Z"
     },
     "latest_news": {
       "title": "Cronograma de Obras – 09 de Novembro/26",
@@ -1729,63 +1730,7 @@
         "ventoDirecao": 99,
         "ventoDirecaoDescription": "L",
         "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:41.404548Z"
-      },
-      {
-        "id": "b6b18e95-80c4-4d75-9c26-97d348590abd",
-        "kmIniId": "3f168d0a-e562-4900-b02a-48fdd229a63d",
-        "nome": "Duque de Caxias",
-        "condicaoTempo": 2,
-        "condicaoTempoIcon": "cloud-sun",
-        "condicaoTempoDescription": "Parcialmente nublado",
-        "temperatura": 21.6,
-        "vento": 1.7,
-        "ventoDirecao": 252,
-        "ventoDirecaoDescription": "O",
-        "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:41.511066Z"
-      },
-      {
-        "id": "db65e116-5c95-4484-ae1b-b822df7029df",
-        "kmIniId": "1a384028-c3c9-4968-89fa-83e59490e733",
-        "nome": "Levy Gasparian",
-        "condicaoTempo": 3,
-        "condicaoTempoIcon": "cloud",
-        "condicaoTempoDescription": "Nublado",
-        "temperatura": 18.7,
-        "vento": 3.2,
-        "ventoDirecao": 63,
-        "ventoDirecaoDescription": "NE",
-        "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:40.113007Z"
-      },
-      {
-        "id": "a05e4748-d6a3-4bc7-8f77-9f7c376c6306",
-        "kmIniId": "92d2f2dc-c462-4da1-8be0-773cc9f83187",
-        "nome": "Juiz de Fora",
-        "condicaoTempo": 45,
-        "condicaoTempoIcon": "fog",
-        "condicaoTempoDescription": "Neblina",
-        "temperatura": 17.9,
-        "vento": 11.9,
-        "ventoDirecao": 1,
-        "ventoDirecaoDescription": "N",
-        "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:40.761418Z"
-      },
-      {
-        "id": "7d5aa930-e120-4e4b-8d13-b1452f5a5fb7",
-        "kmIniId": "851c6f85-847b-4390-99c8-b8328780be93",
-        "nome": "Simão Pereira",
-        "condicaoTempo": 45,
-        "condicaoTempoIcon": "fog",
-        "condicaoTempoDescription": "Neblina",
-        "temperatura": 18.4,
-        "vento": 5.4,
-        "ventoDirecao": 130,
-        "ventoDirecaoDescription": "SE",
-        "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:40.85711Z"
+        "dataTempo": "2026-11-13T11:01:39.64447Z"
       },
       {
         "id": "78db17ea-3bcf-4ea3-8650-a8a4e4fef25e",
@@ -1799,7 +1744,21 @@
         "ventoDirecao": 145,
         "ventoDirecaoDescription": "SE",
         "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:40.95258Z"
+        "dataTempo": "2026-11-13T11:01:39.611094Z"
+      },
+      {
+        "id": "7d5aa930-e120-4e4b-8d13-b1452f5a5fb7",
+        "kmIniId": "851c6f85-847b-4390-99c8-b8328780be93",
+        "nome": "Simão Pereira",
+        "condicaoTempo": 45,
+        "condicaoTempoIcon": "fog",
+        "condicaoTempoDescription": "Neblina",
+        "temperatura": 18.4,
+        "vento": 5.4,
+        "ventoDirecao": 130,
+        "ventoDirecaoDescription": "SE",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-11-13T11:01:39.591263Z"
       },
       {
         "id": "7fcaca47-0426-4ad9-837c-b75987fb6409",
@@ -1813,7 +1772,35 @@
         "ventoDirecao": 26,
         "ventoDirecaoDescription": "NE",
         "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:41.048246Z"
+        "dataTempo": "2026-11-13T11:01:39.622258Z"
+      },
+      {
+        "id": "a05e4748-d6a3-4bc7-8f77-9f7c376c6306",
+        "kmIniId": "92d2f2dc-c462-4da1-8be0-773cc9f83187",
+        "nome": "Juiz de Fora",
+        "condicaoTempo": 45,
+        "condicaoTempoIcon": "fog",
+        "condicaoTempoDescription": "Neblina",
+        "temperatura": 17.9,
+        "vento": 11.9,
+        "ventoDirecao": 1,
+        "ventoDirecaoDescription": "N",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-11-13T11:01:39.571469Z"
+      },
+      {
+        "id": "b6b18e95-80c4-4d75-9c26-97d348590abd",
+        "kmIniId": "3f168d0a-e562-4900-b02a-48fdd229a63d",
+        "nome": "Duque de Caxias",
+        "condicaoTempo": 2,
+        "condicaoTempoIcon": "cloud-sun",
+        "condicaoTempoDescription": "Parcialmente nublado",
+        "temperatura": 21.6,
+        "vento": 1.7,
+        "ventoDirecao": 252,
+        "ventoDirecaoDescription": "O",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-11-13T11:01:39.655526Z"
       },
       {
         "id": "d017c33a-331b-4a07-93fe-891088b63a4a",
@@ -1827,7 +1814,21 @@
         "ventoDirecao": 132,
         "ventoDirecaoDescription": "SE",
         "data": "2026-02-03T19:37:38.972643Z",
-        "dataTempo": "2026-11-13T07:01:41.287618Z"
+        "dataTempo": "2026-11-13T11:01:39.633442Z"
+      },
+      {
+        "id": "db65e116-5c95-4484-ae1b-b822df7029df",
+        "kmIniId": "1a384028-c3c9-4968-89fa-83e59490e733",
+        "nome": "Levy Gasparian",
+        "condicaoTempo": 3,
+        "condicaoTempoIcon": "cloud",
+        "condicaoTempoDescription": "Nublado",
+        "temperatura": 18.7,
+        "vento": 3.2,
+        "ventoDirecao": 63,
+        "ventoDirecaoDescription": "NE",
+        "data": "2026-02-03T19:37:38.972643Z",
+        "dataTempo": "2026-11-13T11:01:39.01389Z"
       }
     ],
     "news": [
@@ -2122,7 +2123,7 @@
     "whatsapp": "(21) 98040-0113",
     "home_url": "https://elovias.com.br/home",
     "map_url": "https://elovias.com.br/mapa",
-    "collected_at": "2026-11-13T07:45:45.700745-03:00",
+    "collected_at": "2026-11-13T08:01:44.659609-03:00",
     "message": "Dados consultados diretamente na API pública usada pelo portal oficial da Elovias. Ausência de aviso ativo não equivale a garantia de tráfego livre.",
     "error": null
   },
@@ -2173,7 +2174,7 @@
     "inmet_alerts": "active",
     "inmet_forecast": "ok",
     "inmet_weather": "unavailable",
-    "weather_reference": "ok",
+    "weather_reference": "source_unconfirmed",
     "weather_map": "ok",
     "radar": "ok",
     "pluviometers": "ok",
