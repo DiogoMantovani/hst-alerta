@@ -6,10 +6,10 @@
     "operational": {
       "last_notified_level": 4,
       "last_notified_context": "rain",
-      "last_sent_at": "2026-11-16T17:46:39.818294+00:00",
-      "last_attempt_at": "2026-11-16T17:46:38.146311+00:00",
+      "last_sent_at": "2026-11-16T18:09:32.628706+00:00",
+      "last_attempt_at": "2026-11-16T18:09:30.890494+00:00",
       "last_event": "escalation",
-      "last_result": "no_event",
+      "last_result": "sent",
       "last_error": null,
       "last_message_id": [
         null
@@ -18,15 +18,15 @@
     "managers": {
       "last_notified_level": 4,
       "last_notified_context": "rain",
-      "last_sent_at": "2026-11-16T17:46:41.115499+00:00",
-      "last_attempt_at": "2026-11-16T17:46:39.818400+00:00",
+      "last_sent_at": "2026-11-16T18:09:34.085872+00:00",
+      "last_attempt_at": "2026-11-16T18:09:32.628809+00:00",
       "last_event": "entry",
-      "last_result": "no_event",
+      "last_result": "sent",
       "last_error": null,
       "last_message_id": [
         null
       ]
     }
   },
-  "updated_at": "2026-11-16T18:01:00.998578+00:00"
+  "updated_at": "2026-11-16T18:09:30.890414+00:00"
 }
