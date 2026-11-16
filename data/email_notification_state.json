@@ -9,7 +9,7 @@
       "last_sent_at": "2026-11-16T18:09:32.628706+00:00",
       "last_attempt_at": "2026-11-16T18:09:30.890494+00:00",
       "last_event": "escalation",
-      "last_result": "sent",
+      "last_result": "no_event",
       "last_error": null,
       "last_message_id": [
         null
@@ -21,12 +21,12 @@
       "last_sent_at": "2026-11-16T18:09:34.085872+00:00",
       "last_attempt_at": "2026-11-16T18:09:32.628809+00:00",
       "last_event": "entry",
-      "last_result": "sent",
+      "last_result": "no_event",
       "last_error": null,
       "last_message_id": [
         null
       ]
     }
   },
-  "updated_at": "2026-11-16T18:09:30.890414+00:00"
+  "updated_at": "2026-11-16T18:15:51.220416+00:00"
 }
