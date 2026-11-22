@@ -9,7 +9,7 @@
       "last_sent_at": "2026-11-22T20:15:58.329601+00:00",
       "last_attempt_at": "2026-11-22T20:15:57.074832+00:00",
       "last_event": "entry",
-      "last_result": "sent",
+      "last_result": "no_event",
       "last_error": null,
       "last_message_id": [
         null
@@ -28,5 +28,5 @@
       ]
     }
   },
-  "updated_at": "2026-11-22T20:15:57.074727+00:00"
+  "updated_at": "2026-11-22T20:30:53.406032+00:00"
 }
