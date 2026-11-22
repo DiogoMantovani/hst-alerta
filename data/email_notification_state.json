@@ -1,15 +1,15 @@
 {
   "schema_version": 2,
-  "last_seen_level": 3,
+  "last_seen_level": 2,
   "last_seen_context": "rain",
   "groups": {
     "operational": {
-      "last_notified_level": 3,
-      "last_notified_context": "rain",
-      "last_sent_at": "2026-11-22T00:45:48.995115+00:00",
-      "last_attempt_at": "2026-11-22T00:45:48.033311+00:00",
-      "last_event": "entry",
-      "last_result": "no_event",
+      "last_notified_level": null,
+      "last_notified_context": null,
+      "last_sent_at": "2026-11-22T17:30:58.957938+00:00",
+      "last_attempt_at": "2026-11-22T17:30:57.763557+00:00",
+      "last_event": "recovery",
+      "last_result": "sent",
       "last_error": null,
       "last_message_id": [
         null
@@ -28,5 +28,5 @@
       ]
     }
   },
-  "updated_at": "2026-11-22T17:15:49.947899+00:00"
+  "updated_at": "2026-11-22T17:30:57.763475+00:00"
 }
